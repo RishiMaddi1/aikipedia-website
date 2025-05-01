@@ -151,10 +151,10 @@
       resize: none; /* Prevent manual resizing */
       height: 60px;
       max-height: 150px; /* Max height limit */
-    transition: all 0.2s;
+      transition: all 0.2s;
     }
 
-/* Optional: When content overflows, ensure it's scrollable instead of expanding */
+    /* Optional: When content overflows, ensure it's scrollable instead of expanding */
     .input-form textarea:focus {
       overflow-y: auto; /* Allow scroll when the content exceeds the max-height */
     }
@@ -307,32 +307,24 @@
 
     function addMessage(role, content) {
       const messageDiv = document.createElement('div');
-      messageDiv.className = `message ${role}`;
-
-      // Convert markdown to HTML and handle code blocks
-      const html = marked.parse(content, {
-        highlight: function(code, lang) {
-          // Use highlight.js to highlight code blocks
-          return hljs.highlightAuto(code).value;
-        }
-      });
-
-      messageDiv.innerHTML = html;
-
-      // Append message to chat container
+      messageDiv.classList.add('message', role);
+      const messageContent = document.createElement('p');
+      messageContent.innerHTML = marked(content);  // Convert Markdown to HTML
+      messageDiv.appendChild(messageContent);
       chatContainer.appendChild(messageDiv);
-
-      // Scroll to bottom after adding message
-      chatContainer.scrollTo({
-        top: chatContainer.scrollHeight,
-        behavior: 'smooth'
-      });
+      chatContainer.scrollTop = chatContainer.scrollHeight;  // Scroll to the bottom
     }
 
-    // Auto-resize textarea
-    userInput.addEventListener('input', function() {
-      this.style.height = 'auto';
-      this.style.height = (this.scrollHeight) + 'px';
+    // Focus on input when clicking inside the input area
+    userInput.addEventListener('focus', () => {
+      userInput.style.height = 'auto';
+    });
+
+    userInput.addEventListener('input', () => {
+      // Handle auto resizing of the input area
+      if (userInput.scrollHeight > userInput.clientHeight) {
+        userInput.style.height = `${userInput.scrollHeight}px`;
+      }
     });
   </script>
 </body>
