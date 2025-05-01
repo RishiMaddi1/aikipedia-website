@@ -212,8 +212,8 @@
     <aside class="sidebar">
       <div class="model-selector">
         <h2>Select Model</h2>
-        <div class="model-option selected" data-model="qwen/qwen-2.5-coder-32b-instruct">
-          <div class="model-name">Qwen</div>
+        <div class="model-option selected" data-model="mistralai/codestral-2501">
+          <div class="model-name">Codestral</div>
           <div class="model-description">Specialized in code generation and technical discussions</div>
         </div>
         <div class="model-option" data-model="google/gemini-2.5-flash-preview">
@@ -243,7 +243,7 @@
     const userInput = document.getElementById('userInput');
     const sendButton = document.getElementById('sendButton');
     const modelOptions = document.querySelectorAll('.model-option');
-    let selectedModel = 'qwen/qwen-2.5-coder-32b-instruct';  // Default selected model
+    let selectedModel = 'mistralai/codestral-2501';
     let chatHistory = [];
 
     // Handle model selection
@@ -270,7 +270,7 @@
       userInput.value = '';
 
       try {
-        const response = await fetch('https://backend.aikipedia.workers.dev/chat', {
+        const response = await fetch('http://localhost:3000/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -312,8 +312,7 @@
       // Convert markdown to HTML and handle code blocks
       const html = marked.parse(content, {
         highlight: function(code, lang) {
-          // Use highlight.js to highlight code blocks
-          return hljs.highlightAuto(code).value;
+          // Highlighting logic here...
         }
       });
 
@@ -321,6 +320,14 @@
 
       // Append message to chat container
       chatContainer.appendChild(messageDiv);
+
+      // Calculate and set the height of chatContainer based on its content
+      const messageHeight = messageDiv.offsetHeight; // Height of the newly added message
+      const totalHeight =
+        chatContainer.scrollHeight - (chatContainer.offsetHeight - 20); // Subtracting some padding/margin
+      chatContainer.style.height = `${
+        totalHeight > messageHeight ? totalHeight : messageHeight
+      }px`;
 
       // Scroll to bottom after adding message
       chatContainer.scrollTo({
