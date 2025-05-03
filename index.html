@@ -6,6 +6,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700&display=swap" rel="stylesheet" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.0/marked.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
         <style>
             :root {
                 --bg: #1e1e1e;
@@ -280,79 +282,101 @@
         </main>
 
         <script>
-            const chatContainer = document.getElementById("chatContainer");
-            const chatForm = document.getElementById("chatForm");
-            const userInput = document.getElementById("userInput");
-            const sendButton = document.getElementById("sendButton");
-            const profileToggle = document.getElementById("profileToggle");
-            const sidebar = document.getElementById("sidebar");
-            const modelSelectorContainer = document.getElementById("modelSelectorContainer");
+    const chatContainer = document.getElementById("chatContainer");
+    const chatForm = document.getElementById("chatForm");
+    const userInput = document.getElementById("userInput");
+    const sendButton = document.getElementById("sendButton");
 
-            let chatHistory = [];
+    const profileToggle = document.getElementById("profileToggle");
+    const sidebar = document.getElementById("sidebar");
+    const modelSelectorBoxes = document.querySelectorAll(".model-selector-box");
 
-            profileToggle.addEventListener("click", () => {
-                sidebar.classList.toggle("expanded");
+    let chatHistory = [];
+
+    profileToggle.addEventListener("click", () => {
+        sidebar.classList.toggle("expanded");
+    });
+
+    modelSelectorBoxes[0].classList.add("selected");
+
+    modelSelectorBoxes.forEach(box => {
+        box.addEventListener("click", () => {
+            modelSelectorBoxes.forEach(otherBox => otherBox.classList.remove("selected"));
+            box.classList.add("selected");
+        });
+    });
+
+    chatForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const message = userInput.value.trim();
+        if (!message) return;
+
+        const selectedModelBox = document.querySelector(".model-selector-box.selected");
+        const model = selectedModelBox ? selectedModelBox.dataset.model : 'qwen/qwen-2.5-coder-32b-instruct';
+
+        addMessage("user", message);
+        userInput.value = "";
+        userInput.disabled = true;
+        sendButton.disabled = true;
+
+        const loadingDiv = document.createElement("div");
+        loadingDiv.className = "loading";
+        loadingDiv.innerHTML = "<span>.</span><span>.</span><span>.</span>";
+        chatContainer.appendChild(loadingDiv);
+        chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: "smooth" });
+
+        try {
+            const res = await fetch("https://backend.aikipedia.workers.dev/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message, model, history: chatHistory })
             });
 
-            const modelSelectorBoxes = document.querySelectorAll(".model-selector-box");
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Something went wrong");
 
-            modelSelectorBoxes[0].classList.add("selected");
+            loadingDiv.remove();
+            addMessage("assistant", data.response);
+            chatHistory.push({ role: "user", content: message }, { role: "assistant", content: data.response });
+        } catch (err) {
+            loadingDiv.remove();
+            addMessage("assistant", "❌ " + err.message);
+        } finally {
+            userInput.disabled = false;
+            sendButton.disabled = false;
+        }
+    });
 
-            modelSelectorBoxes.forEach(box => {
-                box.addEventListener("click", () => {
-                    modelSelectorBoxes.forEach(otherBox => otherBox.classList.remove("selected"));
-                    box.classList.add("selected");
-                    
-                });
-            });
+    function addMessage(role, text) {
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `message ${role}`;
 
-            chatForm.addEventListener("submit", async (e) => {
-                e.preventDefault();
-                const message = userInput.value.trim();
-                const selectedModelBox = document.querySelector(".model-selector-box.selected");
-                const model = selectedModelBox ? selectedModelBox.dataset.model : 'qwen/qwen-2.5-coder-32b-instruct'; // default model
-                if (!message) return;
-
-                addMessage("user", message);
-                userInput.value = "";
-                userInput.disabled = true;
-                sendButton.disabled = true;
-
-                const loadingDiv = document.createElement("div");
-                loadingDiv.className = "loading";
-                loadingDiv.innerHTML = "<span>.</span><span>.</span><span>.</span>";
-                chatContainer.appendChild(loadingDiv);
-                chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: "smooth" });
-
-                try {
-                    const res = await fetch("https://backend.aikipedia.workers.dev/chat", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ message, model, history: chatHistory })
-                    });
-
-                    const data = await res.json();
-                    if (!res.ok) throw new Error(data.error || "Something went wrong");
-
-                    loadingDiv.remove();
-                    addMessage("assistant", data.response);
-                    chatHistory.push({ role: "user", content: message }, { role: "assistant", content: data.response });
-                } catch (err) {
-                    loadingDiv.remove();
-                    addMessage("assistant", `Error: ${err.message}`);
-                } finally {
-                    userInput.disabled = false;
-                    sendButton.disabled = false;
+        if (role === "assistant") {
+            // Use `marked` for markdown parsing and code detection
+            messageDiv.innerHTML = marked.parse(text, {
+                highlight: function (code, lang) {
+                    if (lang && hljs.getLanguage(lang)) {
+                        return hljs.highlight(code, { language: lang }).value;
+                    } else {
+                        return hljs.highlightAuto(code).value;
+                    }
                 }
             });
 
-            function addMessage(role, content) {
-                const div = document.createElement("div");
-                div.className = `message ${role}`;
-                div.innerHTML = marked.parse(content);
-                chatContainer.appendChild(div);
-                chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: "smooth" });
-            }
-        </script>
+            // Ensure highlight.js applies styling
+            setTimeout(() => {
+                document.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightElement(block);
+                });
+            }, 10);
+        } else {
+            messageDiv.textContent = text;
+        }
+
+        chatContainer.appendChild(messageDiv);
+        chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: "smooth" });
+    }
+</script>
+
     </body>
 </html>
