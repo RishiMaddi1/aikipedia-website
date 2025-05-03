@@ -10,10 +10,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <style>
       :root {
-        --bg: #1e1e1e;
-        --bg-secondary: #2b2b2b;
-        --text: #e0e0e0;
-        --accent: #7aa2f7;
+        --bg: #1A120B;
+        --bg-secondary: #3C2A21;
+        --text: #E5E5CB;
+        --accent: #D5CEA3;
         --border: #3a3a3a;
       }
 
@@ -119,12 +119,13 @@
 
       .chat-area {
         flex: 1;
-        padding: 1.5rem 2.5rem;
+        padding: 3rem 8rem 3rem 8rem ;
         overflow-y: auto;
         display: flex;
         flex-direction: column;
         gap: 1.5rem;
       }
+      
 
       .message {
         max-width: 80%;
@@ -246,6 +247,14 @@
         border-radius: 16px;
         background: var(--bg-secondary);
       }
+      .usage-stats {
+        margin-top: -1rem;
+        padding: 0.5rem 1rem;
+        color: #aaa;
+        font-size: 0.8rem;
+        border-top: 1px solid var(--border);
+        text-align: right;
+     }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
@@ -349,7 +358,20 @@
           sendButton.disabled = false;
         }
       });
+      // In your chat response handling:
+addMessage('assistant', data.response);
+displayCreditUsage(data.usage); // New function to show usage stats
 
+function displayCreditUsage(usage) {
+  const usageDiv = document.createElement('div');
+  usageDiv.className = 'usage-stats';
+  usageDiv.innerHTML = `
+    <small>Tokens: ${usage.input_tokens} in / ${usage.output_tokens} out</small>
+    <small>Cost: ${usage.cost.toFixed(4)} credits</small>
+    <small>Remaining: ${usage.remaining_credits.toFixed(4)}</small>
+  `;
+  chatContainer.appendChild(usageDiv);
+}
       function addMessage(role, text) {
     const messageDiv = document.createElement("div");
     messageDiv.className = `message ${role}`;
@@ -395,6 +417,7 @@
     chatContainer.appendChild(messageDiv);
     chatContainer.scrollTo({top: chatContainer.scrollHeight, behavior: "smooth"});
 }
+
     </script>
   </body>
 </html>
