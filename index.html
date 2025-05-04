@@ -15,6 +15,8 @@
         --text: #E5E5CB;
         --accent: #D5CEA3;
         --border: #3a3a3a;
+        --error: #ff6b6b;
+        --success: #51cf66;
       }
 
       * {
@@ -43,6 +45,7 @@
         padding: 1.2rem 0;
         transition: width 0.3s ease;
         font-size: 1.1rem;
+        z-index: 10;
       }
 
       .sidebar.expanded {
@@ -58,6 +61,11 @@
         background-color: var(--accent);
         margin-bottom: 1.5rem;
         cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: var(--bg);
       }
 
       .profile-details {
@@ -126,6 +134,26 @@
         gap: 1.5rem;
       }
       
+      .connection-status {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        z-index: 100;
+        transition: opacity 0.3s ease;
+      }
+
+      .status-online {
+        background-color: var(--success);
+        color: #000;
+      }
+
+      .status-offline {
+        background-color: var(--error);
+        color: #fff;
+      }
 
       .message {
         max-width: 80%;
@@ -145,6 +173,17 @@
       .message.assistant {
         align-self: flex-start;
         background: var(--bg-secondary);
+      }
+
+      .system-message {
+        align-self: center;
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 0.8rem 1rem;
+        border-radius: 10px;
+        margin: 1rem 0;
+        font-size: 0.95rem;
+        opacity: 0.8;
       }
 
       .input-area {
@@ -231,22 +270,27 @@
         font-size: 3.2rem;
         font-weight: 600;
         padding: 1rem 2rem;
-      }
-
-      .input-wrapper {
-        width: 100%;
         display: flex;
-        justify-content: center;
-        padding: 0 2rem 2rem;
-        background: var(--bg);
+        justify-content: space-between;
+        align-items: center;
       }
 
-      .input-area {
-        max-width: 900px;
-        width: 100%;
-        border-radius: 16px;
-        background: var(--bg-secondary);
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
       }
+
+      .clear-chat {
+        background: none;
+        border: 1px solid var(--accent);
+        color: var(--accent);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.9rem;
+      }
+
       .usage-stats {
         margin-top: -1rem;
         padding: 0.5rem 1rem;
@@ -255,15 +299,94 @@
         border-top: 1px solid var(--border);
         text-align: right;
      }
+
+     #offlineToggle {
+       margin-left: 1rem;
+     }
+
+     .tooltip {
+      position: relative;
+      display: inline-block;
+      cursor: help;
+     }
+
+     .tooltip .tooltip-text {
+       visibility: hidden;
+       width: 200px;
+       background-color: var(--bg-secondary);
+       color: var(--text);
+       text-align: center;
+       border-radius: 6px;
+       padding: 5px;
+       position: absolute;
+       z-index: 1;
+       bottom: 125%;
+       left: 50%;
+       margin-left: -100px;
+       opacity: 0;
+       transition: opacity 0.3s;
+       font-size: 0.8rem;
+       border: 1px solid var(--border);
+     }
+
+     .tooltip:hover .tooltip-text {
+       visibility: visible;
+       opacity: 1;
+     }
+    </style>
+    <style>
+      .sidebar-auth-btn {
+        width: 90%;
+        padding: 0.85rem 0;
+        border-radius: 12px;
+        font-size: 1.08rem;
+        font-weight: 600;
+        border: none;
+        outline: none;
+        transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+        margin: 0 auto;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        letter-spacing: 0.01em;
+      }
+      .sidebar-auth-btn-primary {
+        background: var(--accent);
+        color: #1A120B;
+        border: none;
+      }
+      .sidebar-auth-btn-primary:hover {
+        background: #e7dfc2;
+        color: #000;
+        box-shadow: 0 4px 16px rgba(213,206,163,0.12);
+      }
+      .sidebar-auth-btn-secondary {
+        background: transparent;
+        color: var(--accent);
+        border: 2px solid var(--accent);
+      }
+      .sidebar-auth-btn-secondary:hover {
+        background: var(--accent);
+        color: #1A120B;
+        box-shadow: 0 4px 16px rgba(213,206,163,0.10);
+      }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
   </head>
   <body>
+    <!-- <div id="connectionStatus" class="connection-status status-offline">Offline Mode</div> -->
+    
     <aside class="sidebar" id="sidebar">
-      <div class="profile" id="profileToggle"></div>
-      <div class="profile-details">Hello, Maddi</div>
+      <div class="profile" id="profileToggle">G</div>
+      <div class="profile-details" id="profileDetails">Hello, Guest</div>
+      <button id="logoutBtn" style="display:none;margin:0.5rem 0 0.5rem 0.5rem;background:none;color:var(--accent);border:none;font-size:1.1rem;cursor:pointer;">Logout</button>
+
+      <!-- Login/Register Buttons -->
+      <div id="authButtons" style="width:100%; display:flex; flex-direction:column; gap:1.1rem; margin-top:2.5rem; align-items:center;">
+        <button id="loginBtn" class="sidebar-auth-btn sidebar-auth-btn-primary">Login</button>
+        <button id="registerBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary">Register</button>
+      </div>
 
       <!-- Model Selector Section -->
       <div class="model-selector-container" id="modelSelectorContainer">
@@ -282,9 +405,14 @@
 
     <main class="main">
       <div class="header">
-        Aikipedia
+        <div>Aikipedia</div>
+        <div class="header-right">
+          <button class="clear-chat" id="clearChat">Clear Chat</button>
+        </div>
       </div>
-      <div class="chat-area" id="chatContainer"></div>
+      <div class="chat-area" id="chatContainer">
+        <div class="system-message">Welcome to Aikipedia Chat! Login to start a conversation.</div>
+      </div>
       <div class="input-wrapper">
         <form class="input-area" id="chatForm">
           <textarea id="userInput" placeholder="Type your message..." required></textarea>
@@ -293,24 +421,361 @@
       </div>
     </main>
 
+    <!-- Auth Modal -->
+    <div id="authModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;">
+      <!-- Login Form -->
+      <div id="loginForm" style="background:var(--bg-secondary);padding:2.5rem 3rem;border-radius:20px;min-width:380px;max-width:420px;display:flex;flex-direction:column;gap:1.5rem;align-items:center;box-shadow:0 10px 25px rgba(0,0,0,0.2);transform:translateY(-20px);transition:transform 0.3s ease;">
+        <div style="text-align:center;margin-bottom:1rem;">
+          <h2 style="color:var(--accent);font-size:2rem;margin-bottom:0.5rem;">Welcome Back</h2>
+          <p style="color:var(--text);opacity:0.8;font-size:0.95rem;">Sign in to continue chatting</p>
+        </div>
+        
+        <div style="width:100%;display:flex;flex-direction:column;gap:1.2rem;">
+          <div>
+            <input id="loginUsername" placeholder="Username" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid var(--border);width:100%;background:var(--bg);color:var(--text);font-size:1rem;transition:border-color 0.3s ease;" />
+          </div>
+          <div>
+            <input id="loginPassword" type="password" placeholder="Password" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid var(--border);width:100%;background:var(--bg);color:var(--text);font-size:1rem;transition:border-color 0.3s ease;" />
+          </div>
+        </div>
+
+        <button id="loginSubmitBtn" style="background:var(--accent);color:#000;font-weight:600;width:100%;padding:1rem 0;border-radius:12px;border:none;cursor:pointer;font-size:1rem;transition:all 0.3s ease;margin-top:0.5rem;">Sign In</button>
+        
+        <div style="display:flex;gap:0.5rem;align-items:center;margin-top:0.5rem;">
+          <span style="color:var(--text);opacity:0.7;font-size:0.9rem;">New to Aikipedia?</span>
+          <button id="switchToRegisterBtn" style="background:none;border:none;color:var(--accent);cursor:pointer;font-weight:600;font-size:0.9rem;">Create Account</button>
+        </div>
+
+        <button id="loginCancelBtn" style="background:none;color:var(--text);border:none;cursor:pointer;font-size:0.9rem;opacity:0.7;margin-top:0.5rem;">Cancel</button>
+        
+        <div id="loginError" style="color:var(--error);font-size:0.95rem;text-align:center;min-height:1.2rem;"></div>
+      </div>
+
+      <!-- Register Form -->
+      <div id="registerForm" style="display:none;background:var(--bg-secondary);padding:2.5rem 3rem;border-radius:20px;min-width:380px;max-width:420px;flex-direction:column;gap:1.5rem;align-items:center;box-shadow:0 10px 25px rgba(0,0,0,0.2);transform:translateY(-20px);transition:transform 0.3s ease;">
+        <div style="text-align:center;margin-bottom:1rem;">
+          <h2 style="color:var(--accent);font-size:2rem;margin-bottom:0.5rem;">Create Account</h2>
+          <p style="color:var(--text);opacity:0.8;font-size:0.95rem;">Join Aikipedia to start chatting</p>
+        </div>
+        
+        <div style="width:100%;display:flex;flex-direction:column;gap:1.2rem;">
+          <div>
+            <input id="registerUsername" placeholder="Choose Username" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid var(--border);width:100%;background:var(--bg);color:var(--text);font-size:1rem;transition:border-color 0.3s ease;" />
+          </div>
+          <div>
+            <input id="registerPassword" type="password" placeholder="Create Password" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid var(--border);width:100%;background:var(--bg);color:var(--text);font-size:1rem;transition:border-color 0.3s ease;" />
+          </div>
+          <div>
+            <input id="registerConfirmPassword" type="password" placeholder="Confirm Password" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid var(--border);width:100%;background:var(--bg);color:var(--text);font-size:1rem;transition:border-color 0.3s ease;" />
+          </div>
+        </div>
+
+        <button id="registerSubmitBtn" style="background:var(--accent);color:#000;font-weight:600;width:100%;padding:1rem 0;border-radius:12px;border:none;cursor:pointer;font-size:1rem;transition:all 0.3s ease;margin-top:0.5rem;">Create Account</button>
+        
+        <div style="display:flex;gap:0.5rem;align-items:center;margin-top:0.5rem;">
+          <span style="color:var(--text);opacity:0.7;font-size:0.9rem;">Already have an account?</span>
+          <button id="switchToLoginBtn" style="background:none;border:none;color:var(--accent);cursor:pointer;font-weight:600;font-size:0.9rem;">Sign In</button>
+        </div>
+
+        <button id="registerCancelBtn" style="background:none;color:var(--text);border:none;cursor:pointer;font-size:0.9rem;opacity:0.7;margin-top:0.5rem;">Cancel</button>
+        
+        <div id="registerError" style="color:var(--error);font-size:0.95rem;text-align:center;min-height:1.2rem;"></div>
+      </div>
+    </div>
+
     <script>
       const chatContainer = document.getElementById("chatContainer");
       const chatForm = document.getElementById("chatForm");
       const userInput = document.getElementById("userInput");
       const sendButton = document.getElementById("sendButton");
-
       const profileToggle = document.getElementById("profileToggle");
       const sidebar = document.getElementById("sidebar");
       const modelSelectorBoxes = document.querySelectorAll(".model-selector-box");
+      const profileDetails = document.getElementById("profileDetails");
+      const authButtons = document.getElementById("authButtons");
+      const loginBtn = document.getElementById("loginBtn");
+      const registerBtn = document.getElementById("registerBtn");
+      const authModal = document.getElementById("authModal");
+      const loginUsername = document.getElementById("loginUsername");
+      const loginPassword = document.getElementById("loginPassword");
+      const loginSubmitBtn = document.getElementById("loginSubmitBtn");
+      const switchToRegisterBtn = document.getElementById("switchToRegisterBtn");
+      const loginCancelBtn = document.getElementById("loginCancelBtn");
+      const loginError = document.getElementById("loginError");
+      const registerUsername = document.getElementById("registerUsername");
+      const registerPassword = document.getElementById("registerPassword");
+      const registerConfirmPassword = document.getElementById("registerConfirmPassword");
+      const registerSubmitBtn = document.getElementById("registerSubmitBtn");
+      const switchToLoginBtn = document.getElementById("switchToLoginBtn");
+      const registerCancelBtn = document.getElementById("registerCancelBtn");
+      const registerError = document.getElementById("registerError");
+      const logoutBtn = document.getElementById("logoutBtn");
+      const connectionStatus = document.getElementById("connectionStatus");
+      const clearChatBtn = document.getElementById("clearChat");
 
       let chatHistory = [];
+      let loggedInUser = null;
+      let authMode = "login";
+      
+      // Check if we have a stored session
+      function checkStoredSession() {
+        const storedUser = localStorage.getItem('aikipediaUser');
+        if (storedUser) {
+          setLoggedInUser(storedUser);
+          return true;
+        }
+        return false;
+      }
 
+      function setLoggedInUser(username) {
+        loggedInUser = username;
+        localStorage.setItem('aikipediaUser', username);
+        profileDetails.textContent = Hello, ${username};
+        profileToggle.textContent = username.charAt(0).toUpperCase();
+        authButtons.style.display = "none";
+        userInput.disabled = false;
+        sendButton.disabled = false;
+        logoutBtn.style.display = "block";
+        
+        // Add welcome message if chat is empty
+        if (chatHistory.length === 0) {
+          addSystemMessage(Welcome, ${username}! You can start chatting now.);
+        }
+      }
+      
+      function setLoggedOut() {
+        loggedInUser = null;
+        localStorage.removeItem('aikipediaUser');
+        profileDetails.textContent = Hello, Guest;
+        profileToggle.textContent = "G";
+        authButtons.style.display = "flex";
+        userInput.disabled = true;
+        sendButton.disabled = true;
+        logoutBtn.style.display = "none";
+      }
+
+      // Handle login/register events
+      loginBtn.onclick = () => {
+        document.getElementById("loginForm").style.display = "flex";
+        document.getElementById("registerForm").style.display = "none";
+        authModal.style.display = "flex";
+        document.getElementById("loginForm").style.transform = "translateY(-20px)";
+        setTimeout(() => {
+          document.getElementById("loginForm").style.transform = "translateY(0)";
+        }, 10);
+      };
+      
+      registerBtn.onclick = () => {
+        document.getElementById("loginForm").style.display = "none";
+        document.getElementById("registerForm").style.display = "flex";
+        authModal.style.display = "flex";
+        document.getElementById("registerForm").style.transform = "translateY(-20px)";
+        setTimeout(() => {
+          document.getElementById("registerForm").style.transform = "translateY(0)";
+        }, 10);
+      };
+
+      // Switch between login and register forms
+      document.getElementById("switchToRegisterBtn").onclick = () => {
+        document.getElementById("loginForm").style.transform = "translateY(-20px)";
+        setTimeout(() => {
+          document.getElementById("loginForm").style.display = "none";
+          document.getElementById("registerForm").style.display = "flex";
+          document.getElementById("registerForm").style.transform = "translateY(-20px)";
+          setTimeout(() => {
+            document.getElementById("registerForm").style.transform = "translateY(0)";
+          }, 10);
+        }, 300);
+      };
+
+      document.getElementById("switchToLoginBtn").onclick = () => {
+        document.getElementById("registerForm").style.transform = "translateY(-20px)";
+        setTimeout(() => {
+          document.getElementById("registerForm").style.display = "none";
+          document.getElementById("loginForm").style.display = "flex";
+          document.getElementById("loginForm").style.transform = "translateY(-20px)";
+          setTimeout(() => {
+            document.getElementById("loginForm").style.transform = "translateY(0)";
+          }, 10);
+        }, 300);
+      };
+      
+      document.getElementById("loginCancelBtn").onclick = () => {
+        document.getElementById("loginForm").style.transform = "translateY(-20px)";
+        setTimeout(() => {
+          authModal.style.display = "none";
+        }, 300);
+      };
+
+      document.getElementById("registerCancelBtn").onclick = () => {
+        document.getElementById("registerForm").style.transform = "translateY(-20px)";
+        setTimeout(() => {
+          authModal.style.display = "none";
+        }, 300);
+      };
+
+      // Add input focus effects
+      const authInputs = document.querySelectorAll("#authModal input");
+      authInputs.forEach(input => {
+        input.addEventListener("focus", () => {
+          input.style.borderColor = "var(--accent)";
+          input.previousElementSibling.style.opacity = "1";
+        });
+        
+        input.addEventListener("blur", () => {
+          input.style.borderColor = "var(--border)";
+          input.previousElementSibling.style.opacity = "0.5";
+        });
+      });
+
+      // Add hover effects to buttons
+      const modalAuthButtons = document.querySelectorAll("#authModal button");
+      modalAuthButtons.forEach(button => {
+        if (!button.id.includes("Cancel") && !button.id.includes("switch")) {
+          button.addEventListener("mouseover", () => {
+            button.style.transform = "translateY(-2px)";
+            button.style.boxShadow = "0 5px 15px rgba(0,0,0,0.2)";
+          });
+          
+          button.addEventListener("mouseout", () => {
+            button.style.transform = "translateY(0)";
+            button.style.boxShadow = "none";
+          });
+        }
+      });
+
+      // Handle form submissions
+      document.getElementById("loginSubmitBtn").onclick = async () => {
+        const username = document.getElementById("loginUsername").value.trim();
+        const password = document.getElementById("loginPassword").value.trim();
+        
+        if (!username || !password) {
+          document.getElementById("loginError").textContent = "Please fill in all fields";
+          return;
+        }
+        
+        document.getElementById("loginError").textContent = "";
+        document.getElementById("loginSubmitBtn").disabled = true;
+        
+        try {
+          const res = await fetch("https://backend.aikipedia.workers.dev/flask", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "login", username, password })
+          });
+          
+          const data = await res.json();
+          if (!res.ok || data.error) {
+            throw new Error(data.error || "Login failed");
+          }
+          
+          setLoggedInUser(username);
+          authModal.style.display = "none";
+        } catch (err) {
+          let errorMsg;
+          if (err && err.message) {
+            errorMsg = err.message;
+          } else if (err && err.error) {
+            // If backend returns { error: { ... } }
+            if (typeof err.error === 'object') {
+              errorMsg = JSON.stringify(err.error, null, 2);
+            } else {
+              errorMsg = String(err.error);
+            }
+          } else if (typeof err === "object") {
+            errorMsg = JSON.stringify(err, null, 2);
+          } else {
+            errorMsg = String(err);
+          }
+          document.getElementById("loginError").textContent = errorMsg;
+        } finally {
+          document.getElementById("loginSubmitBtn").disabled = false;
+        }
+      };
+
+      document.getElementById("registerSubmitBtn").onclick = async () => {
+        const username = document.getElementById("registerUsername").value.trim();
+        const password = document.getElementById("registerPassword").value.trim();
+        const confirmPassword = document.getElementById("registerConfirmPassword").value.trim();
+        
+        if (!username || !password || !confirmPassword) {
+          document.getElementById("registerError").textContent = "Please fill in all fields";
+          return;
+        }
+        
+        if (password !== confirmPassword) {
+          document.getElementById("registerError").textContent = "Passwords do not match";
+          return;
+        }
+        
+        document.getElementById("registerError").textContent = "";
+        document.getElementById("registerSubmitBtn").disabled = true;
+        
+        try {
+          const res = await fetch("https://backend.aikipedia.workers.dev/flask", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "register", username, password })
+          });
+          
+          const data = await res.json();
+          if (!res.ok || data.error) {
+            throw new Error(data.error || "Registration failed");
+          }
+          
+          setLoggedInUser(username);
+          authModal.style.display = "none";
+        } catch (err) {
+          let errorMsg;
+          if (err && err.message) {
+            errorMsg = err.message;
+          } else if (err && err.error) {
+            // If backend returns { error: { ... } }
+            if (typeof err.error === 'object') {
+              errorMsg = JSON.stringify(err.error, null, 2);
+            } else {
+              errorMsg = String(err.error);
+            }
+          } else if (typeof err === "object") {
+            errorMsg = JSON.stringify(err, null, 2);
+          } else {
+            errorMsg = String(err);
+          }
+          document.getElementById("registerError").textContent = errorMsg;
+        } finally {
+          document.getElementById("registerSubmitBtn").disabled = false;
+        }
+      };
+
+      logoutBtn.onclick = () => {
+        setLoggedOut();
+        chatHistory = [];
+        chatContainer.innerHTML = "";
+        addSystemMessage("You've been logged out. Login to start a new conversation.");
+      };
+
+      // Clear chat functionality
+      clearChatBtn.onclick = () => {
+        if (confirm("Are you sure you want to clear the chat history?")) {
+          chatHistory = [];
+          chatContainer.innerHTML = "";
+          if (loggedInUser) {
+            addSystemMessage(Chat cleared. You can start a new conversation, ${loggedInUser}.);
+          } else {
+            addSystemMessage("Chat cleared. Login to start a conversation.");
+          }
+        }
+      };
+
+      // Toggle sidebar expansion
       profileToggle.addEventListener("click", () => {
         sidebar.classList.toggle("expanded");
       });
 
+      // Set default selected model
       modelSelectorBoxes[0].classList.add("selected");
 
+      // Model selection handler
       modelSelectorBoxes.forEach((box) => {
         box.addEventListener("click", () => {
           modelSelectorBoxes.forEach((otherBox) => otherBox.classList.remove("selected"));
@@ -318,8 +783,80 @@
         });
       });
 
+      // Add message to chat
+      function addMessage(role, text) {
+        const messageDiv = document.createElement("div");
+        messageDiv.className = message ${role};
+
+        if (role === "assistant") {
+            // Preprocess text to ensure proper math delimiters
+            let processedText = text
+                // Fix single-line equations
+                .replace(/(^|\s)\$([^$]+)\$($|\s)/g, '$1$$$2$$$3')
+                // Fix multi-line equations
+                .replace(/\\begin{equation}([\s\S]*?)\\end{equation}/g, '$$$1$$')
+                // Fix display-style \[ \]
+                .replace(/\\\[([\s\S]*?)\\\]/g, '$$$1$$');
+
+            // Parse with marked
+            messageDiv.innerHTML = marked.parse(processedText, {
+                highlight: function(code, lang) {
+                    if (lang && hljs.getLanguage(lang)) {
+                        return hljs.highlight(code, { language: lang }).value;
+                    }
+                    return hljs.highlightAuto(code).value;
+                }
+            });
+
+            // Render math with KaTeX
+            setTimeout(() => {
+                renderMathInElement(messageDiv, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false},
+                        {left: '\\(', right: '\\)', display: false}
+                    ],
+                    throwOnError: false
+                });
+
+                // Apply syntax highlighting
+                document.querySelectorAll('pre code').forEach(hljs.highlightElement);
+            }, 10);
+        } else {
+            messageDiv.textContent = text;
+        }
+
+        chatContainer.appendChild(messageDiv);
+        chatContainer.scrollTo({top: chatContainer.scrollHeight, behavior: "smooth"});
+      }
+      
+      // Add system message (gray centered message)
+      function addSystemMessage(text) {
+        const messageDiv = document.createElement("div");
+        messageDiv.className = "system-message";
+        messageDiv.textContent = text;
+        chatContainer.appendChild(messageDiv);
+        chatContainer.scrollTo({top: chatContainer.scrollHeight, behavior: "smooth"});
+      }
+
+      // Display token usage and cost
+      function displayCreditUsage(data) {
+        if (!data || !data.input_tokens) return;
+        
+        const usageDiv = document.createElement('div');
+        usageDiv.className = 'usage-stats';
+        usageDiv.innerHTML = `
+          <small>Tokens: ${data.input_tokens} in / ${data.output_tokens} out</small>
+          <small>Cost: ${data.cost.toFixed(4)} credits</small>
+        `;
+        chatContainer.appendChild(usageDiv);
+      }
+
+      // Handle message submission
       chatForm.addEventListener("submit", async (e) => {
         e.preventDefault();
+        if (!loggedInUser) return;
+        
         const message = userInput.value.trim();
         if (!message) return;
 
@@ -338,10 +875,13 @@
         chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: "smooth" });
 
         try {
+          // Real backend request only
           const res = await fetch("https://backend.aikipedia.workers.dev/chat", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message, model, history: chatHistory }),
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ username: loggedInUser, message, model, history: chatHistory }),
           });
 
           const data = await res.json();
@@ -349,75 +889,78 @@
 
           loadingDiv.remove();
           addMessage("assistant", data.response);
+          displayCreditUsage(data);
+          // Add to chat history
           chatHistory.push({ role: "user", content: message }, { role: "assistant", content: data.response });
+        
         } catch (err) {
           loadingDiv.remove();
-          addMessage("assistant", "❌ " + err.message);
+          let errorMsg;
+          if (err && err.message) {
+            errorMsg = err.message;
+          } else if (err && err.error) {
+            // If backend returns { error: { ... } }
+            if (typeof err.error === 'object') {
+              errorMsg = JSON.stringify(err.error, null, 2);
+            } else {
+              errorMsg = String(err.error);
+            }
+          } else if (typeof err === "object") {
+            errorMsg = JSON.stringify(err, null, 2);
+          } else {
+            errorMsg = String(err);
+          }
+          
+          addMessage("assistant", "❌ " + errorMsg);
         } finally {
           userInput.disabled = false;
           sendButton.disabled = false;
         }
       });
-      // In your chat response handling:
-addMessage('assistant', data.response);
-displayCreditUsage(data.usage); // New function to show usage stats
 
-function displayCreditUsage(usage) {
-  const usageDiv = document.createElement('div');
-  usageDiv.className = 'usage-stats';
-  usageDiv.innerHTML = `
-    <small>Tokens: ${usage.input_tokens} in / ${usage.output_tokens} out</small>
-    <small>Cost: ${usage.cost.toFixed(4)} credits</small>
-    <small>Remaining: ${usage.remaining_credits.toFixed(4)}</small>
-  `;
-  chatContainer.appendChild(usageDiv);
-}
-      function addMessage(role, text) {
-    const messageDiv = document.createElement("div");
-    messageDiv.className = `message ${role}`;
+      // Allow pressing Enter to send message
+      userInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          if (!sendButton.disabled) {
+            chatForm.dispatchEvent(new Event("submit"));
+          }
+        }
+      });
 
-    if (role === "assistant") {
-        // Preprocess text to ensure proper math delimiters
-        let processedText = text
-            // Fix single-line equations
-            .replace(/(^|\s)\$([^$]+)\$($|\s)/g, '$1$$$2$$$3')
-            // Fix multi-line equations
-            .replace(/\\begin{equation}([\s\S]*?)\\end{equation}/g, '$$$1$$')
-            // Fix display-style \[ \]
-            .replace(/\\\[([\s\S]*?)\\\]/g, '$$$1$$');
+      // Auto-resize textarea as user types
+      userInput.addEventListener("input", function() {
+        this.style.height = "64px";
+        this.style.height = (this.scrollHeight > 200 ? 200 : this.scrollHeight) + "px";
+      });
 
-        // Parse with marked
-        messageDiv.innerHTML = marked.parse(processedText, {
-            highlight: function(code, lang) {
-                if (lang && hljs.getLanguage(lang)) {
-                    return hljs.highlight(code, { language: lang }).value;
-                }
-                return hljs.highlightAuto(code).value;
-            }
-        });
+      // Initialize
+      window.addEventListener("DOMContentLoaded", async () => {
+        // Check for saved session
+        const hasSession = checkStoredSession();
+        
+        // Setup input state
+        userInput.disabled = !hasSession;
+        sendButton.disabled = !hasSession;
+        
+        // Show welcome message if no session
+        if (!hasSession) {
+          addSystemMessage("Welcome to Aikipedia Chat! Login to start a conversation.");
+        }
+      });
 
-        // Render math with KaTeX
-        setTimeout(() => {
-            renderMathInElement(messageDiv, {
-                delimiters: [
-                    {left: '$$', right: '$$', display: true},
-                    {left: '$', right: '$', display: false},
-                    {left: '\\(', right: '\\)', display: false}
-                ],
-                throwOnError: false
+      // Service Worker Registration for PWA support
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+              console.log('Service Worker registered:', registration);
+            })
+            .catch(error => {
+              console.log('Service Worker registration failed:', error);
             });
-
-            // Apply syntax highlighting
-            document.querySelectorAll('pre code').forEach(hljs.highlightElement);
-        }, 10);
-    } else {
-        messageDiv.textContent = text;
-    }
-
-    chatContainer.appendChild(messageDiv);
-    chatContainer.scrollTo({top: chatContainer.scrollHeight, behavior: "smooth"});
-}
-
+        });
+      }
     </script>
   </body>
 </html>
