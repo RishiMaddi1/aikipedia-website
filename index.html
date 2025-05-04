@@ -530,7 +530,7 @@
       function setLoggedInUser(username) {
         loggedInUser = username;
         localStorage.setItem('aikipediaUser', username);
-        profileDetails.textContent = Hello, ${username};
+        profileDetails.textContent = `Hello, ${username}`;
         profileToggle.textContent = username.charAt(0).toUpperCase();
         authButtons.style.display = "none";
         userInput.disabled = false;
@@ -539,14 +539,14 @@
         
         // Add welcome message if chat is empty
         if (chatHistory.length === 0) {
-          addSystemMessage(Welcome, ${username}! You can start chatting now.);
+          addSystemMessage(`Welcome, ${username}! You can start chatting now.`);
         }
       }
       
       function setLoggedOut() {
         loggedInUser = null;
         localStorage.removeItem('aikipediaUser');
-        profileDetails.textContent = Hello, Guest;
+        profileDetails.textContent = `Hello, Guest`;
         profileToggle.textContent = "G";
         authButtons.style.display = "flex";
         userInput.disabled = true;
@@ -760,7 +760,7 @@
           chatHistory = [];
           chatContainer.innerHTML = "";
           if (loggedInUser) {
-            addSystemMessage(Chat cleared. You can start a new conversation, ${loggedInUser}.);
+            addSystemMessage(`Chat cleared. You can start a new conversation, ${loggedInUser}.`);
           } else {
             addSystemMessage("Chat cleared. Login to start a conversation.");
           }
@@ -786,7 +786,7 @@
       // Add message to chat
       function addMessage(role, text) {
         const messageDiv = document.createElement("div");
-        messageDiv.className = message ${role};
+        messageDiv.className = `message ${role}`;
 
         if (role === "assistant") {
             // Preprocess text to ensure proper math delimiters
