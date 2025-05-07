@@ -24,6 +24,25 @@
         --success: #2F686F;
       }
 
+::-webkit-scrollbar {
+  width: 6px;
+  background-color: var(--border); /* Use the border color for the scrollbar track */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--accent); /* Use the accent color for the scrollbar thumb */
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-button {
+  background-color: var(--border); /* Use the border color for the scrollbar button */
+}
+
+::-webkit-scrollbar-corner {
+  background-color: var(--bg-secondary); /* Use the background color for the scrollbar corner */
+}
+
+
       * {
         margin: 0;
         padding: 0;
@@ -155,7 +174,7 @@
 
      .chat-area {
   flex: 1;
-  padding: 10rem; /* Adjusted padding for a more compact layout */
+  padding: 17rem; /* Adjusted padding for a more compact layout */
   overflow-y: auto; /* Enables scrolling when content overflows */
   display: flex;
   flex-direction: column;
@@ -224,7 +243,7 @@
   padding: 1rem 2rem; /* Adjusted padding to make it smaller */
   font-size: 1.1rem;
   border-radius: 20px;
-  max-width: 52rem; /* Adjust the maximum width to make it more compact */
+  max-width: 85rem; /* Adjust the maximum width to make it more compact */
   width: 100%;
   margin: 0 auto; /* Center the input area within the available space */
 }
@@ -334,8 +353,9 @@
       .usage-stats {
         margin-top: -1rem;
         padding: 0.5rem 1rem;
-        color: var(--text);
+        color: #aaa;
         font-size: 0.8rem;
+        border-top: 1px solid var(--border);
         text-align: right;
      }
 
