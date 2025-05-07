@@ -8,15 +8,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.0/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="manifest" href="site.webmanifest">
+
     <style>
       :root {
-        --bg: #1A120B;
-        --bg-secondary: #3C2A21;
-        --text: #E5E5CB;
-        --accent: #D5CEA3;
-        --border: #3a3a3a;
-        --error: #ff6b6b;
-        --success: #51cf66;
+        --bg: #031626; 
+        --bg-secondary: #010512;
+        --text: #a3b2d3;
+        --accent: #4889cd;
+        --border: #000137;
+        --error: #FCADB0;
+        --success: #2F686F;
       }
 
       * {
@@ -80,34 +85,57 @@
         font-weight: 600;
       }
 
-      .model-selector-container {
-        display: none;
-        flex-direction: column;
-        gap: 1.2rem;
-        margin-top: 2rem;
-        width: 100%;
-        padding-right: 1rem;
-      }
+     /* HIDE by default */
+.model-selector-container {
+  display: none;
+  max-height: 400px; /* adjust as needed */
+  overflow-y: auto;
+  flex-direction: column;
+  gap: 1rem;
+  padding-right: 0.5rem; /* space for scrollbar */
+}
 
-      .sidebar.expanded .model-selector-container {
-        display: flex;
-      }
+/* SHOW only when sidebar is expanded */
+.sidebar.expanded .model-selector-container {
+  display: flex;
+  margin-top: 2rem; /* Adjust this value as needed for desired spacing */
+}
 
-      .model-selector-box {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background: var(--bg);
-        color: var(--text);
-        width: 100%;
-        height: 120px;
-        border-radius: 12px;
-        border: 1px solid var(--border);
-        padding: 10px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-      }
+
+/* Optional scrollbar styling */
+.model-selector-container::-webkit-scrollbar {
+  width: 6px;
+}
+.model-selector-container::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+.model-selector-box {
+  background: var(--bg-secondary, #f5f5f5);
+  padding: 1rem;
+  border: 1px solid var(--border, #ccc);
+  border-radius: 8px;
+  transition: background 0.3s;
+  cursor: pointer;
+  position: relative;
+}
+
+.model-selector-box h1 {
+  font-size: 1.5rem; /* smaller heading */
+  margin: 0;
+}
+
+.model-selector-box p {
+  display: none;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.model-selector-box:hover p {
+  display: block;
+}
+
 
       .model-selector-box:hover {
         background-color: var(--bg-secondary);
@@ -125,15 +153,15 @@
         overflow: hidden;
       }
 
-      .chat-area {
-        flex: 1;
-        padding: 3rem 8rem 3rem 8rem ;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-      }
-      
+     .chat-area {
+  flex: 1;
+  padding: 10rem; /* Adjusted padding for a more compact layout */
+  overflow-y: auto; /* Enables scrolling when content overflows */
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* Reduced gap for more compact message spacing */
+  max-height: 80vh; /* Keeps the chat area from growing too large */
+}      
       .connection-status {
         position: fixed;
         top: 1rem;
@@ -156,7 +184,7 @@
       }
 
       .message {
-        max-width: 80%;
+        max-width: 60%;
         padding: 1.2rem 1.4rem;
         border-radius: 12px;
         word-wrap: break-word;
@@ -165,6 +193,7 @@
       }
 
       .message.user {
+        max-width: 60%;
         align-self: flex-end;
         background: var(--accent);
         color: #000;
@@ -177,56 +206,64 @@
 
       .system-message {
         align-self: center;
-        background: #2c3e50;
-        color: #ecf0f1;
+        background: var(--bg-secondary);
+        color: var(--text);
         padding: 0.8rem 1rem;
         border-radius: 10px;
         margin: 1rem 0;
         font-size: 0.95rem;
-        opacity: 0.8;
+        opacity: 1;
       }
 
       .input-area {
-        display: flex;
-        gap: 1rem;
-        border-top: 1px solid var(--border);
-        background: var(--bg-secondary);
-        padding: 1.2rem;
-        align-items: center;
-        font-size: 1.1rem;
-        border-top-left-radius: 20px;
-        border-top-right-radius: 20px;
-      }
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  border-top: 1px solid var(--border);
+  background: var(--bg-secondary);
+  padding: 1rem 2rem; /* Adjusted padding to make it smaller */
+  font-size: 1.1rem;
+  border-radius: 20px;
+  max-width: 52rem; /* Adjust the maximum width to make it more compact */
+  width: 100%;
+  margin: 0 auto; /* Center the input area within the available space */
+}
 
-      .input-area textarea {
-        flex: 1;
-        background: var(--bg);
-        color: var(--text);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 1rem;
-        font-size: 1.1rem;
-        resize: none;
-        height: 64px;
-        border-radius: 14px;
-      }
+.input-area textarea {
+  flex: 1;
+  background: var(--bg-secondary);
+  color: var(--text);
+  border: 1px solid var(--bg-secondary);
+  border-radius: 10px;
+  padding: 1rem;
+  font-size: 1.1rem;
+  resize: none;
+  height: 64px;
+  border-radius: 14px;
+}
+::placeholder {
+  color: var(--text); /* your desired placeholder color */
+  opacity: 1;  /* make sure it’s visible */
+}
 
-      .input-area button,
-      .input-area select {
-        background: var(--accent);
-        color: #000;
-        border: none;
-        border-radius: 10px;
-        padding: 0.8rem 1.2rem;
-        font-size: 1.1rem;
-        cursor: pointer;
-        border-radius: 14px;
-      }
+.input-area button,
+.input-area select {
+  background: var(--accent);
+  color: #000;
+  border: none;
+  border-radius: 10px;
+  padding: 0.8rem 1.2rem;
+  font-size: 1.1rem;
+  cursor: pointer;
+  border-radius: 14px;
+  margin-left: 1rem; /* Space between button/select and the text area */
+}
 
-      .input-area button:disabled {
-        background: #555;
-        cursor: not-allowed;
-      }
+.input-area button:disabled {
+  background: #c5d8ee;
+  cursor: not-allowed;
+}
+
 
       .loading {
         align-self: flex-start;
@@ -290,7 +327,10 @@
         cursor: pointer;
         font-size: 0.9rem;
       }
-
+      .clear-chat:hover{
+       background:var(--accent);
+       color: #031626;
+       }
       .usage-stats {
         margin-top: -1rem;
         padding: 0.5rem 1rem;
@@ -351,13 +391,13 @@
       }
       .sidebar-auth-btn-primary {
         background: var(--accent);
-        color: #1A120B;
-        border: none;
+        color: #000;
+        border: 0 4px 16px rgba(213,206,163,0.10);
       }
       .sidebar-auth-btn-primary:hover {
-        background: #e7dfc2;
-        color: #000;
-        box-shadow: 0 4px 16px rgba(213,206,163,0.12);
+        background: #000;
+        color: var(--accent);
+        border: 2px solid var(--accent);
       }
       .sidebar-auth-btn-secondary {
         background: transparent;
@@ -384,30 +424,29 @@
 
       <!-- Login/Register Buttons -->
       <div id="authButtons" style="width:100%; display:flex; flex-direction:column; gap:1.1rem; margin-top:2.5rem; align-items:center;">
-        <button id="loginBtn" class="sidebar-auth-btn sidebar-auth-btn-primary">Login</button>
+        <button id="loginBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary">Login</button>
         <button id="registerBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary">Register</button>
       </div>
-
-      <!-- Model Selector Section -->
-      <div class="model-selector-container" id="modelSelectorContainer">
-        <div class="model-selector-box" data-model="qwen/qwen-2.5-coder-32b-instruct">
-          <h1>Qwen</h1>
-          <br />
-          <p>Advanced Coding Capabilities</p>
-        </div>
-        <div class="model-selector-box" data-model="google/gemini-2.5-flash-preview">
-          <h1>Gemini</h1>
-          <br />
-          <p>Best For Reasoning Tasks</p>
-        </div>
-        
-        <div class="model-selector-box" data-model="mistralai/codestral-2501">
-            <h1>Codestral</h1>
-            <br />
-            <p>High-performance code generation model ideal for software development tasks</p>
-        </div>
-
+      <div>
+     
       </div>
+       <div class="model-selector-container" id="modelSelectorContainer">
+  <div class="model-selector-box" data-model="qwen/qwen-2.5-coder-32b-instruct">
+    <h1>Qwen</h1>
+    <p>Advanced Coding Capabilities</p>
+  </div>
+
+  <div class="model-selector-box" data-model="google/gemini-2.5-flash-preview">
+    <h1>Gemini</h1>
+    <p>Best For Reasoning Tasks</p>
+  </div>
+
+  <div class="model-selector-box" data-model="mistralai/codestral-2501">
+    <h1>Codestral</h1>
+    <p>High-performance code generation model ideal for software development tasks</p>
+  </div>
+
+        </div>
     </aside>
 
     <main class="main">
