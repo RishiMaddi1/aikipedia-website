@@ -139,15 +139,29 @@ function animateParticle(particle) {
 
 // Initialize the background particles
 function initParticleAnimation() {
-    const container = initBackgroundParticles();
+    let container = initBackgroundParticles();
     const particleCount = 140; // Reduced by 30% from 200
     
-    // Create initial particles spread across screen
-    for (let i = 0; i < particleCount; i++) {
-        setTimeout(() => {
-            createBackgroundParticle(container);
-        }, i * 75); // Slightly longer delay between spawns
+    function createInitialParticles() {
+        // Clear existing particles
+        if (container) {
+            container.remove();
+        }
+        container = initBackgroundParticles();
+        
+        // Create initial particles spread across screen
+        for (let i = 0; i < particleCount; i++) {
+            setTimeout(() => {
+                createBackgroundParticle(container);
+            }, i * 75); // Slightly longer delay between spawns
+        }
     }
+    
+    // Create initial particles
+    createInitialParticles();
+    
+    // Restart animation every 8 seconds
+    setInterval(createInitialParticles, 8000);
     
     // Continuously add new particles
     setInterval(() => {
