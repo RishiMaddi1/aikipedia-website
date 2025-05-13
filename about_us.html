@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - AI Services Hub India</title>
+    <link href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:700" rel="stylesheet" />
+    
+    <style>
+        :root {
+            --bg: #181a20; 
+            --bg-secondary: #010512;
+            --text: #a3b2d3;
+            --accent: #4889cd;
+            --border: #000137;
+            --error: #FCADB0;
+            --success: #2F686F;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            perspective: 1000px;
+        }
+
+        .main-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Enhanced Header Animation */
+        .header-container {
+            text-align: center;
+            margin-bottom: 3rem;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        #container {
+            color: var(--text);
+            text-transform: uppercase;
+            font-size: clamp(28px, 5vw, 36px);
+            font-weight: bold;
+            padding-top: 80px;
+            width: 100%;
+            bottom: 45%;
+            display: block;
+            animation: float 6s ease-in-out infinite;
+            line-height: 1.5;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+
+        #flip {
+            height: 50px;
+            overflow: hidden;
+            display: inline-block;
+            vertical-align: middle;
+            margin-bottom: 8px;
+        }
+
+        #flip > div > div {
+            color: #fff;
+            padding: 4px 16px;
+            height: 45px;
+            margin-bottom: 45px;
+            display: inline-block;
+            border-radius: 6px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            min-width: 120px;
+            text-align: center;
+        }
+
+        #flip div:first-child {
+            animation: show 5s linear infinite;
+        }
+
+        #flip div div {
+            background: var(--success);
+        }
+        #flip div:first-child div {
+            background: var(--accent);
+        }
+        #flip div:last-child div {
+            background: var(--error);
+        }
+
+        @keyframes show {
+            0% {margin-top:-270px;}
+            5% {margin-top:-180px;}
+            33% {margin-top:-180px;}
+            38% {margin-top:-90px;}
+            66% {margin-top:-90px;}
+            71% {margin-top:0px;}
+            99.99% {margin-top:0px;}
+            100% {margin-top:-270px;}
+        }
+
+        /* Enhanced Section Styles with improved animations */
+        .sections-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+
+        h1, h2 {
+            color: var(--accent);
+            margin-top: 0;
+            position: relative;
+        }
+
+        h1::after, h2::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: var(--accent);
+            margin-top: 10px;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .section:hover h1::after,
+        .section:hover h2::after {
+            width: 100px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            margin-bottom: 0;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            transition: transform 0.3s ease;
+        }
+
+        .section {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            transform: translateY(0) scale(1);
+            text-align: center;
+        }
+
+        /* Hover effect with subtle rise and zoom */
+        .section:hover {
+            transform: translateY(-10px) scale(1.01);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent);
+            z-index: 2;
+        }
+
+        /* Pulse border animation for all sections */
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 10px;
+            padding: 2px;
+            background: linear-gradient(45deg, var(--accent), transparent, var(--accent));
+            background-size: 200% 200%;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            animation: gradientBorder 4s ease infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .section:hover::before {
+            opacity: 1;
+        }
+
+        /* Alternating headings position */
+        .section {
+            text-align: center;
+        }
+
+        .section h1::after,
+        .section h2::after {
+            margin: 10px auto 0;
+        }
+
+        @keyframes gradientBorder {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .highlight {
+            color: var(--accent);
+            font-weight: 500;
+        }
+        
+        /* Team members section styling */
+        .team-section {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .team-member {
+            background: rgba(0, 1, 37, 0.4);
+            border-radius: 10px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(72, 137, 205, 0.2);
+            transform: scale(1);
+        }
+        
+        .team-member:hover {
+            transform: translateY(-5px) scale(1.015);
+            border-color: var(--accent);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .member-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--success));
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .member-avatar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: scale(0);
+            transition: transform 0.5s ease;
+        }
+        
+        .team-member:hover .member-avatar::after {
+            transform: scale(1);
+        }
+        
+        .member-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+        
+        .member-role {
+            color: var(--accent);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+        
+        .member-bio {
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .social-link {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(72, 137, 205, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .social-link:hover {
+            background: var(--accent);
+            transform: scale(1.1);
+        }
+        
+        .social-link svg {
+            width: 16px;
+            height: 16px;
+            fill: white;
+        }
+
+        /* Enhanced Back Button */
+        #backToChatBtn {
+            position: fixed;
+            top: clamp(1rem, 3vw, 2rem);
+            left: clamp(1rem, 3vw, 2rem);
+            z-index: 2101;
+            background-color: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: clamp(40px, 5vw, 50px);
+            height: clamp(40px, 5vw, 50px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        #backToChatBtn:hover {
+            transform: scale(1.1) rotate(-10deg);
+            background-color: #fff;
+            color: var(--accent);
+        }
+
+        /* Enhanced Gradient Background */
+        .background-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(1, 5, 18, 0.8) 0%, var(--bg) 100%);
+            z-index: 0;
+            animation: gradientShift 15s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 0%; }
+            50% { background-position: 100% 100%; }
+            100% { background-position: 0% 0%; }
+        }
+
+        /* Particle effect */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background-color: var(--accent);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: particleFloat 15s infinite linear;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.3;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            #container {
+                font-size: 24px;
+                padding-top: 80px;
+            }
+            
+            .section {
+                padding: 1.5rem;
+                text-align: center;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .team-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .header-bar {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            position: fixed;
+            top: clamp(1rem, 3vw, 2rem);
+            left: clamp(1rem, 3vw, 2rem);
+            z-index: 2102;
+        }
+
+        .site-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 1px;
+            line-height: 1;
+            user-select: none;
+        }
+
+        @media (max-width: 768px) {
+            .site-title {
+                font-size: 1.6rem;
+            }
+            .header-bar {
+                gap: 1rem;
+            }
+        }
+
+        /* Remove the old fixed position for the back button */
+        #backToChatBtn {
+            position: static;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-gradient"></div>
+
+    <div class="header-bar">
+        <button id="backToChatBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+        </button>
+        <span class="site-title">Aikipedia</span>
+    </div>
+
+    <div class="main-content">
+        <div class="header-container">
+            <div id="container">
+                Make 
+                <div id="flip">
+                  <div><div>Coding</div></div>
+                  <div><div>API Calls</div></div>
+                  <div><div>Spending</div></div>
+                </div>
+                AweSoMe!
+            </div>
+        </div>
+          
+        <div class="sections-container">
+            <div class="section">
+                <h1>About Us</h1>
+                <p>Welcome to India's first flexible AI services platform! We're revolutionizing how Indians access and utilize advanced AI technologies by making them more accessible and affordable than ever before.</p>
+            </div>
+
+            <div class="section">
+                <h2>Our Vision</h2>
+                <p>We believe that artificial intelligence should be accessible to everyone, not just large corporations or those who can afford expensive monthly subscriptions. Our platform bridges this gap by providing a unique pay-as-you-go model tailored specifically for the Indian market.</p>
+            </div>
+
+            <div class="section">
+                <h2>What Makes Us Different</h2>
+                <p>Unlike traditional AI service providers that require hefty monthly subscriptions, we offer a flexible credit-based system. Purchase credits as needed and use them at your convenience. Whether you're working on a two-day project or need ongoing access, you only pay for what you use.</p>
+            </div>
+
+            <div class="section">
+                <h2>Our Services</h2>
+                <p>We provide access to cutting-edge AI models through both our web interface and API endpoints. Our platform integrates seamlessly with your projects, offering the power of advanced language models like Claude and GPT at a fraction of the cost.</p>
+            </div>
+
+            <div class="section">
+                <h2>Built for Developers</h2>
+                <p>For developers, we offer simple API integration with your existing projects. Use your username and credits to make API calls, building powerful AI features into your applications without the burden of expensive subscriptions.</p>
+            </div>
+
+            <div class="section">
+                <h2>Our Commitment</h2>
+                <p>We are committed to democratizing access to AI technology in India. By providing flexible, affordable, and reliable AI services, we aim to empower individuals, startups, and businesses to innovate and grow with the power of artificial intelligence.</p>
+            </div>
+
+            <div class="section">
+                <h2>Meet Our Team</h2>
+                <p>Behind every great platform is a team of dedicated professionals. Meet the minds working to make AI accessible and affordable for everyone in India.</p>
+                
+                <div class="team-section">
+                    <div class="team-member">
+                        <div class="member-avatar">
+                            <span>RD</span>
+                        </div>
+                        <div class="member-name">Rishi Daneshwar</div>
+                        <div class="member-role">Founder & Lead Developer</div>
+                        <div class="member-bio">
+                            Full-stack developer with 8+ years of experience in AI integration and cloud architecture. Passionate about making cutting-edge technology accessible to all.
+                        </div>
+                        <div class="social-links">
+                            <a href="#" class="social-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/></svg>
+                            </a>
+                            <a href="#" class="social-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                            </a>
+                            <a href="#" class="social-link">
+                                <svg xmlns="https://github.com/SaiRohith08" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="team-member">
+                        <div class="member-avatar">
+                            <span>VS</span>
+                        </div>
+                        <div class="member-name">Vennela Sai</div>
+                        <div class="member-role">AI Engineer & Product Manager</div>
+                        <div class="member-bio">
+                            AI/ML specialist with expertise in NLP and large language models. Previously worked at top tech companies before joining to democratize AI access in India.
+                        </div>
+                        <div class="social-links">
+                            <a href="#" class="social-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/></svg>
+                            </a>
+                            <a href="#" class="social-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                            </a>
+                            <a href="#" class="social-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- New Team Member 3 -->
+                    <div class="team-member">
+                        <div class="member-avatar">
+                            <span>CR</span>
+                        </div>
+                        <div class="member-name">Chanakya Reddy</div>
+                        <div class="member-role">Backend Engineer & DevOps</div>
+                        <div class="member-bio">
+                            Backend wizard with extensive experience in system architecture. Specializes in building scalable systems and optimizing cloud infrastructure.
+                        </div>
+                        <div class="social-links">
+                            <a href="#" class="social-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/></svg>
+                            </a>
+                            <a href="#" class="social-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                            </a>
+                            <a href="#" class="social-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- New Team Member 3 -->
+                    <div class="team-member">
+                        <div class="member-avatar">
+                            <span>SR</span>
+                        </div>
+                        <div class="member-name">Sai Rohith</div>
+                        <div class="member-role">Backend Engineer & DevOps</div>
+                        <div class="member-bio">
+                            Backend wizard with extensive experience in system architecture. Specializes in building scalable systems and optimizing cloud infrastructure.
+                        </div>
+                        <div class="social-links">
+                            <a href="#" class="social-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/></svg>
+                            </a>
+                            <a href="#" class="social-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                            </a>
+                            <a href="#" class="social-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Back button functionality
+        document.getElementById("backToChatBtn").onclick = function() {
+            window.location.href = "index.html";
+        };
+
+        // Initialize on page load
+        window.onload = function() {
+            // Add entrance animation with staggered delay
+            const sections = document.querySelectorAll('.section');
+            sections.forEach((section, index) => {
+                // Set initial state for entrance animation
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    section.style.transition = 'all 0.8s ease-out';
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }, 100 + (index * 200));
+            });
+        };
+    </script>
+    <!-- Background particles effect -->
+    <script src="background-particles.js"></script>
+    <!-- Cursor trail effect -->
+    <script src="cursor-trail.js"></script>
+</body>
+</html>
