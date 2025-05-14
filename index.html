@@ -70,28 +70,32 @@
       }
 
       .sidebar {
-        position: fixed;
-        top: 3.85rem;
-        left: 1.75rem;
-        width: 224px;
-        min-width: 154px;
-        max-width: 63vw;
-        background: var(--bg-secondary);
-        border-radius: 16.8px;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-        border: 1.05px solid var(--border);
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 2rem 1.5rem;
-        transition: opacity 0.3s, transform 0.3s;
-        font-size: 1.1rem;
-        z-index: 2001;
-        pointer-events: none;
-        opacity: 0;
-        height: auto;
-        min-height: 84px;
-      }
+  position: fixed;
+  top: 3.85rem;
+  left: 1.75rem;
+  width: 224px;
+  min-width: 154px;
+  max-width: 63vw;
+  background: var(--bg-secondary);
+  border-radius: 16.8px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  border: 1.05px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 2rem 1.5rem;
+  transition: opacity 0.3s, transform 0.3s;
+  font-size: 1.1rem;
+  z-index: 2001;
+  pointer-events: none;
+  opacity: 0;
+
+  /* Modified for dynamic height and scroll */
+  height: 80vh;             /* 50% of viewport height */
+  min-height: 84px;
+  overflow-y: auto;         /* Enable vertical scroll if content overflows */
+}
+
       .sidebar.visible {
         pointer-events: auto;
         opacity: 1;
