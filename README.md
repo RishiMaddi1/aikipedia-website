@@ -1,7 +1,3 @@
-Certainly! Below is a formatted README file for your project. I've included a section for licensing that restricts usage, which you can customize further if needed.
-
----
-
 # Aikipedia Chat
 
 Aikipedia Chat is a platform designed to provide affordable access to advanced AI models. By acting as an intermediary, we offer a cost-effective solution for users in India to leverage powerful AI capabilities without the high upfront costs typically associated with these services.
@@ -59,6 +55,3 @@ We welcome contributions to Aikipedia Chat! If you're interested in contributing
 
 This project is proprietary and all rights are reserved. Unauthorized copying, distribution, or use of this software is strictly prohibited. For permissions, please contact the project owner.
 
----
-
-Feel free to adjust the licensing section to fit your specific needs or legal requirements. If you have any more questions or need further assistance, let me know!
