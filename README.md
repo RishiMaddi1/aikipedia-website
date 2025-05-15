@@ -1,5 +1,8 @@
 # https://aikipedia.in/
 
+![image](https://github.com/user-attachments/assets/8caa66cf-5785-417a-aacf-0c9c1b928e8c)
+
+
 # Aikipedia Chat
 
 Aikipedia Chat is a platform designed to provide affordable access to advanced AI models. By acting as an intermediary, we offer a cost-effective solution for users in India to leverage powerful AI capabilities without the high upfront costs typically associated with these services.
@@ -46,7 +49,7 @@ To set up Aikipedia Chat locally, follow these steps:
 ## Usage
 
 1. Register or log in to your account.
-2. Purchase credits through the platform.
+2. Purchase credits through email for now, before the payment apis are updated.
 3. Use the chat interface to interact with AI models or integrate the API into your projects.
 
 ## Contributing
