@@ -1,3 +1,5 @@
+# https://aikipedia.in/
+
 # Aikipedia Chat
 
 Aikipedia Chat is a platform designed to provide affordable access to advanced AI models. By acting as an intermediary, we offer a cost-effective solution for users in India to leverage powerful AI capabilities without the high upfront costs typically associated with these services.
