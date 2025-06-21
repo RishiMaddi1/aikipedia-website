@@ -1185,24 +1185,21 @@
       <div>
      
       </div>
-       <!-- Fancy Custom Model Dropdown -->
-       <div class="model-dropdown-container" style="width:100%;margin:1.76rem 0 0.96rem 0;">
-         <label for="modelDropdownCustom" style="color:var(--text);font-size:0.88rem;font-weight:600;margin-bottom:0.56rem;display:block;">Select Model</label>
-         <div id="modelDropdownCustom" class="fancy-dropdown" tabindex="0">
-           <span class="fancy-dropdown-selected" id="customDropdownSelected">Qwen — Advanced Coding Capabilities</span>
-           <span class="fancy-dropdown-arrow"></span>
-           <ul class="fancy-dropdown-list" id="customDropdownList" style="display:none;">
-             <li data-value="qwen/qwen-2.5-coder-32b-instruct" class="selected"><span>Qwen — Advanced Coding Capabilities</span><span class="fancy-dropdown-check">✔</span></li>
-             <li data-value="google/gemini-2.5-flash-preview"><span>Gemini — Best For Reasoning Tasks</span><span class="fancy-dropdown-check"></span></li>
-             <li data-value="mistralai/codestral-2501"><span>Codestral — High-performance code generation</span><span class="fancy-dropdown-check"></span></li>
-           </ul>
-         </div>
-       </div>
     </aside>
 
     <main class="main">
       <div class="header">
         <span class="aikipedia-title">Aikipedia</span>
+      </div>
+      <!-- Compact Model Selector, top-right -->
+      <div id="modelSelectorCompact" style="position:absolute;top:5.2rem;right:2.5rem;z-index:1200;">
+        <button id="modelSelectorBtn" style="background:var(--accent);color:#000;border:none;border-radius:20px;padding:0.5rem 1.2rem;font-weight:600;font-size:1rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.08);display:flex;align-items:center;gap:0.5rem;transition:background 0.2s, color 0.2s;">
+          <span id="modelSelectorBtnName">Qwen</span>
+          <span style="font-size:1.1rem;">▼</span>
+        </button>
+        <div id="modelDropdownList" style="display:none;position:absolute;top:120%;right:0;width:340px;background:var(--bg-secondary);border:1.5px solid var(--border);border-radius:14px;box-shadow:0 2px 16px rgba(0,0,0,0.13);z-index:1201;max-height:380px;overflow-y:auto;">
+          <!-- Model options will be injected here by JS -->
+        </div>
       </div>
       <button class="clear-chat-btn" id="clearChat">Clear Chat</button>
       <div class="chat-shell">
@@ -1466,7 +1463,7 @@
         const message = userInput.value.trim();
         if (!message) return;
 
-        const model = selectedModel || "qwen/qwen-2.5-coder-32b-instruct";
+        const model = selectedModel || modelList[0].value;
 
         addMessage("user", message);
         userInput.value = "";
@@ -1714,50 +1711,63 @@
         sidebarOverlay.classList.remove("visible");
       });
 
-      // Fancy Model Dropdown logic
-      const fancyDropdown = document.getElementById("modelDropdownCustom");
-      const fancyDropdownList = document.getElementById("customDropdownList");
-      const fancyDropdownSelected = document.getElementById("customDropdownSelected");
-      let selectedModel = "qwen/qwen-2.5-coder-32b-instruct";
-      fancyDropdown.addEventListener("click", function(e) {
+      // Model Selector Data
+      const modelList = [
+        {
+          value: "qwen/qwen-2.5-coder-32b-instruct",
+          name: "Qwen",
+          desc: "Advanced Coding Capabilities. Great for code, math, and reasoning.",
+          cost: "$0.06/$0.15 per 1M tokens"
+        },
+        {
+          value: "google/gemini-2.5-flash-preview",
+          name: "Gemini Flash",
+          desc: "Best For Reasoning Tasks. Excellent for logic, reasoning, and general tasks.",
+          cost: "$0.15/$0.60 per 1M tokens"
+        },
+        {
+          value: "mistralai/codestral-2501",
+          name: "Codestral",
+          desc: "High-performance code generation. Fast, accurate code generation for many languages.",
+          cost: "$0.30/$0.90 per 1M tokens"
+        }
+      ];
+      let selectedModel = modelList[0].value;
+      const modelSelectorBtn = document.getElementById("modelSelectorBtn");
+      const modelSelectorBtnName = document.getElementById("modelSelectorBtnName");
+      const modelDropdownList = document.getElementById("modelDropdownList");
+      // Populate dropdown
+      modelDropdownList.innerHTML = modelList.map((m, i) => `
+        <div class="model-option" data-value="${m.value}" style="padding:1rem 1.2rem;cursor:pointer;display:flex;flex-direction:column;border-bottom:1px solid var(--border);background:var(--bg-secondary);">
+          <span style="font-weight:700;color:var(--accent);font-size:1rem;">${m.name}</span>
+          <span style="color:var(--text);font-size:0.93rem;opacity:0.8;">${m.desc}</span>
+          <span style="color:#7ecb7e;font-size:0.92rem;margin-top:0.1rem;"><b>Cost:</b> ${m.cost}</span>
+          <span style="color:var(--text);font-size:0.8rem;opacity:0.6;margin-top:0.1rem;">(input/output tokens)</span>
+        </div>
+      `).join("");
+      // Dropdown open/close logic
+      modelSelectorBtn.addEventListener("click", function(e) {
         e.stopPropagation();
-        const isOpen = fancyDropdown.classList.contains("open");
-        document.querySelectorAll('.fancy-dropdown.open').forEach(el => {
-          el.classList.remove('open');
-          el.querySelector('.fancy-dropdown-list').style.display = 'none';
-        });
+        const isOpen = modelDropdownList.style.display === "block";
+        document.querySelectorAll('#modelDropdownList').forEach(el => el.style.display = 'none');
         if (!isOpen) {
-          fancyDropdown.classList.add("open");
-          fancyDropdownList.style.display = "block";
+          modelDropdownList.style.display = "block";
         } else {
-          fancyDropdown.classList.remove("open");
-          fancyDropdownList.style.display = "none";
+          modelDropdownList.style.display = "none";
         }
       });
-      fancyDropdownList.querySelectorAll("li").forEach(li => {
-        li.addEventListener("click", function(e) {
+      // Model selection logic
+      modelDropdownList.querySelectorAll(".model-option").forEach((el, idx) => {
+        el.addEventListener("click", function(e) {
           e.stopPropagation();
-          fancyDropdownSelected.textContent = li.textContent.replace('✔','').trim();
-          selectedModel = li.getAttribute("data-value");
-          fancyDropdownList.querySelectorAll("li").forEach(item => item.classList.remove("selected"));
-          li.classList.add("selected");
-          fancyDropdown.classList.remove("open");
-          fancyDropdownList.style.display = "none";
+          selectedModel = modelList[idx].value;
+          modelSelectorBtnName.textContent = modelList[idx].name;
+          modelDropdownList.style.display = "none";
         });
       });
       document.addEventListener("click", function(e) {
-        if (!fancyDropdown.contains(e.target)) {
-          fancyDropdown.classList.remove("open");
-          fancyDropdownList.style.display = "none";
-        }
-      });
-      fancyDropdown.addEventListener("keydown", function(e) {
-        if (e.key === "Enter" || e.key === " ") {
-          fancyDropdown.click();
-        }
-        if (e.key === "Escape") {
-          fancyDropdown.classList.remove("open");
-          fancyDropdownList.style.display = "none";
+        if (!modelSelectorBtn.contains(e.target) && !modelDropdownList.contains(e.target)) {
+          modelDropdownList.style.display = "none";
         }
       });
 
