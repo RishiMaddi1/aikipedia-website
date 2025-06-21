@@ -1312,6 +1312,7 @@
 
       let chatHistory = [];
       let loggedInUser = null;
+      let loggedInUserId = null;
       let authMode = "login";
       document.getElementById("aboutUsBtn").onclick = function() {
        window.location.href = "about_us.html";
@@ -1324,16 +1325,19 @@
       // Check if we have a stored session
       function checkStoredSession() {
         const storedUser = localStorage.getItem('aikipediaUser');
-        if (storedUser) {
-          setLoggedInUser(storedUser);
+        const storedUserId = localStorage.getItem('aikipediaUserId');
+        if (storedUser && storedUserId) {
+          setLoggedInUser(storedUser, storedUserId);
           return true;
         }
         return false;
       }
 
-      function setLoggedInUser(username) {
+      function setLoggedInUser(username, userId) {
         loggedInUser = username;
+        loggedInUserId = userId;
         localStorage.setItem('aikipediaUser', username);
+        localStorage.setItem('aikipediaUserId', userId);
         profileDetails.textContent = `Hello, ${username}`;
         profileToggle.textContent = username.charAt(0).toUpperCase();
         authButtons.style.display = "none";
@@ -1349,7 +1353,9 @@
       
       function setLoggedOut() {
         loggedInUser = null;
+        loggedInUserId = null;
         localStorage.removeItem('aikipediaUser');
+        localStorage.removeItem('aikipediaUserId');
         profileDetails.textContent = `Hello, Guest`;
         profileToggle.textContent = "G";
         authButtons.style.display = "flex";
@@ -1449,6 +1455,122 @@
       });
 
       // Handle form submissions
+      chatForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!loggedInUser || !loggedInUserId) return;
+        
+        const message = userInput.value.trim();
+        if (!message) return;
+
+        const model = selectedModel || "qwen/qwen-2.5-coder-32b-instruct";
+
+        addMessage("user", message);
+        userInput.value = "";
+        // Reset textarea height immediately after sending
+        userInput.style.height = "64px";
+        userInput.disabled = true;
+        sendButton.disabled = true;
+
+        const loadingDiv = document.createElement("div");
+        loadingDiv.className = "loading";
+        loadingDiv.innerHTML = "<span class='loader'></span>";
+        chatContainer.appendChild(loadingDiv);
+        chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: "smooth" });
+
+        try {
+          // Real backend request only
+          const res = await fetch("https://backend.aikipedia.workers.dev/chat", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ user_id: loggedInUserId, message, model, history: chatHistory }),
+          });
+
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || "Something went wrong");
+
+          loadingDiv.remove();
+          addMessage("assistant", data.response);
+          displayCreditUsage(data);
+          // Add to chat history
+          chatHistory.push({ role: "user", content: message }, { role: "assistant", content: data.response });
+        
+        } catch (err) {
+          loadingDiv.remove();
+          let errorMsg;
+          if (err && err.message) {
+            errorMsg = err.message;
+          } else if (err && err.error) {
+            // If backend returns { error: { ... } }
+            if (typeof err.error === 'object') {
+              errorMsg = JSON.stringify(err.error, null, 2);
+            } else {
+              errorMsg = String(err.error);
+            }
+          } else if (typeof err === "object") {
+            errorMsg = JSON.stringify(err, null, 2);
+          } else {
+            errorMsg = String(err);
+          }
+          
+          addMessage("assistant", "❌ " + errorMsg);
+        } finally {
+          userInput.disabled = false;
+          sendButton.disabled = false;
+        }
+      });
+
+      // Allow pressing Enter to send message
+      userInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          if (e.shiftKey) {
+            // Allow Shift+Enter for new line
+            return;
+          } else {
+            e.preventDefault();
+            if (!sendButton.disabled) {
+              chatForm.dispatchEvent(new Event("submit"));
+            }
+          }
+        }
+      });
+
+      // Auto-resize textarea as user types
+      userInput.addEventListener("input", function() {
+        this.style.height = "auto";
+        this.style.height = (this.scrollHeight > 200 ? 200 : this.scrollHeight) + "px";
+      });
+
+      // Initialize
+      window.addEventListener("DOMContentLoaded", async () => {
+        // Check for saved session
+        const hasSession = checkStoredSession();
+        
+        // Setup input state
+        userInput.disabled = !hasSession;
+        sendButton.disabled = !hasSession;
+        
+        // Show welcome message if no session
+        if (!hasSession) {
+          addSystemMessage("Welcome to Aikipedia Chat! Login to start a conversation.");
+        }
+      });
+
+      // Service Worker Registration for PWA support
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+              console.log('Service Worker registered:', registration);
+            })
+            .catch(error => {
+              console.log('Service Worker registration failed:', error);
+            });
+        });
+      }
+
+      // Handle form submissions
       document.getElementById("loginSubmitBtn").onclick = async () => {
         const username = document.getElementById("loginUsername").value.trim();
         const password = document.getElementById("loginPassword").value.trim();
@@ -1473,7 +1595,7 @@
             throw new Error(data.error || "Login failed");
           }
           
-          setLoggedInUser(username);
+          setLoggedInUser(username, data.user_id);
           authModal.style.display = "none";
         } catch (err) {
           let errorMsg;
@@ -1527,7 +1649,7 @@
             throw new Error(data.error || "Registration failed");
           }
           
-          setLoggedInUser(username);
+          setLoggedInUser(username, data.user_id);
           authModal.style.display = "none";
         } catch (err) {
           let errorMsg;
@@ -1719,122 +1841,6 @@
           <small>Cost: ${data.cost.toFixed(4)} credits</small>
         `;
         chatContainer.appendChild(usageDiv);
-      }
-
-      // Handle message submission
-      chatForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        if (!loggedInUser) return;
-        
-        const message = userInput.value.trim();
-        if (!message) return;
-
-        const model = selectedModel || "qwen/qwen-2.5-coder-32b-instruct";
-
-        addMessage("user", message);
-        userInput.value = "";
-        // Reset textarea height immediately after sending
-        userInput.style.height = "64px";
-        userInput.disabled = true;
-        sendButton.disabled = true;
-
-        const loadingDiv = document.createElement("div");
-        loadingDiv.className = "loading";
-        loadingDiv.innerHTML = "<span class='loader'></span>";
-        chatContainer.appendChild(loadingDiv);
-        chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: "smooth" });
-
-        try {
-          // Real backend request only
-          const res = await fetch("https://backend.aikipedia.workers.dev/chat", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ username: loggedInUser, message, model, history: chatHistory }),
-          });
-
-          const data = await res.json();
-          if (!res.ok) throw new Error(data.error || "Something went wrong");
-
-          loadingDiv.remove();
-          addMessage("assistant", data.response);
-          displayCreditUsage(data);
-          // Add to chat history
-          chatHistory.push({ role: "user", content: message }, { role: "assistant", content: data.response });
-        
-        } catch (err) {
-          loadingDiv.remove();
-          let errorMsg;
-          if (err && err.message) {
-            errorMsg = err.message;
-          } else if (err && err.error) {
-            // If backend returns { error: { ... } }
-            if (typeof err.error === 'object') {
-              errorMsg = JSON.stringify(err.error, null, 2);
-            } else {
-              errorMsg = String(err.error);
-            }
-          } else if (typeof err === "object") {
-            errorMsg = JSON.stringify(err, null, 2);
-          } else {
-            errorMsg = String(err);
-          }
-          
-          addMessage("assistant", "❌ " + errorMsg);
-        } finally {
-          userInput.disabled = false;
-          sendButton.disabled = false;
-        }
-      });
-
-      // Allow pressing Enter to send message
-      userInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-          if (e.shiftKey) {
-            // Allow Shift+Enter for new line
-            return;
-          } else {
-            e.preventDefault();
-            if (!sendButton.disabled) {
-              chatForm.dispatchEvent(new Event("submit"));
-            }
-          }
-        }
-      });
-
-      // Auto-resize textarea as user types
-      userInput.addEventListener("input", function() {
-        this.style.height = "auto";
-        this.style.height = (this.scrollHeight > 200 ? 200 : this.scrollHeight) + "px";
-      });
-
-      // Initialize
-      window.addEventListener("DOMContentLoaded", async () => {
-        // Check for saved session
-        const hasSession = checkStoredSession();
-        
-        // Setup input state
-        userInput.disabled = !hasSession;
-        sendButton.disabled = !hasSession;
-        
-        // Show welcome message if no session
-        if (!hasSession) {
-          addSystemMessage("Welcome to Aikipedia Chat! Login to start a conversation.");
-        }
-      });
-
-      // Service Worker Registration for PWA support
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/service-worker.js')
-            .then(registration => {
-              console.log('Service Worker registered:', registration);
-            })
-            .catch(error => {
-              console.log('Service Worker registration failed:', error);
-            });
-        });
       }
     </script>
     <!-- Background particles effect -->
