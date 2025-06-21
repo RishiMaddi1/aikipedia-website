@@ -9,6 +9,21 @@
 
     <link href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700&display=swap" rel="stylesheet" />
     <style>
+        /* Custom Scrollbar Styles (copied from index.html) */
+        ::-webkit-scrollbar {
+          width: 6px;
+          background-color: var(--border);
+        }
+        ::-webkit-scrollbar-thumb {
+          background-color: var(--accent);
+          border-radius: 6px;
+        }
+        ::-webkit-scrollbar-button {
+          background-color: var(--border);
+        }
+        ::-webkit-scrollbar-corner {
+          background-color: var(--bg-secondary);
+        }
         :root {
             --bg: #031626; 
             --bg-secondary: #010512;
@@ -233,6 +248,30 @@
     display: none;
   }
 
+  @media (max-width: 600px) {
+    body {
+      padding: 8px;
+    }
+    h1, h2 {
+      font-size: 1.2rem;
+    }
+    .api-tabs {
+      flex-wrap: wrap;
+      gap: 0.25rem;
+    }
+    .tab-btn {
+      padding: 0.3rem 0.6rem;
+      font-size: 0.9rem;
+    }
+    .code-box {
+      padding: 0.3rem;
+    }
+    .code-block pre {
+      font-size: 0.7rem;
+      padding: 0.5rem;
+    }
+  }
+
     </style>
 </head>
 <body>
@@ -243,7 +282,7 @@
         </svg>
     </button>
     <br><br>
-    <p>This platform is designed to empower developers, researchers, and hobbyists by allowing them to bring their own API keys and utilize them seamlessly for personal, professional, or hackathon projects. By integrating powerful LLM (Large Language Model) wrappers, users can create intelligent applications that leverage the latest in generative AI, NLP, and automation technologies. Whether you're building a chatbot, writing code assistants, or crafting innovative tools, our system gives you the flexibility to connect your own API services and unlock full potential with a customizable LLM stack.</p>
+    <p>This platform is designed to empower developers, researchers, and hobbyists by allowing them to bring their own API keys and utilize them seamlessly for personal, professional, or hackathon projects. By integrating powerful LLM (Large Language Model) wrappers, users can create intelligent applications that leverage the latest in generative AI, NLP, and automation technologies. Whether you're building a chatbot, writing code assistants, or crafting innovative tools, our system gives you the flexibility to connect your own API services and unlock full potential with a customizable LLM stack.<br><br><strong>Note:</strong> All API calls now require your <span style="color:var(--accent)"><b>user_id</b></span> (not username) for authentication and usage tracking.</p>
     <h2 style="color: var(--accent); margin-top: 2rem;">API Usage Examples</h2>
 <div class="api-wrapper">
   <div class="api-tabs">
@@ -266,7 +305,7 @@
   https://backend.aikipedia.workers.dev/chat \
   -H 'Content-Type: application/json' \
   -d '{
-    "username": "your_username",
+    "user_id": "your_user_id",
     "message": "your_message",
     "model": "qwen/qwen-2.5-coder-32b-instruct",
     "history": []
@@ -281,7 +320,7 @@
 response = requests.post(
   "https://backend.aikipedia.workers.dev/chat",
   json={
-    "username": "your_username",
+    "user_id": "your_user_id",
     "message": "your_message",
     "model": "qwen/qwen-2.5-coder-32b-instruct",
     "history": []
@@ -298,7 +337,7 @@ print(response.json())</code></pre>
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
-    username: "your_username",
+    user_id: "your_user_id",
     message: "your_message",
     model: "qwen/qwen-2.5-coder-32b-instruct",
     history: []
@@ -315,7 +354,7 @@ print(response.json())</code></pre>
       <pre><code class="language-javascript">const axios = require("axios");
 
 axios.post("https://backend.aikipedia.workers.dev/chat", {
-  username: "your_username",
+  user_id: "your_user_id",
   message: "your_message",
   model: "qwen/qwen-2.5-coder-32b-instruct",
   history: []
@@ -337,7 +376,7 @@ import (
 
 func main() {
   payload := map[string]interface{}{
-    "username": "your_username",
+    "user_id": "your_user_id",
     "message": "your_message",
     "model": "qwen/qwen-2.5-coder-32b-instruct",
     "history": []string{},
@@ -356,7 +395,7 @@ func main() {
 HttpRequest request = HttpRequest.newBuilder()
   .uri(URI.create("https://backend.aikipedia.workers.dev/chat"))
   .header("Content-Type", "application/json")
-  .POST(HttpRequest.BodyPublishers.ofString("{\"username\":\"your_username\",\"message\":\"your_message\",\"model\":\"qwen/qwen-2.5-coder-32b-instruct\",\"history\":[]}"))
+  .POST(HttpRequest.BodyPublishers.ofString("{\"user_id\":\"your_user_id\",\"message\":\"your_message\",\"model\":\"qwen/qwen-2.5-coder-32b-instruct\",\"history\":[]}"))
   .build();
 
 HttpResponse&lt;String&gt; response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -369,7 +408,7 @@ System.out.println(response.body());</code></pre>
       <button class="copy-btn">📋</button>
       <pre><code class="language-php">&lt;?php
 $payload = json_encode([
-  "username" => "your_username",
+  "user_id" => "your_user_id",
   "message" => "your_message",
   "model" => "qwen/qwen-2.5-coder-32b-instruct",
   "history" => []
@@ -397,7 +436,7 @@ require 'json'
 
 uri = URI('https://backend.aikipedia.workers.dev/chat')
 res = Net::HTTP.post(uri, {
-  username: "your_username",
+  user_id: "your_user_id",
   message: "your_message",
   model: "qwen/qwen-2.5-coder-32b-instruct",
   history: []
@@ -416,7 +455,7 @@ using System.Text.Json;
 
 var client = new HttpClient();
 var content = new StringContent(JsonSerializer.Serialize(new {
-  username = "your_username",
+  user_id = "your_user_id",
   message = "your_message",
   model = "qwen/qwen-2.5-coder-32b-instruct",
   history = new string[] {}
@@ -430,6 +469,7 @@ Console.WriteLine(responseBody);</code></pre>
   </div>
 </div>
 
+  <div id="userIdBox" style="display:none;margin:2.5rem auto 1.5rem auto;max-width:320px;padding:0.25em 0.8em;background:var(--bg-secondary);color:var(--accent);border:1.2px solid var(--accent);border-radius:2em;font-size:0.98em;font-family:monospace;font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,0.06);letter-spacing:0.01em;line-height:1.6;white-space:nowrap;text-align:center;"></div>
 
     <script>
       document.getElementById("backToChatBtn").onclick = function() {
@@ -519,6 +559,21 @@ Console.WriteLine(responseBody);</code></pre>
 <script src="background-particles.js"></script>
 <!-- Cursor trail effect -->
 <script src="cursor-trail.js"></script>
+
+<script>
+  // Show user_id if logged in (same as index.html localStorage keys)
+  window.addEventListener('DOMContentLoaded', function() {
+    const user = localStorage.getItem('aikipediaUser');
+    const userId = localStorage.getItem('aikipediaUserId');
+    const userIdBox = document.getElementById('userIdBox');
+    if (user && userId) {
+      userIdBox.style.display = 'block';
+      userIdBox.innerHTML = `ID: <span style='color:var(--accent);'>${userId}</span>`;
+    } else {
+      userIdBox.style.display = 'none';
+    }
+  });
+</script>
 
 </body>
 </html>
