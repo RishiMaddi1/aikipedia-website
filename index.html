@@ -1192,7 +1192,7 @@
         <span class="aikipedia-title">Aikipedia</span>
       </div>
       <!-- Compact Model Selector, top-right -->
-      <div id="modelSelectorCompact" style="position:absolute;top:5.2rem;right:2.5rem;z-index:1200;">
+      <div id="modelSelectorCompact" style="position:absolute;top:5.2rem;right:2.5rem;z-index:1200;display:flex;flex-direction:column;align-items:flex-end;width:auto;min-width:0;">
         <button id="modelSelectorBtn" style="background:var(--accent);color:#000;border:none;border-radius:20px;padding:0.5rem 1.2rem;font-weight:600;font-size:1rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.08);display:flex;align-items:center;gap:0.5rem;transition:background 0.2s, color 0.2s;">
           <span id="modelSelectorBtnName">Qwen</span>
           <span style="font-size:1.1rem;">▼</span>
@@ -1200,7 +1200,60 @@
         <div id="modelDropdownList" style="display:none;position:absolute;top:120%;right:0;width:340px;background:var(--bg-secondary);border:1.5px solid var(--border);border-radius:14px;box-shadow:0 2px 16px rgba(0,0,0,0.13);z-index:1201;max-height:380px;overflow-y:auto;">
           <!-- Model options will be injected here by JS -->
         </div>
+        <!-- Credits Display -->
+        <div id="creditsDisplay" style="display:none;margin-top:1rem;cursor:pointer;align-items:center;gap:0.7rem;padding:0.7rem 1.1rem;background:var(--accent);border-radius:12px;border:none;box-shadow:0 2px 8px rgba(0,0,0,0.08);font-size:1.08rem;font-weight:600;color:#000;transition:none;min-width:120px;flex-direction:row;">
+          <img src="echo.png" alt="Echos" style="width:28px;height:28px;vertical-align:middle;" />
+          <span id="creditsAmount" style="margin:0 0.5rem 0 0.2rem;">--</span>
+          <button id="reloadCreditsBtn" title="Reload credits" style="background:none;border:none;outline:none;cursor:pointer;padding:0;margin:0;display:inline-flex;align-items:center;">
+            <svg id="reloadCreditsIcon" width="22" height="22" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="color:var(--bg-secondary);transition:color 0.2s;"><path d="M17.65 6.35A8 8 0 1 0 18 10h-2a6 6 0 1 1-1.76-4.24l-2.79 2.79H18V2.5l-2.35 2.35z" fill="currentColor"/></svg>
+          </button>
+        </div>
       </div>
+      <style>
+        #modelSelectorCompact {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          width: auto;
+          min-width: 0;
+        }
+        #creditsDisplay {
+          display: none;
+          margin-top: 1rem;
+          cursor: pointer;
+          align-items: center;
+          gap: 0.7rem;
+          padding: 0.7rem 1.1rem;
+          background: var(--accent);
+          border-radius: 12px;
+          border: none;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+          font-size: 1.08rem;
+          font-weight: 600;
+          color: #000;
+          transition: none;
+          min-width: 120px;
+          flex-direction: row;
+        }
+        #reloadCreditsBtn {
+          background: none;
+          border: none;
+          outline: none;
+          cursor: pointer;
+          padding: 0;
+          margin: 0;
+          display: inline-flex;
+          align-items: center;
+        }
+        #reloadCreditsIcon {
+          color: #000;
+          transition: none;
+        }
+        #creditsAmount {
+          color: #000;
+        }
+        /* No hover effects */
+      </style>
       <button class="clear-chat-btn" id="clearChat">Clear Chat</button>
       <div class="chat-shell">
         <div class="chat-area" id="chatContainer">
@@ -1350,6 +1403,7 @@
         if (chatHistory.length === 0) {
           addSystemMessage(`Welcome, ${username}! You can start chatting now.`);
         }
+        showCreditsDisplayIfLoggedIn();
       }
       
       function setLoggedOut() {
@@ -1363,6 +1417,7 @@
         userInput.disabled = true;
         sendButton.disabled = true;
         logoutBtn.style.display = "none";
+        showCreditsDisplayIfLoggedIn();
       }
 
       // Handle login/register events
@@ -1556,6 +1611,7 @@
         if (!hasSession) {
           addSystemMessage("Welcome to Aikipedia Chat! Login to start a conversation.");
         }
+        showCreditsDisplayIfLoggedIn();
       });
 
       // Service Worker Registration for PWA support
@@ -1855,6 +1911,61 @@
           <small>Cost: ${data.cost.toFixed(4)} credits</small>
         `;
         chatContainer.appendChild(usageDiv);
+      }
+
+      // Credits Display Logic
+      const creditsDisplay = document.getElementById("creditsDisplay");
+      const creditsAmount = document.getElementById("creditsAmount");
+      const reloadCreditsBtn = document.getElementById("reloadCreditsBtn");
+      let creditsLoading = false;
+      let reloadCooldown = false;
+      
+      async function fetchAndShowCredits() {
+        if (!loggedInUserId) {
+          creditsDisplay.style.display = "none";
+          return;
+        }
+        creditsLoading = true;
+        creditsAmount.textContent = "...";
+        try {
+          const res = await fetch("https://backend.aikipedia.workers.dev/flask", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "get_credits", user_id: loggedInUserId })
+          });
+          const data = await res.json();
+          if (!res.ok || data.error) throw new Error(data.error || "Failed to fetch credits");
+          creditsAmount.textContent = data.money_left !== undefined ? parseFloat(data.money_left).toFixed(2) : "0.00";
+        } catch (e) {
+          creditsAmount.textContent = "--";
+        } finally {
+          creditsLoading = false;
+        }
+      }
+      // Reload button handler with 1-minute cooldown
+      reloadCreditsBtn.onclick = (e) => {
+        e.stopPropagation();
+        if (reloadCooldown || creditsLoading) return;
+        fetchAndShowCredits();
+        reloadCreditsBtn.disabled = true;
+        reloadCooldown = true;
+        setTimeout(() => {
+          reloadCreditsBtn.disabled = false;
+          reloadCooldown = false;
+        }, 60000); // 60 seconds
+      };
+      // Click credits area to go to payments
+      creditsDisplay.onclick = (e) => {
+        window.location.href = "payments.html";
+      };
+      // Show/hide credits display on login/logout
+      function showCreditsDisplayIfLoggedIn() {
+        if (loggedInUserId) {
+          creditsDisplay.style.display = "flex";
+          fetchAndShowCredits();
+        } else {
+          creditsDisplay.style.display = "none";
+        }
       }
     </script>
     <!-- Background particles effect -->
