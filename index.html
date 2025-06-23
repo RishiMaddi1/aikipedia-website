@@ -1330,6 +1330,14 @@
       </div>
     </div>
 
+    <div id="mobileNoticeModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);z-index:3000;align-items:center;justify-content:center;">
+      <div style="background:var(--bg-secondary);padding:2.2rem 2.5rem;border-radius:18px;min-width:260px;max-width:90vw;display:flex;flex-direction:column;gap:1.2rem;align-items:center;box-shadow:0 8px 22px rgba(0,0,0,0.18);">
+        <h2 style="color:var(--accent);font-size:1.4rem;margin-bottom:0.5rem;text-align:center;">Mobile Experience Notice</h2>
+        <p style="color:var(--text);opacity:0.9;font-size:1.05rem;text-align:center;">Aikipedia is not yet optimized for mobile browsers.<br>We are working on a dedicated app for a better experience.<br>Thank you for your patience!</p>
+        <button id="dismissMobileNoticeBtn" style="background:var(--accent);color:#000;font-weight:600;width:100%;padding:0.7rem 0;border-radius:10px;border:none;cursor:pointer;font-size:1rem;transition:all 0.2s ease;margin-top:0.5rem;">OK, got it</button>
+      </div>
+    </div>
+
     <script>
       const chatContainer = document.getElementById("chatContainer");
       const chatForm = document.getElementById("chatForm");
@@ -1967,6 +1975,26 @@
           creditsDisplay.style.display = "none";
         }
       }
+
+      // Mobile notice popup logic
+      function isMobileDevice() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      }
+      function showMobileNoticeIfNeeded() {
+        if (!isMobileDevice()) return;
+        if (localStorage.getItem('aikipediaMobileNoticeDismissed')) return;
+        const modal = document.getElementById('mobileNoticeModal');
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        document.getElementById('dismissMobileNoticeBtn').onclick = function() {
+          modal.style.display = 'none';
+          document.body.style.overflow = '';
+          localStorage.setItem('aikipediaMobileNoticeDismissed', '1');
+        };
+      }
+      window.addEventListener('DOMContentLoaded', function() {
+        showMobileNoticeIfNeeded();
+      });
     </script>
     <!-- Background particles effect -->
     <script src="background-particles.js"></script>
