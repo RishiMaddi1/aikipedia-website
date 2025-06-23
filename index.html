@@ -298,6 +298,7 @@
         overflow-y: auto;
         scrollbar-width: none;
         -ms-overflow-style: none;
+        font-size: 1.68rem; /* Increased by ~20% from clamp(1.15rem, 2.5vw, 1.4rem) base */
       }
       .chat-area::-webkit-scrollbar {
        display: none; /* Chrome, Safari, Opera */
@@ -315,7 +316,7 @@
         border-radius: 1.152em 1.152em 0.448em 1.152em;
         box-shadow: 0 1.28px 10.24px 0 rgba(72,137,205,0.13);
         padding: 0.768rem 1.152rem;
-        font-size: clamp(0.755rem, 1.6vw, 0.896rem);
+        font-size: clamp(0.91rem, 1.92vw, 1.08rem); /* +20% */
         line-height: 1.8;
         word-wrap: break-word;
       }
@@ -326,7 +327,7 @@
         border-radius: 0;
         box-shadow: none;
         padding: 0;
-        font-size: clamp(0.755rem, 1.6vw, 0.896rem);
+        font-size: clamp(0.91rem, 1.92vw, 1.08rem); /* +20% */
         line-height: 1.8;
         word-wrap: break-word;
       }
@@ -343,7 +344,7 @@
         padding: 0.704rem 1.024rem;
         border-radius: 0.768em;
         margin: 0.768rem 0;
-        font-size: clamp(0.691rem, 1.28vw, 0.768rem);
+        font-size: clamp(0.83rem, 1.54vw, 0.92rem); /* +20% */
         opacity: 0.95;
         box-shadow: 0 0.64px 3.84px 0 rgba(0,0,0,0.08);
       }
@@ -354,7 +355,7 @@
         border-radius: 0.64em;
         padding: 0.768em 0.96em 0.768em 0.96em;
         margin: 0.768em 0;
-        font-size: 0.691em;
+        font-size: 0.83em; /* +20% from 0.691em */
         position: relative;
         overflow-x: auto;
       }
