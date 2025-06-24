@@ -471,6 +471,9 @@ Console.WriteLine(responseBody);</code></pre>
 
   <div id="userIdBox" style="display:none;margin:2.5rem auto 1.5rem auto;max-width:320px;padding:0.25em 0.8em;background:var(--bg-secondary);color:var(--accent);border:1.2px solid var(--accent);border-radius:2em;font-size:0.98em;font-family:monospace;font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,0.06);letter-spacing:0.01em;line-height:1.6;white-space:nowrap;text-align:center;"></div>
 
+    <button id="resetUserIdBtn" style="margin:1.5em 0;padding:0.7em 1.2em;background:var(--accent);color:#000;border:none;border-radius:8px;cursor:pointer;font-weight:600;">Reset my API key (user_id)</button>
+    <div id="resetUserIdMsg" style="margin-top:1em;color:var(--accent);font-weight:600;"></div>
+
     <script>
       document.getElementById("backToChatBtn").onclick = function() {
         window.location.href = "index.html";
@@ -573,6 +576,32 @@ Console.WriteLine(responseBody);</code></pre>
       userIdBox.style.display = 'none';
     }
   });
+</script>
+
+<script>
+  document.getElementById('resetUserIdBtn').onclick = async function() {
+    const userId = localStorage.getItem('aikipediaUserId');
+    if (!userId) return alert("You must be logged in.");
+    if (!confirm("Are you sure? This will invalidate your old API key.")) return;
+    const res = await fetch('https://backend.aikipedia.workers.dev/reset-user-id', {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: userId })
+    });
+    const data = await res.json();
+    if (data.new_user_id) {
+      localStorage.setItem('aikipediaUserId', data.new_user_id);
+      document.getElementById('resetUserIdMsg').textContent = "Your new API key (user_id) is: " + data.new_user_id;
+      // Update the userIdBox display immediately:
+      const userIdBox = document.getElementById('userIdBox');
+      if (userIdBox) {
+        userIdBox.style.display = 'block';
+        userIdBox.innerHTML = `ID: <span style='color:var(--accent);'>${data.new_user_id}</span>`;
+      }
+    } else {
+      document.getElementById('resetUserIdMsg').textContent = "Failed to reset user_id: " + (data.error || "Unknown error");
+    }
+  };
 </script>
 
 </body>

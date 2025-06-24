@@ -1262,6 +1262,11 @@
         </div>
         <div class="input-wrapper">
           <form class="input-area" id="chatForm">
+            <input type="file" id="imageInput" accept="image/*" style="display:none" />
+            <button id="imageAttachBtn" type="button" title="Attach image" style="background:var(--accent);color:#000;border:none;border-radius:0.8em;padding:0.7rem 1.1rem;margin-right:0.5rem;display:flex;align-items:center;gap:0.4rem;cursor:pointer;font-size:1.1rem;">
+              <span id="imageIcon">🖼️</span>
+            </button>
+            <div id="imagePreview" style="display:none;align-items:center;gap:0.5rem;margin-right:0.5rem;"></div>
             <textarea id="userInput" placeholder="Type your message..." required></textarea>
             <button id="sendButton" type="submit">Send</button>
           </form>
@@ -1339,6 +1344,12 @@
       </div>
     </div>
 
+    <!-- Add this modal HTML just before </body> -->
+    <div id="imageModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.85);z-index:3000;align-items:center;justify-content:center;">
+      <span id="imageModalClose" style="position:absolute;top:2.5vw;right:3vw;font-size:2.8rem;color:#fff;cursor:pointer;font-weight:900;z-index:3010;">&times;</span>
+      <img id="imageModalImg" src="" alt="Full Image" style="max-width:90vw;max-height:90vh;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.25);" />
+    </div>
+
     <script>
       const chatContainer = document.getElementById("chatContainer");
       const chatForm = document.getElementById("chatForm");
@@ -1369,6 +1380,12 @@
       const connectionStatus = document.getElementById("connectionStatus");
       const clearChatBtn = document.getElementById("clearChat");
       const sidebarOverlay = document.getElementById("sidebarOverlay");
+      const imageInput = document.getElementById("imageInput");
+      const imageAttachBtn = document.getElementById("imageAttachBtn");
+      const imagePreview = document.getElementById("imagePreview");
+      let uploadedImageUrl = null;
+      let uploadedImageStoragePath = null;
+      let imageUploading = false;
 
       let chatHistory = [];
       let loggedInUser = null;
@@ -1519,72 +1536,72 @@
         }
       });
 
-      // Handle form submissions
-      chatForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        if (!loggedInUser || !loggedInUserId) return;
+      // // Handle form submissions
+      // chatForm.addEventListener("submit", async (e) => {
+      //   e.preventDefault();
+      //   if (!loggedInUser || !loggedInUserId) return;
         
-        const message = userInput.value.trim();
-        if (!message) return;
+      //   const message = userInput.value.trim();
+      //   if (!message) return;
 
-        const model = selectedModel || modelList[0].value;
+      //   const model = selectedModel || modelList[0].value;
 
-        addMessage("user", message);
-        userInput.value = "";
-        // Reset textarea height immediately after sending
-        userInput.style.height = "64px";
-        userInput.disabled = true;
-        sendButton.disabled = true;
+      //   addMessage("user", message);
+      //   userInput.value = "";
+      //   // Reset textarea height immediately after sending
+      //   userInput.style.height = "64px";
+      //   userInput.disabled = true;
+      //   sendButton.disabled = true;
 
-        const loadingDiv = document.createElement("div");
-        loadingDiv.className = "loading";
-        loadingDiv.innerHTML = "<span class='loader'></span>";
-        chatContainer.appendChild(loadingDiv);
-        chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: "smooth" });
+      //   const loadingDiv = document.createElement("div");
+      //   loadingDiv.className = "loading";
+      //   loadingDiv.innerHTML = "<span class='loader'></span>";
+      //   chatContainer.appendChild(loadingDiv);
+      //   chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: "smooth" });
 
-        try {
-          // Real backend request only
-          const res = await fetch("https://backend.aikipedia.workers.dev/chat", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ user_id: loggedInUserId, message, model, history: chatHistory }),
-          });
+      //   try {
+      //     // Real backend request only
+      //     const res = await fetch("https://backend.aikipedia.workers.dev/chat", {
+      //       method: "POST",
+      //       headers: {
+      //         "Content-Type": "application/json"
+      //       },
+      //       body: JSON.stringify({ user_id: loggedInUserId, message, model, history: chatHistory }),
+      //     });
 
-          const data = await res.json();
-          if (!res.ok) throw new Error(data.error || "Something went wrong");
+      //     const data = await res.json();
+      //     if (!res.ok) throw new Error(data.error || "Something went wrong");
 
-          loadingDiv.remove();
-          addMessage("assistant", data.response);
-          displayCreditUsage(data);
-          // Add to chat history
-          chatHistory.push({ role: "user", content: message }, { role: "assistant", content: data.response });
+      //     loadingDiv.remove();
+      //     addMessage("assistant", data.response);
+      //     displayCreditUsage(data);
+      //     // Add to chat history
+      //     chatHistory.push({ role: "user", content: message }, { role: "assistant", content: data.response });
         
-        } catch (err) {
-          loadingDiv.remove();
-          let errorMsg;
-          if (err && err.message) {
-            errorMsg = err.message;
-          } else if (err && err.error) {
-            // If backend returns { error: { ... } }
-            if (typeof err.error === 'object') {
-              errorMsg = JSON.stringify(err.error, null, 2);
-            } else {
-              errorMsg = String(err.error);
-            }
-          } else if (typeof err === "object") {
-            errorMsg = JSON.stringify(err, null, 2);
-          } else {
-            errorMsg = String(err);
-          }
+      //   } catch (err) {
+      //     loadingDiv.remove();
+      //     let errorMsg;
+      //     if (err && err.message) {
+      //       errorMsg = err.message;
+      //     } else if (err && err.error) {
+      //       // If backend returns { error: { ... } }
+      //       if (typeof err.error === 'object') {
+      //         errorMsg = JSON.stringify(err.error, null, 2);
+      //       } else {
+      //         errorMsg = String(err.error);
+      //       }
+      //     } else if (typeof err === "object") {
+      //       errorMsg = JSON.stringify(err, null, 2);
+      //     } else {
+      //       errorMsg = String(err);
+      //     }
           
-          addMessage("assistant", "❌ " + errorMsg);
-        } finally {
-          userInput.disabled = false;
-          sendButton.disabled = false;
-        }
-      });
+      //     addMessage("assistant", "❌ " + errorMsg);
+      //   } finally {
+      //     userInput.disabled = false;
+      //     sendButton.disabled = false;
+      //   }
+      // });
 
       // Allow pressing Enter to send message
       userInput.addEventListener("keydown", (e) => {
@@ -1828,6 +1845,7 @@
           selectedModel = modelList[idx].value;
           modelSelectorBtnName.textContent = modelList[idx].name;
           modelDropdownList.style.display = "none";
+          updateImageAttachBtnState();
         });
       });
       document.addEventListener("click", function(e) {
@@ -1836,64 +1854,216 @@
         }
       });
 
+      function isGeminiSelected() {
+        return selectedModel === "google/gemini-2.5-flash-preview";
+      }
+
+      function updateImageAttachBtnState() {
+        if (isGeminiSelected()) {
+          imageAttachBtn.disabled = false;
+          imageAttachBtn.style.opacity = 1;
+          imageAttachBtn.title = "Attach image (Gemini only)";
+        } else {
+          imageAttachBtn.disabled = true;
+          imageAttachBtn.style.opacity = 0.5;
+          imageAttachBtn.title = "Image input only supported for Gemini";
+          clearImagePreview();
+        }
+        updateSendButtonState();
+      }
+
+      function updateSendButtonState() {
+        if (imageUploading) {
+          sendButton.disabled = true;
+          sendButton.title = "Please wait for the image to finish uploading";
+        } else {
+          sendButton.disabled = userInput.disabled || (isGeminiSelected() && uploadedImageUrl === null && imagePreview.style.display === "flex");
+          sendButton.title = sendButton.disabled ? "Please wait for the image to finish uploading" : "Send";
+        }
+      }
+
+      window.addEventListener("DOMContentLoaded", updateImageAttachBtnState);
+
+      imageAttachBtn.onclick = function(e) {
+        if (!isGeminiSelected()) return;
+        imageInput.click();
+      };
+
+      imageInput.onchange = async function(e) {
+        const file = imageInput.files[0];
+        if (!file) return;
+        imagePreview.innerHTML = `<span class='loader' style='width:28px;height:28px;'></span> <span style='color:var(--text);font-size:1rem;'>Uploading...</span>`;
+        imagePreview.style.display = "flex";
+        imageUploading = true;
+        updateSendButtonState();
+        uploadedImageUrl = null;
+        uploadedImageStoragePath = null;
+        // Read file as base64
+        const reader = new FileReader();
+        reader.onload = async function(ev) {
+          const base64 = ev.target.result;
+          try {
+            const res = await fetch("https://backend.aikipedia.workers.dev/upload-image", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ image_base64: base64, filename: file.name, user_id: loggedInUserId })
+            });
+            const data = await res.json();
+            if (res.ok && data.url) {
+              uploadedImageUrl = data.url;
+              uploadedImageStoragePath = data.storage_path;
+              const url = URL.createObjectURL(file);
+              imagePreview.innerHTML = `<img src="${url}" alt="preview" style="max-width:60px;max-height:60px;border-radius:8px;" /> <button id='removeImageBtn' type='button' style='background:none;border:none;color:var(--error);font-size:1.2rem;cursor:pointer;'>✖</button>`;
+              document.getElementById('removeImageBtn').onclick = function() {
+                clearImagePreview();
+                updateSendButtonState();
+              };
+            } else {
+              uploadedImageUrl = null;
+              uploadedImageStoragePath = null;
+              imagePreview.innerHTML = `<span style='color:var(--error);font-size:1rem;'>Image upload failed</span>`;
+              setTimeout(clearImagePreview, 2000);
+            }
+          } catch (err) {
+            uploadedImageUrl = null;
+            uploadedImageStoragePath = null;
+            imagePreview.innerHTML = `<span style='color:var(--error);font-size:1rem;'>Image upload error</span>`;
+            setTimeout(clearImagePreview, 2000);
+          }
+          imageUploading = false;
+          updateSendButtonState();
+        };
+        reader.readAsDataURL(file);
+      };
+
+      function clearImagePreview() {
+        imagePreview.innerHTML = "";
+        imagePreview.style.display = "none";
+        imageInput.value = "";
+        uploadedImageUrl = null;
+        uploadedImageStoragePath = null;
+        imageUploading = false;
+        updateSendButtonState();
+      }
+
+      // Modify chatForm submit
+      chatForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!loggedInUser || !loggedInUserId) return;
+        if (imageUploading) {
+          addSystemMessage("Please wait for the image to finish uploading before sending your message.");
+          return;
+        }
+        const message = userInput.value.trim();
+        if (!message) return;
+        const model = selectedModel || modelList[0].value;
+        addMessage("user", message, isGeminiSelected() ? uploadedImageUrl : undefined);
+        userInput.value = "";
+        userInput.style.height = "64px";
+        userInput.disabled = true;
+        sendButton.disabled = true;
+        imageAttachBtn.disabled = true;
+        const loadingDiv = document.createElement("div");
+        loadingDiv.className = "loading";
+        loadingDiv.innerHTML = "<span class='loader'></span>";
+        chatContainer.appendChild(loadingDiv);
+        chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: "smooth" });
+        let imageUrlToSend = uploadedImageUrl;
+        try {
+          const body = { user_id: loggedInUserId, message, model, history: chatHistory };
+          if (isGeminiSelected() && imageUrlToSend) {
+            body.image_url = imageUrlToSend;
+          }
+          const res = await fetch("https://backend.aikipedia.workers.dev/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || "Something went wrong");
+          loadingDiv.remove();
+          addMessage("assistant", data.response);
+          displayCreditUsage(data);
+          chatHistory.push({ role: "user", content: message }, { role: "assistant", content: data.response });
+        } catch (err) {
+          loadingDiv.remove();
+          let errorMsg = err && err.message ? err.message : (err && err.error ? (typeof err.error === 'object' ? JSON.stringify(err.error, null, 2) : String(err.error)) : (typeof err === "object" ? JSON.stringify(err, null, 2) : String(err)));
+          addMessage("assistant", "❌ " + errorMsg);
+          
+        } finally {
+          userInput.disabled = false;
+          sendButton.disabled = false;
+          updateImageAttachBtnState();
+        }
+      });
+
       // Add message to chat
-      function addMessage(role, text) {
+      function addMessage(role, text, imageUrl) {
         const messageDiv = document.createElement("div");
         messageDiv.className = `message ${role}`;
 
+        if (role === "user" && imageUrl) {
+          const img = document.createElement("img");
+          img.src = imageUrl;
+          img.alt = "uploaded image";
+          img.style.maxWidth = "240px";
+          img.style.maxHeight = "240px";
+          img.style.display = "block";
+          img.style.marginBottom = "0.5em";
+          img.style.borderRadius = "8px";
+          img.style.cursor = "pointer";
+          img.onclick = function() {
+            imageModalImg.src = imageUrl;
+            imageModal.style.display = 'flex';
+          };
+          messageDiv.appendChild(img);
+        }
+
         if (role === "assistant") {
-            // Preprocess text to ensure proper math delimiters
-            let processedText = text
-                // Fix single-line equations
-                .replace(/(^|\s)\$([^$]+)\$($|\s)/g, '$1$$$2$$$3')
-                // Fix multi-line equations
-                .replace(/\\begin{equation}([\s\S]*?)\\end{equation}/g, '$$$1$$')
-                // Fix display-style \\[ \\]
-                .replace(/\\\[([\s\S]*?)\\\]/g, '$$$1$$');
-
-            // Parse with marked
-            messageDiv.innerHTML = marked.parse(processedText, {
-                highlight: function(code, lang) {
-                    if (lang && hljs.getLanguage(lang)) {
-                        return hljs.highlight(code, { language: lang }).value;
-                    }
-                    return hljs.highlightAuto(code).value;
-                }
+          // Preprocess text to ensure proper math delimiters
+          let processedText = text
+            // Fix single-line equations
+            .replace(/(^|\s)\$([^$]+)\$($|\s)/g, '$1$$$2$$$3')
+            // Fix multi-line equations
+            .replace(/\\begin{equation}([\s\S]*?)\\end{equation}/g, '$$$1$$')
+            // Fix display-style \\[ \\]
+            .replace(/\\\[([\s\S]*?)\\\]/g, '$$$1$$');
+          messageDiv.innerHTML += marked.parse(processedText, {
+            highlight: function(code, lang) {
+              if (lang && hljs.getLanguage(lang)) {
+                return hljs.highlight(code, { language: lang }).value;
+              }
+              return hljs.highlightAuto(code).value;
+            }
+          });
+          setTimeout(() => {
+            renderMathInElement(messageDiv, {
+              delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false},
+                {left: '\\(', right: '\\)', display: false}
+              ],
+              throwOnError: false
             });
-
-            // Render math with KaTeX
-            setTimeout(() => {
-                renderMathInElement(messageDiv, {
-                    delimiters: [
-                        {left: '$$', right: '$$', display: true},
-                        {left: '$', right: '$', display: false},
-                        {left: '\\(', right: '\\)', display: false}
-                    ],
-                    throwOnError: false
-                });
-
-                // Apply syntax highlighting
-                document.querySelectorAll('pre code').forEach(hljs.highlightElement);
-
-                // Add copy buttons to code blocks
-                messageDiv.querySelectorAll('pre code').forEach((block) => {
-                  if (!block.parentElement.querySelector('.copy-btn')) {
-                    const copyBtn = document.createElement('button');
-                    copyBtn.className = 'copy-btn';
-                    copyBtn.textContent = 'Copy';
-                    copyBtn.onclick = function(e) {
-                      e.stopPropagation();
-                      navigator.clipboard.writeText(block.textContent);
-                      copyBtn.textContent = 'Copied!';
-                      setTimeout(() => { copyBtn.textContent = 'Copy'; }, 1200);
-                    };
-                    block.parentElement.style.position = 'relative';
-                    block.parentElement.appendChild(copyBtn);
-                  }
-                });
-            }, 10);
-        } else {
-            messageDiv.textContent = text;
+            document.querySelectorAll('pre code').forEach(hljs.highlightElement);
+            messageDiv.querySelectorAll('pre code').forEach((block) => {
+              if (!block.parentElement.querySelector('.copy-btn')) {
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'copy-btn';
+                copyBtn.textContent = 'Copy';
+                copyBtn.onclick = function(e) {
+                  e.stopPropagation();
+                  navigator.clipboard.writeText(block.textContent);
+                  copyBtn.textContent = 'Copied!';
+                  setTimeout(() => { copyBtn.textContent = 'Copy'; }, 1200);
+                };
+                block.parentElement.style.position = 'relative';
+                block.parentElement.appendChild(copyBtn);
+              }
+            });
+          }, 10);
+        } else if (role === "user") {
+          messageDiv.appendChild(document.createTextNode(text));
         }
 
         chatContainer.appendChild(messageDiv);
@@ -1996,6 +2166,20 @@
       window.addEventListener('DOMContentLoaded', function() {
         showMobileNoticeIfNeeded();
       });
+
+      const imageModal = document.getElementById('imageModal');
+      const imageModalImg = document.getElementById('imageModalImg');
+      const imageModalClose = document.getElementById('imageModalClose');
+      imageModalClose.onclick = function() {
+        imageModal.style.display = 'none';
+        imageModalImg.src = '';
+      };
+      imageModal.onclick = function(e) {
+        if (e.target === imageModal) {
+          imageModal.style.display = 'none';
+          imageModalImg.src = '';
+        }
+      };
     </script>
     <!-- Background particles effect -->
     <script src="background-particles.js"></script>
