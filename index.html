@@ -1799,19 +1799,25 @@
           value: "qwen/qwen-2.5-coder-32b-instruct",
           name: "Qwen",
           desc: "Advanced Coding Capabilities. Great for code, math, and reasoning.",
-          cost: "$0.078/$0.195 per 1M tokens"
+          cost: "₹6.47/₹16.18 per 1M tokens"
         },
         {
           value: "google/gemini-2.5-flash-preview",
           name: "Gemini Flash",
           desc: "Best For Reasoning Tasks. Excellent for logic, reasoning, and general tasks.",
-          cost: "$0.195/$0.78 per 1M tokens"
+          cost: "₹16.18/₹64.72 per 1M tokens"
         },
         {
           value: "mistralai/codestral-2501",
           name: "Codestral",
           desc: "High-performance code generation. Fast, accurate code generation for many languages.",
-          cost: "$0.39/$1.17 per 1M tokens"
+          cost: "₹32.36/₹97.08 per 1M tokens"
+        },
+        {
+          value: "deepseek/deepseek-chat-v3-0324",
+          name: "DeepSeek V3",
+          desc: "Advanced general-purpose model. Great for reasoning and conversation.",
+          cost: "₹30.20/₹94.78 per 1M tokens"
         }
       ];
       let selectedModel = modelList[0].value;
@@ -2082,12 +2088,15 @@
       // Display token usage and cost
       function displayCreditUsage(data) {
         if (!data || !data.input_tokens) return;
-        
         const usageDiv = document.createElement('div');
         usageDiv.className = 'usage-stats';
+        let costLine = `<small>Cost: ₹${data.cost.toFixed(4)} INR credits</small>`;
+        if (data.model === 'google/gemini-2.5-flash-preview' && data.image_url) {
+          costLine += '<small>Includes image charge</small>';
+        }
         usageDiv.innerHTML = `
-          <small>Tokens: ${data.input_tokens} in / ${data.output_tokens} out</small>
-          <small>Cost: ${data.cost.toFixed(4)} credits</small>
+          <small>Tokens: ${data.input_tokens} in / ${data.output_tokens} out (actual)</small>
+          ${costLine}
         `;
         chatContainer.appendChild(usageDiv);
       }
