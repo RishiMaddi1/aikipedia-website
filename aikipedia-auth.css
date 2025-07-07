@@ -1,0 +1,247 @@
+/* Sidebar, Modal, and Auth Styles for Aikipedia (shared) */
+
+.sidebar {
+  position: fixed;
+  top: 3.08rem;
+  left: 1.4rem;
+  width: 179.2px;
+  min-width: 123.2px;
+  max-width: 50.4vw;
+  background: var(--bg-secondary);
+  border-radius: 13.44px;
+  box-shadow: 0 6.4px 25.6px rgba(0,0,0,0.18);
+  border: 0.84px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 1.6rem 1.2rem;
+  transition: opacity 0.3s, transform 0.3s;
+  font-size: 0.88rem;
+  z-index: 2001;
+  pointer-events: none;
+  opacity: 0;
+  height: 64vh;
+  min-height: 67.2px;
+  overflow-y: auto;
+}
+.sidebar.visible {
+  pointer-events: auto;
+  opacity: 1;
+  transform: translateY(0);
+  width: 176px;
+  padding-left: 0.96rem;
+}
+.sidebar .profile-details,
+.sidebar .model-selector-container {
+  display: none;
+}
+.sidebar.visible .profile-details {
+  display: block;
+}
+#sidebarOverlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.35);
+  z-index: 2000;
+  transition: opacity 0.3s;
+}
+#sidebarOverlay.visible {
+  display: block;
+}
+.profile {
+  width: clamp(29.12px, 6.72vw, 40.32px);
+  height: clamp(29.12px, 6.72vw, 40.32px);
+  border-radius: 35%;
+  background-color: var(--accent);
+  margin-bottom: clamp(0.784rem, 1.68vw, 1.232rem);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: var(--bg);
+  font-size: clamp(0.784rem, 1.68vw, 1.208rem);
+  transition: transform 0.2s ease;
+}
+.profile:hover {
+  transform: scale(1.05);
+  cursor: pointer;
+}
+.profile-details {
+  display: none;
+  margin-top: 0.56rem;
+  font-size: 1.52rem;
+}
+.sidebar-auth-btn {
+  width: 90%;
+  padding: clamp(0.8rem, 2vw, 0.96rem) 0;
+  border-radius: 12.8px;
+  font-size: clamp(0.88rem, 2vw, 1.12rem);
+  font-weight: 600;
+  border: none;
+  outline: none;
+  transition: all 0.2s ease;
+  margin: 0 auto;
+  cursor: pointer;
+  box-shadow: 0 3.2px 9.6px rgba(0, 0, 0, 0.1);
+  letter-spacing: 0.01em;
+}
+.sidebar-auth-btn-primary {
+  background: var(--accent);
+  color: #000;
+  border: 0 3.2px 12.8px rgba(213,206,163,0.10);
+}
+.sidebar-auth-btn-primary:hover {
+  background: #000;
+  color: var(--accent);
+  border: 2px solid var(--accent);
+}
+.sidebar-auth-btn-secondary {
+  background: transparent;
+  color: var(--accent);
+  border: 2px solid var(--accent);
+}
+.sidebar-auth-btn-secondary:hover {
+  background: var(--accent);
+  color: #1A120B;
+  box-shadow: 0 3.2px 12.8px rgba(213,206,163,0.10);
+}
+#authModal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.7);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+#loginForm, #registerForm {
+  background: var(--bg-secondary);
+  padding: 2.5rem 3rem;
+  border-radius: 20px;
+  min-width: 380px;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  transform: translateY(-20px);
+  transition: transform 0.3s ease;
+}
+#loginForm h2, #registerForm h2 {
+  font-size: 2rem;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+#loginForm input, #registerForm input {
+  padding: 1rem 1.2rem;
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  width: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+#loginSubmitBtn, #registerSubmitBtn {
+  background: var(--accent);
+  color: #000;
+  font-weight: 600;
+  width: 100%;
+  padding: 1rem 0;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+}
+#loginCancelBtn, #registerCancelBtn {
+  background: none;
+  color: var(--text);
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  opacity: 0.7;
+  margin-top: 0.5rem;
+}
+#loginError, #registerError {
+  color: var(--error);
+  font-size: 0.95rem;
+  text-align: center;
+  min-height: 1.2rem;
+}
+@media (max-width: 900px) {
+  .sidebar.visible {
+    width: 64vw;
+    min-width: 0;
+    max-width: 256px;
+  }
+}
+@media (max-width: 600px) {
+  .sidebar {
+    left: 50%;
+    transform: translateX(-50%) translateY(-16px);
+    width: 76vw;
+    min-width: 0;
+    max-width: 78.4vw;
+    padding: 1rem;
+    z-index: 2002;
+  }
+  .profile {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+    top: 0.8rem;
+    left: 0.8rem;
+  }
+  .sidebar .profile-details {
+    font-size: 1.2rem;
+    margin-top: 0.5rem;
+  }
+  .sidebar-auth-btn {
+    padding: 0.8rem 0;
+    font-size: 0.9rem;
+    border-radius: 0.8rem;
+  }
+  #authModal {
+    padding: 1rem;
+  }
+  #loginForm, #registerForm {
+    min-width: 90vw;
+    max-width: 90vw;
+    padding: 1.5rem;
+  }
+  #loginForm h2, #registerForm h2 {
+    font-size: 1.5rem;
+  }
+  #loginForm input, #registerForm input {
+    padding: 0.8rem;
+    font-size: 0.9rem;
+  }
+  #loginSubmitBtn, #registerSubmitBtn {
+    padding: 0.8rem 0;
+    font-size: 0.9rem;
+  }
+  #sidebarOverlay {
+    background: rgba(0,0,0,0.5);
+  }
+}
+@media (max-width: 480px) {
+  .sidebar {
+    padding: 0.8rem;
+  }
+  .sidebar-auth-btn {
+    padding: 0.7rem 0;
+    font-size: 0.85rem;
+  }
+} 

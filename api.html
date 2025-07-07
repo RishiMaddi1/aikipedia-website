@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us</title>
+    <!-- Prism CSS for syntax highlighting -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700&display=swap" rel="stylesheet" />
+    <style>
+        /* Custom Scrollbar Styles (copied from index.html) */
+        ::-webkit-scrollbar {
+          width: 6px;
+          background-color: var(--border);
+        }
+        ::-webkit-scrollbar-thumb {
+          background-color: var(--accent);
+          border-radius: 6px;
+        }
+        ::-webkit-scrollbar-button {
+          background-color: var(--border);
+        }
+        ::-webkit-scrollbar-corner {
+          background-color: var(--bg-secondary);
+        }
+        :root {
+            --bg: #031626; 
+            --bg-secondary: #010512;
+            --text: #a3b2d3;
+            --accent: #4889cd;
+            --border: #000137;
+            --error: #FCADB0;
+            --success: #2F686F  ;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #181a20;
+            color: var(--text);
+            padding: 20px;
+            line-height: 1.6;
+            min-height: 100vh;
+            width: 100vw;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        h1 {
+            color: var(--accent);
+        }
+        p {
+            margin-bottom: 1rem;
+        }
+        .api-wrapper {
+  margin-top: 1rem;
+}
+
+.api-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.tab-btn {
+  padding: 0.5rem 1rem;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  color: var(--text);
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.tab-btn:hover,
+.tab-btn.active {
+  background-color: var(--accent);
+  color: #000;
+  font-weight: 600;
+}
+
+.code-box {
+  position: relative;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.code-block {
+  display: none;
+  position: relative;
+}
+
+.code-block.active {
+  display: block;
+}
+
+.code-block pre {
+  background-color:black;
+  color: #a3d3e2;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  overflow-x: auto;
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: var(--accent);
+  color: #000;
+  border: none;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.copy-btn:hover {
+  background-color: #66a8f1;
+}
+.api-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.tab-btn {
+  padding: 0.5rem 1rem;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.25s ease, background-color 0.3s;
+}
+
+.tab-btn:hover {
+  background-color: var(--accent);
+  color: #000;
+  transform: translateY(-2px);
+}
+
+.tab-btn.active {
+  background-color: var(--accent);
+  color: #000;
+  font-weight: bold;
+}
+
+.code-box {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background-color:black;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  overflow: hidden;
+}
+
+.code-block {
+  display: none;
+  animation: fadeIn 0.5s ease;
+}
+
+.code-block.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.copy-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: var(--accent);
+  color: #000;
+  border: none;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  z-index: 2;
+  transition: background 0.3s;
+}
+
+.copy-btn:hover {
+  background: #66a8f1;
+}
+.copy-tooltip {
+    position: absolute;
+    top: -30px;
+    right: 10px;
+    background: var(--success);
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.5);
+    animation: bounceFade 1.5s ease forwards;
+  }
+
+  @keyframes bounceFade {
+    0% { opacity: 0; transform: scale(0.5) translateY(-10px); }
+    20% { opacity: 1; transform: scale(1.1) translateY(0); }
+    40% { transform: scale(0.95); }
+    60% { transform: scale(1); }
+    100% { opacity: 0; transform: scale(1) translateY(-10px); }
+  }
+
+  /* Flip animation */
+  .code-box {
+    background-color: black;
+    perspective: 1000px;
+  }
+  .flip-container {
+    transition: transform 0.6s ease;
+    transform-style: preserve-3d;
+    position: relative;
+  }
+  .code-block {
+    backface-visibility: hidden;
+    transform: rotateY(180deg);
+    position: absolute;
+    width: 100%;
+  }
+  .code-block.active {
+    transform: rotateY(0deg);
+    position: relative;
+  }
+
+  /* Magnet effect */
+  .tab-btn {
+    transition: transform 0.2s ease-out;
+  }
+
+  /* Remove gradient wave effect and set solid background */
+  body::before {
+    display: none;
+  }
+
+  @media (max-width: 600px) {
+    body {
+      padding: 8px;
+    }
+    h1, h2 {
+      font-size: 1.2rem;
+    }
+    .api-tabs {
+      flex-wrap: wrap;
+      gap: 0.25rem;
+    }
+    .tab-btn {
+      padding: 0.3rem 0.6rem;
+      font-size: 0.9rem;
+    }
+    .code-box {
+      padding: 0.3rem;
+    }
+    .code-block pre {
+      font-size: 0.7rem;
+      padding: 0.5rem;
+    }
+  }
+
+    </style>
+</head>
+<body>
+    <button id="backToChatBtn" style="position:fixed;top:clamp(0.5rem, 2vw, 1rem);left:clamp(0.5rem, 2vw, 1rem);z-index:2101;background-color:var(--accent);color:#000;border:none;border-radius:50%;padding:clamp(0.3rem, 1vw, 0.5rem);cursor:pointer;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+    </button>
+    <br><br>
+    <p>This platform is designed to empower developers, researchers, and hobbyists by allowing them to bring their own API keys and utilize them seamlessly for personal, professional, or hackathon projects. By integrating powerful LLM (Large Language Model) wrappers, users can create intelligent applications that leverage the latest in generative AI, NLP, and automation technologies. Whether you're building a chatbot, writing code assistants, or crafting innovative tools, our system gives you the flexibility to connect your own API services and unlock full potential with a customizable LLM stack.<br><br><strong>Note:</strong> All API calls now require your <span style="color:var(--accent)"><b>user_id</b></span> (not username) for authentication and usage tracking.</p>
+    <h2 style="color: var(--accent); margin-top: 2rem;">API Usage Examples</h2>
+<div class="api-wrapper">
+  <div class="api-tabs">
+    <button class="tab-btn active" data-lang="curl">cURL</button>
+    <button class="tab-btn" data-lang="python">Python</button>
+    <button class="tab-btn" data-lang="javascript">JavaScript</button>
+    <button class="tab-btn" data-lang="nodejs">Node.js</button>
+    <button class="tab-btn" data-lang="go">Go</button>
+    <button class="tab-btn" data-lang="java">Java</button>
+    <button class="tab-btn" data-lang="php">PHP</button>
+    <button class="tab-btn" data-lang="ruby">Ruby</button>
+    <button class="tab-btn" data-lang="csharp">C#</button>
+  </div>
+
+  <div class="code-box">
+    <div class="flip-container">
+    <div class="code-block active" id="curl">
+      <button class="copy-btn">📋</button>
+      <pre><code class="language-bash">curl -X POST \
+  https://backend.aikipedia.workers.dev/chat \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "user_id": "your_user_id",
+    "message": "your_message",
+    "model": "qwen/qwen-2.5-coder-32b-instruct",
+    "history": []
+}'</code></pre>
+    </div>
+</div>
+    <div class="code-block" id="python">
+        <div class="flip-container">
+      <button class="copy-btn">📋</button>
+      <pre><code class="language-python">import requests
+
+response = requests.post(
+  "https://backend.aikipedia.workers.dev/chat",
+  json={
+    "user_id": "your_user_id",
+    "message": "your_message",
+    "model": "qwen/qwen-2.5-coder-32b-instruct",
+    "history": []
+  }
+)
+print(response.json())</code></pre>
+    </div>
+    </div>
+
+    <div class="code-block" id="javascript">
+        <div class="flip-container">
+      <button class="copy-btn">📋</button>
+      <pre><code class="language-javascript">fetch("https://backend.aikipedia.workers.dev/chat", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    user_id: "your_user_id",
+    message: "your_message",
+    model: "qwen/qwen-2.5-coder-32b-instruct",
+    history: []
+  })
+})
+.then(res => res.json())
+.then(console.log);</code></pre>
+    </div>
+    </div>
+
+    <div class="code-block" id="nodejs">
+        <div class="flip-container">
+      <button class="copy-btn">📋</button>
+      <pre><code class="language-javascript">const axios = require("axios");
+
+axios.post("https://backend.aikipedia.workers.dev/chat", {
+  user_id: "your_user_id",
+  message: "your_message",
+  model: "qwen/qwen-2.5-coder-32b-instruct",
+  history: []
+}).then(res => console.log(res.data));</code></pre>
+    </div>
+    </div>
+
+    <div class="code-block" id="go">
+        <div class="flip-container">
+      <button class="copy-btn">📋</button>
+      <pre><code class="language-go">package main
+
+import (
+  "bytes"
+  "encoding/json"
+  "net/http"
+  "fmt"
+)
+
+func main() {
+  payload := map[string]interface{}{
+    "user_id": "your_user_id",
+    "message": "your_message",
+    "model": "qwen/qwen-2.5-coder-32b-instruct",
+    "history": []string{},
+  }
+  jsonData, _ := json.Marshal(payload)
+  resp, _ := http.Post("https://backend.aikipedia.workers.dev/chat", "application/json", bytes.NewBuffer(jsonData))
+  fmt.Println(resp.Status)
+}</code></pre>
+    </div>
+    </div>
+
+    <div class="code-block" id="java">
+        <div class="flip-container">
+      <button class="copy-btn">📋</button>
+      <pre><code class="language-java">HttpClient client = HttpClient.newHttpClient();
+HttpRequest request = HttpRequest.newBuilder()
+  .uri(URI.create("https://backend.aikipedia.workers.dev/chat"))
+  .header("Content-Type", "application/json")
+  .POST(HttpRequest.BodyPublishers.ofString("{\"user_id\":\"your_user_id\",\"message\":\"your_message\",\"model\":\"qwen/qwen-2.5-coder-32b-instruct\",\"history\":[]}"))
+  .build();
+
+HttpResponse&lt;String&gt; response = client.send(request, HttpResponse.BodyHandlers.ofString());
+System.out.println(response.body());</code></pre>
+    </div>
+    </div> 
+
+    <div class="code-block" id="php">
+        <div class="flip-container">
+      <button class="copy-btn">📋</button>
+      <pre><code class="language-php">&lt;?php
+$payload = json_encode([
+  "user_id" => "your_user_id",
+  "message" => "your_message",
+  "model" => "qwen/qwen-2.5-coder-32b-instruct",
+  "history" => []
+]);
+
+$options = [
+  'http' => [
+    'header'  => "Content-type: application/json\r\n",
+    'method'  => 'POST',
+    'content' => $payload,
+  ],
+];
+
+$context  = stream_context_create($options);
+$result = file_get_contents("https://backend.aikipedia.workers.dev/chat", false, $context);
+echo $result;
+?&gt;</code></pre>
+    </div>
+</div>
+    <div class="code-block" id="ruby">
+        <div class="flip-container">
+      <button class="copy-btn">📋</button>
+      <pre><code class="language-ruby">require 'net/http'
+require 'json'
+
+uri = URI('https://backend.aikipedia.workers.dev/chat')
+res = Net::HTTP.post(uri, {
+  user_id: "your_user_id",
+  message: "your_message",
+  model: "qwen/qwen-2.5-coder-32b-instruct",
+  history: []
+}.to_json, "Content-Type" => "application/json")
+
+puts res.body</code></pre>
+    </div>
+    </div>
+
+    <div class="code-block" id="csharp">
+        <div class="flip-container">
+      <button class="copy-btn">📋</button>
+      <pre><code class="language-csharp">using System.Net.Http;
+using System.Text;
+using System.Text.Json;
+
+var client = new HttpClient();
+var content = new StringContent(JsonSerializer.Serialize(new {
+  user_id = "your_user_id",
+  message = "your_message",
+  model = "qwen/qwen-2.5-coder-32b-instruct",
+  history = new string[] {}
+}), Encoding.UTF8, "application/json");
+
+var response = await client.PostAsync("https://backend.aikipedia.workers.dev/chat", content);
+string responseBody = await response.Content.ReadAsStringAsync();
+Console.WriteLine(responseBody);</code></pre>
+    </div>
+    </div>
+  </div>
+</div>
+
+  <div id="userIdBox" style="display:none;margin:2.5rem auto 1.5rem auto;max-width:320px;padding:0.25em 0.8em;background:var(--bg-secondary);color:var(--accent);border:1.2px solid var(--accent);border-radius:2em;font-size:0.98em;font-family:monospace;font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,0.06);letter-spacing:0.01em;line-height:1.6;white-space:nowrap;text-align:center;"></div>
+
+    <button id="resetUserIdBtn" style="margin:1.5em 0;padding:0.7em 1.2em;background:var(--accent);color:#000;border:none;border-radius:8px;cursor:pointer;font-weight:600;">Reset my API key (user_id)</button>
+    <div id="resetUserIdMsg" style="margin-top:1em;color:var(--accent);font-weight:600;"></div>
+
+    <script>
+      document.getElementById("backToChatBtn").onclick = function() {
+        window.location.href = "index.html";
+      };
+      
+  // Tab switching logic
+
+
+  // Copy button logic
+  document.querySelectorAll('.copy-btn').forEach(button => {
+    button.addEventListener('click', () => {
+      const code = button.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = '✅';
+        setTimeout(() => (button.textContent = '📋'), 1500);
+      });
+    });
+  });
+
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const code = btn.nextElementSibling.innerText;
+      navigator.clipboard.writeText(code);
+
+      const tooltip = document.createElement('div');
+      tooltip.className = 'copy-tooltip';
+      tooltip.innerText = 'Copied!';
+      btn.parentElement.appendChild(tooltip);
+
+      setTimeout(() => {
+        tooltip.remove();
+      }, 1500);
+    });
+  });
+
+  // Tab switching with flip animation
+  const tabs = document.querySelectorAll('.tab-btn');
+  const blocks = document.querySelectorAll('.code-block');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      const lang = tab.dataset.lang;
+
+      blocks.forEach(block => {
+        block.classList.remove('active');
+        if (block.id === lang) {
+          block.classList.add('active');
+        }
+      });
+    });
+  });
+
+  // Magnet hover effect
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  document.addEventListener('mousemove', e => {
+    tabBtns.forEach(btn => {
+      const rect = btn.getBoundingClientRect();
+      const dx = e.clientX - (rect.left + rect.width / 2);
+      const dy = e.clientY - (rect.top + rect.height / 2);
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 100) {
+        btn.style.transform = `translate(${dx * 0.1}px, ${dy * 0.1}px)`;
+      } else {
+        btn.style.transform = '';
+      }
+    });
+  });
+  
+    </script>
+  
+<!-- Prism JS for syntax highlighting -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-php.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-ruby.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+
+<!-- Background particles effect -->
+<script src="background-particles.js"></script>
+<!-- Cursor trail effect -->
+<script src="cursor-trail.js"></script>
+
+<script>
+  // Show user_id if logged in (same as index.html localStorage keys)
+  window.addEventListener('DOMContentLoaded', function() {
+    const user = localStorage.getItem('aikipediaUser');
+    const userId = localStorage.getItem('aikipediaUserId');
+    const userIdBox = document.getElementById('userIdBox');
+    if (user && userId) {
+      userIdBox.style.display = 'block';
+      userIdBox.innerHTML = `ID: <span style='color:var(--accent);'>${userId}</span>`;
+    } else {
+      userIdBox.style.display = 'none';
+    }
+  });
+</script>
+
+<script>
+  document.getElementById('resetUserIdBtn').onclick = async function() {
+    const userId = localStorage.getItem('aikipediaUserId');
+    if (!userId) return alert("You must be logged in.");
+    if (!confirm("Are you sure? This will invalidate your old API key.")) return;
+    const res = await fetch('https://backend.aikipedia.workers.dev/reset-user-id', {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: userId })
+    });
+    const data = await res.json();
+    if (data.new_user_id) {
+      localStorage.setItem('aikipediaUserId', data.new_user_id);
+      document.getElementById('resetUserIdMsg').textContent = "Your new API key (user_id) is: " + data.new_user_id;
+      // Update the userIdBox display immediately:
+      const userIdBox = document.getElementById('userIdBox');
+      if (userIdBox) {
+        userIdBox.style.display = 'block';
+        userIdBox.innerHTML = `ID: <span style='color:var(--accent);'>${data.new_user_id}</span>`;
+      }
+    } else {
+      document.getElementById('resetUserIdMsg').textContent = "Failed to reset user_id: " + (data.error || "Unknown error");
+    }
+  };
+</script>
+
+</body>
+</html>

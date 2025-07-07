@@ -1,0 +1,2208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Aikipedia Chat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:700,900&display=swap" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.0/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="manifest" href="site.webmanifest">
+
+    <style>
+      :root {
+        --bg: #031626; 
+        --bg-secondary: #010512;
+        --text: #a3b2d3;
+        --accent: #4889cd;
+        --border: #000137;
+        --error: #FCADB0;
+        --success: #2F686F;
+      }
+
+::-webkit-scrollbar {
+  width: 6px;
+  background-color: var(--border); /* Use the border color for the scrollbar track */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--accent); /* Use the accent color for the scrollbar thumb */
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-button {
+  background-color: var(--border); /* Use the border color for the scrollbar button */
+}
+
+::-webkit-scrollbar-corner {
+  background-color: var(--bg-secondary); /* Use the background color for the scrollbar corner */
+}
+
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html, body {
+        height: 100%;
+        width: 100vw;
+        min-height: 100vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      body {
+        font-family: "Inter", "Montserrat", sans-serif;
+        background-color: #181a20;
+        color: var(--text);
+        min-height: 100vh;
+        width: 100vw;
+        display: flex;
+        font-size: clamp(1.15rem, 2.5vw, 1.4rem);
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+
+      .sidebar {
+  position: fixed;
+  top: 3.08rem;
+  left: 1.4rem;
+  width: 179.2px;
+  min-width: 123.2px;
+  max-width: 50.4vw;
+  background: var(--bg-secondary);
+  border-radius: 13.44px;
+  box-shadow: 0 6.4px 25.6px rgba(0,0,0,0.18);
+  border: 0.84px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 1.6rem 1.2rem;
+  transition: opacity 0.3s, transform 0.3s;
+  font-size: 0.88rem;
+  z-index: 2001;
+  pointer-events: none;
+  opacity: 0;
+
+  /* Modified for dynamic height and scroll */
+  height: 64vh;             /* 50% of viewport height */
+  min-height: 67.2px;
+  overflow-y: auto;         /* Enable vertical scroll if content overflows */
+}
+
+      .sidebar.visible {
+        pointer-events: auto;
+        opacity: 1;
+        transform: translateY(0);
+      }
+      
+      .sidebar.visible .profile-details,
+      .sidebar.visible .model-selector-container {
+        display: block;
+      }
+      .sidebar .profile-details,
+      .sidebar .model-selector-container {
+        display: none;
+      }
+      .sidebar.visible .profile-details {
+        display: block;
+      }
+      .sidebar.visible .model-selector-container {
+        display: flex;
+      }
+      .sidebar {
+        /* Hide sidebar by default */
+        width: 0;
+        padding-left: 0;
+      }
+      .sidebar.visible {
+        width: 176px;
+        padding-left: 0.96rem;
+      }
+      /* Overlay for sidebar */
+      #sidebarOverlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0,0,0,0.35);
+        z-index: 2000;
+        transition: opacity 0.3s;
+      }
+      #sidebarOverlay.visible {
+        display: block;
+      }
+      @media (max-width: 900px) {
+        .sidebar.visible {
+          width: 64vw;
+          min-width: 0;
+          max-width: 256px;
+        }
+      }
+      @media (max-width: 600px) {
+        .sidebar {
+          left: 50%;
+          transform: translateX(-50%) translateY(-16px);
+          width: 76vw;
+          min-width: 0;
+          max-width: 78.4vw;
+        }
+        /* Profile icon stays fixed on mobile */
+      }
+
+      .profile {
+        width: clamp(29.12px, 6.72vw, 40.32px);
+        height: clamp(29.12px, 6.72vw, 40.32px);
+        border-radius: 35%;
+        background-color: var(--accent);
+        margin-bottom: clamp(0.784rem, 1.68vw, 1.232rem);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: var(--bg);
+        font-size: clamp(0.784rem, 1.68vw, 1.208rem);
+        transition: transform 0.2s ease;
+      }
+
+      .profile:hover {
+        transform: scale(1.05);
+        cursor: pointer;
+      }
+
+      .profile-details {
+        display: none;
+        margin-top: 0.56rem;
+        font-size: 1.52rem;
+      }
+
+      .sidebar.expanded .profile-details {
+        display: block;
+        color: var(--text);
+        font-weight: 600;
+      }
+
+     /* HIDE by default */
+.model-selector-container {
+  display: none;
+  max-height: 320px; /* adjust as needed */
+  overflow-y: auto;
+  flex-direction: column;
+  gap: 0.8rem;
+  padding-right: 0.4rem; /* space for scrollbar */
+}
+
+/* SHOW only when sidebar is expanded */
+.sidebar.expanded .model-selector-container {
+  display: flex;
+  margin-top: 1.6rem; /* Adjust this value as needed for desired spacing */
+}
+
+
+/* Optional scrollbar styling */
+.model-selector-container::-webkit-scrollbar {
+  width: 6px;
+}
+.model-selector-container::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+.model-selector-box {
+  background: var(--bg-secondary);
+  padding: clamp(0.784rem, 1.68vw, 1.208rem);
+  border: 1px solid var(--border);
+  border-radius: 8.96px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.model-selector-box h1 {
+  font-size: clamp(0.728rem, 1.68vw, 1.072rem);
+  margin: 0;
+}
+
+.model-selector-box p {
+  display: none;
+  font-size: clamp(0.56rem, 1.4vw, 0.808rem);
+  margin-top: 0.448rem;
+}
+
+.model-selector-box:hover p {
+  display: block;
+}
+
+
+      .model-selector-box:hover {
+        transform: translateY(-1.6px);
+        box-shadow: 0 3.2px 9.6px rgba(0, 0, 0, 0.1);
+      }
+
+      .model-selector-box.selected {
+        background-color: var(--accent);
+        color: #000;
+        transform: translateY(-1.6px);
+        box-shadow: 0 3.2px 9.6px rgba(0, 0, 0, 0.1);
+      }
+
+      .main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        background: transparent;
+        min-height: 100vh;
+        position: relative;
+        width: 100vw;
+      }
+
+      .chat-shell {
+        width: 40vw;
+        max-width: 592px;
+        min-width: 256px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        flex: 1;
+        height: calc(100vh - 5.2rem); /* header + clear btn margin */
+        min-height: 0;
+      }
+
+      .chat-area {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        margin: 0;
+        background: transparent;
+        border-radius: 0;
+        box-shadow: none;
+        flex: 1 1 auto;
+        padding: 1.6rem 0 6.4rem 0;
+        display: flex;
+        flex-direction: column;
+        gap: 1.792rem;
+        min-height: 0;
+        overflow-y: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        font-size: 1.68rem; /* Increased by ~20% from clamp(1.15rem, 2.5vw, 1.4rem) base */
+      }
+      .chat-area::-webkit-scrollbar {
+       display: none; /* Chrome, Safari, Opera */
+    }
+
+      .message {
+        margin-bottom: 0.128rem;
+        margin-top: 0.128rem;
+      }
+      .message.user {
+        align-self: flex-end;
+        max-width: 70%;
+        background: var(--accent);
+        color: #000;
+        border-radius: 1.152em 1.152em 0.448em 1.152em;
+        box-shadow: 0 1.28px 10.24px 0 rgba(72,137,205,0.13);
+        padding: 0.768rem 1.152rem;
+        font-size: clamp(0.91rem, 1.92vw, 1.08rem); /* +20% */
+        line-height: 1.8;
+        word-wrap: break-word;
+      }
+      .message.assistant {
+        align-self: stretch;
+        background: none;
+        color: var(--text);
+        border-radius: 0;
+        box-shadow: none;
+        padding: 0;
+        font-size: clamp(0.91rem, 1.92vw, 1.08rem); /* +20% */
+        line-height: 1.8;
+        word-wrap: break-word;
+      }
+      .message.assistant > *:first-child {
+        margin-top: 0;
+      }
+      .message.assistant > *:last-child {
+        margin-bottom: 0;
+      }
+      .system-message {
+        align-self: center;
+        background: #23272f;
+        color: var(--text);
+        padding: 0.704rem 1.024rem;
+        border-radius: 0.768em;
+        margin: 0.768rem 0;
+        font-size: clamp(0.83rem, 1.54vw, 0.92rem); /* +20% */
+        opacity: 0.95;
+        box-shadow: 0 0.64px 3.84px 0 rgba(0,0,0,0.08);
+      }
+      .chat-area pre code {
+        display: block;
+        background: #000;
+        color: #e6e6e6;
+        border-radius: 0.64em;
+        padding: 0.768em 0.96em 0.768em 0.96em;
+        margin: 0.768em 0;
+        font-size: 0.83em; /* +20% from 0.691em */
+        position: relative;
+        overflow-x: auto;
+      }
+      .copy-btn {
+        position: absolute;
+        top: 0.448em;
+        right: 0.64em;
+        background: var(--accent);
+        color: #000;
+        border: none;
+        border-radius: 0.448em;
+        padding: 0.192em 0.576em;
+        font-size: 0.608em;
+        cursor: pointer;
+        z-index: 2;
+        opacity: 0.85;
+        transition: background 0.2s, color 0.2s;
+      }
+      .copy-btn:hover {
+        background: #000;
+        color: var(--accent);
+        opacity: 1;
+      }
+
+      .input-wrapper {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        background: transparent;
+        padding-bottom: 1.76rem;
+        display: flex;
+        justify-content: center;
+        pointer-events: none;
+        position: static;
+      }
+      .input-area {
+        width: 100%;
+        background: #23272f;
+        border-radius: 1.232em;
+        box-shadow: 0 2.24px 18.72px 0 rgba(0,0,0,0.18);
+        border: none;
+        display: flex;
+        align-items: center;
+        padding: 0.728rem 0.952rem;
+        font-size: clamp(0.84rem, 1.68vw, 0.84rem);
+        gap: 0.672rem;
+        pointer-events: all;
+      }
+      .input-area textarea {
+        flex: 1;
+        background: transparent;
+        color: var(--text);
+        border: none;
+        border-radius: 0.672em;
+        padding: 0.616rem 0.224rem;
+        font-size: clamp(0.68rem, 1.512vw, 1.008rem);
+        resize: none;
+        min-height: 35.84px;
+        max-height: 112px;
+        line-height: 1.19;
+        outline: none;
+        box-shadow: none;
+      }
+      .input-area textarea:focus {
+        outline: none;
+        box-shadow: none;
+      }
+      .input-area button {
+        background: var(--accent);
+        color: #000;
+        border: none;
+        border-radius: 0.96em;
+        padding: 0.88rem 1.76rem;
+        font-size: clamp(0.976rem, 2.16vw, 1.2rem);
+        cursor: pointer;
+        margin-left: 0.64rem;
+        transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+        box-shadow: 0 0.8px 6.4px 0 rgba(72,137,205,0.13);
+        font-weight: 600;
+        align-self: center;
+      }
+      .input-area button:disabled {
+        background: #c5d8ee;
+        cursor: not-allowed;
+      }
+      .input-area button:hover:not(:disabled) {
+        background: #000;
+        color: var(--accent);
+        box-shadow: 0 1.6px 9.6px 0 rgba(72,137,205,0.13);
+      }
+
+      @media (max-width: 900px) {
+        .chat-shell, .chat-area, .input-wrapper {
+          max-width: 100vw;
+          width: 100vw;
+          height: auto;
+        }
+        .header {
+          width: 100vw;
+        }
+      }
+      @media (max-width: 600px) {
+        .chat-shell, .chat-area, .input-wrapper {
+          max-width: 100vw;
+          width: 100vw;
+          border-radius: 0;
+          padding-left: 0.2rem;
+          padding-right: 0.2rem;
+          height: auto;
+        }
+        .input-area {
+          border-radius: 0;
+          padding: 0.7rem 0.5rem;
+        }
+        .header {
+          width: 100vw;
+        }
+        .clear-chat-btn {
+          right: 1rem;
+          top: 1rem;
+          padding: 0.7rem 1.2rem;
+        }
+      }
+
+      .connection-status {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        z-index: 100;
+        transition: opacity 0.3s ease;
+      }
+
+      .status-online {
+        background-color: var(--success);
+        color: #000;
+      }
+
+      .status-offline {
+        background-color: var(--error);
+        color: #fff;
+      }
+
+      .loading {
+        align-self: flex-start;
+        background: #181a20;
+        padding: 0.96rem;
+        border-radius: 8px;
+        font-family: monospace;
+        color: #aaa;
+        max-width: 70%;
+        font-size: 0.96rem;
+        border-radius: 11.2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 64px;
+      }
+
+      /* Custom Loader Spinner */
+      .loader {
+        width: 28.8px;
+        height: 28.8px;
+        position: relative;
+        animation: rotate 1.5s ease-in infinite alternate;
+      }
+      .loader::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        color: var(--accent);
+        background: currentColor;
+        width: 28.8px;
+        height: 14.4px;
+        border-radius: 0 0 19.2px 19.2px;
+      }
+      .loader::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 10%;
+        background: #181a20 ;
+        opacity: 0.7;
+        width: 3.2px;
+        height: 28.8px;
+        animation: rotate 1.2s linear infinite alternate-reverse;
+        border-radius: 1.6px;
+      }
+
+      @keyframes rotate {
+        100% { transform: rotate(360deg)}
+      }
+
+      .header {
+        width: 100vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        background: transparent;
+        margin-top: 0.96rem;
+        margin-bottom: 0.4rem;
+        z-index: 30;
+      }
+      .aikipedia-title {
+        font-family: 'Montserrat', 'Inter', sans-serif;
+        font-size: clamp(2.576rem, 5.6vw, 4.14rem);
+
+        font-weight: 900;
+        color: var(--accent);
+        letter-spacing: 0.04em;
+        text-shadow: 0 1.6px 12.8px rgba(72,137,205,0.10);
+        margin: 0 auto;
+        line-height: 1.1;
+      }
+      .clear-chat-btn {
+        position: fixed;
+        top: 1.76rem;
+        right: 2.24rem;
+        z-index: 100;
+        background: var(--accent);
+        color: #000;
+        border: none;
+        border-radius: 0.96em;
+        padding: 0.72rem 1.68rem;
+        font-size: clamp(0.88rem, 1.6vw, 1.04rem);
+        font-weight: 700;
+        box-shadow: 0 1.6px 9.6px 0 rgba(72,137,205,0.13);
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+      }
+      .clear-chat-btn:hover {
+        background: #000;
+        color: var(--accent);
+        box-shadow: 0 3.2px 12.8px 0 rgba(72,137,205,0.18);
+      }
+
+      .usage-stats {
+        margin-top: -0.64rem;
+        padding: 0.32rem 0.64rem;
+        color: #aaa;
+        font-size: 0.512rem;
+        text-align: right;
+     }
+
+     #offlineToggle {
+       margin-left: 0.8rem;
+     }
+
+     .tooltip {
+      position: relative;
+      display: inline-block;
+      cursor: help;
+     }
+
+     .tooltip .tooltip-text {
+       visibility: hidden;
+       width: 160px;
+       background-color: var(--bg-secondary);
+       color: var(--text);
+       text-align: center;
+       border-radius: 4.8px;
+       padding: 4px;
+       position: absolute;
+       z-index: 1;
+       bottom: 125%;
+       left: 50%;
+       margin-left: -80px;
+       opacity: 0;
+       transition: opacity 0.3s;
+       font-size: 0.64rem;
+       border: 1px solid var(--border);
+     }
+
+     .tooltip:hover .tooltip-text {
+       visibility: visible;
+       opacity: 1;
+     }
+
+      .model-dropdown-container {
+        width: 100%;
+        margin-bottom: 0.96rem;
+      }
+      .model-dropdown {
+        width: 100%;
+        padding: 0.76em 1.76em 0.76em 0.88em;
+        border-radius: 10.4px;
+        border: 1px solid var(--border);
+        background: linear-gradient(120deg, var(--bg-secondary) 90%, #0a1a2f 100%);
+        color: var(--text);
+        font-size: 0.904rem;
+        font-weight: 500;
+        margin-top: 0.24em;
+        box-shadow: 0 1.2px 6.4px 0 rgba(0,0,0,0.10), 0 0 0 1.2px rgba(72,137,205,0.04) inset;
+        transition: border 0.2s, box-shadow 0.2s, background 0.2s;
+        outline: none;
+        appearance: none;
+        -webkit-appearance: none;
+        position: relative;
+        cursor: pointer;
+        background-image: url('data:image/svg+xml;utf8,<svg fill="%235c7bb7" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+        background-repeat: no-repeat;
+        background-position: right 1em center;
+        background-size: 1.1em;
+        box-sizing: border-box;
+      }
+      .model-dropdown:focus {
+        border: 1.2px solid var(--accent);
+        box-shadow: 0 0 0 2px rgba(72,137,205,0.18), 0 1.2px 6.4px 0 rgba(0,0,0,0.10);
+        background: linear-gradient(120deg, var(--bg) 90%, #0a1a2f 100%);
+      }
+      .model-dropdown:hover {
+        border: 1.2px solid var(--accent);
+        background: linear-gradient(120deg, var(--bg-secondary) 80%, #18345a 100%);
+      }
+      .model-dropdown option {
+        background: var(--bg-secondary);
+        color: var(--text);
+        font-size: 0.864rem;
+      }
+
+      .fancy-dropdown-list li {
+        padding: 0.4rem 0.8rem;
+        border-bottom: 1px solid var(--border);
+        transition: background-color 0.3s ease, color 0.3s ease;
+        cursor: pointer;
+      }
+      .fancy-dropdown-list li:last-child {
+        border-bottom: none;
+      }
+      .fancy-dropdown-list li:hover {
+        background-color: var(--accent);
+        color: #000;
+      }
+      .fancy-dropdown-list li.selected {
+        background-color: var(--accent);
+        color: #000;
+      }
+
+      /* Enhanced Model Selector Dropdown */
+      .fancy-dropdown {
+        position: relative;
+        width: 100%;
+        padding: 0.76em 0.88em;
+        border-radius: 10.4px;
+        border: 1px solid var(--border);
+        background: var(--bg-secondary);
+        color: var(--text);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 1.6px 6.4px rgba(0,0,0,0.1);
+      }
+
+      .fancy-dropdown:hover {
+        border-color: var(--accent);
+        transform: translateY(-1.6px);
+        box-shadow: 0 3.2px 9.6px rgba(72,137,205,0.15);
+      }
+
+      .fancy-dropdown-selected {
+        display: block;
+        font-size: 0.84rem;
+        font-weight: 500;
+        padding-right: 19.2px;
+      }
+
+      .fancy-dropdown::after {
+        content: '▼';
+        position: absolute;
+        right: 1em;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.8em;
+        color: var(--accent);
+        transition: transform 0.3s ease;
+      }
+
+      .fancy-dropdown.open::after {
+        transform: translateY(-50%) rotate(180deg);
+      }
+
+      .fancy-dropdown-list {
+        position: absolute;
+        top: calc(100% + 6.4px);
+        left: 0;
+        width: 100%;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: 10.4px;
+        padding: 0.4rem;
+        max-height: 200px;
+        overflow-y: auto;
+        z-index: 1000;
+        opacity: 0;
+        transform: translateY(-8px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 3.2px 12.8px rgba(0,0,0,0.15);
+        scrollbar-width: thin;
+        scrollbar-color: var(--accent) var(--bg-secondary);
+      }
+
+      .fancy-dropdown.open .fancy-dropdown-list {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .fancy-dropdown-list::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .fancy-dropdown-list::-webkit-scrollbar-track {
+        background: var(--bg-secondary);
+        border-radius: 3px;
+      }
+
+      .fancy-dropdown-list::-webkit-scrollbar-thumb {
+        background: var(--accent);
+        border-radius: 3px;
+      }
+
+      .fancy-dropdown-list li {
+        padding: 0.64rem 0.8rem;
+        border-radius: 6.4px;
+        margin-bottom: 0.24rem;
+        transition: all 0.2s ease;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.8rem;
+      }
+
+      .fancy-dropdown-list li:last-child {
+        margin-bottom: 0;
+      }
+
+      .fancy-dropdown-list li:hover {
+        background: var(--accent);
+        color: #000;
+        transform: translateX(3.2px);
+      }
+
+      .fancy-dropdown-list li.selected {
+        background: var(--accent);
+        color: #000;
+        font-weight: 500;
+      }
+
+      .fancy-dropdown-check {
+        opacity: 0;
+        transform: scale(0.5);
+        transition: all 0.2s ease;
+      }
+
+      .fancy-dropdown-list li.selected .fancy-dropdown-check {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      .fancy-dropdown-list li:hover .fancy-dropdown-check {
+        opacity: 0.7;
+      }
+
+      /* Mobile Responsive Design */
+      @media (max-width: 768px) {
+        body {
+          font-size: clamp(0.9rem, 3vw, 1.1rem);
+        }
+
+        /* Header adjustments for mobile */
+        .header {
+          margin-top: 0.5rem;
+          margin-bottom: 0.2rem;
+        }
+
+        .aikipedia-title {
+          font-size: clamp(1.8rem, 8vw, 2.5rem);
+        }
+
+        .clear-chat-btn {
+          top: 0.8rem;
+          right: 0.8rem;
+          padding: 0.5rem 1rem;
+          font-size: 0.8rem;
+        }
+
+        /* Profile icon mobile positioning */
+        .profile {
+          width: 40px;
+          height: 40px;
+          font-size: 1rem;
+          top: 0.8rem;
+          left: 0.8rem;
+        }
+
+        /* Sidebar mobile adjustments */
+        .sidebar {
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          border-radius: 0;
+          padding: 1rem;
+          z-index: 2002;
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
+        }
+
+        .sidebar.visible {
+          transform: translateX(0);
+          width: 100vw;
+          padding-left: 1rem;
+        }
+
+        .sidebar .profile-details {
+          font-size: 1.2rem;
+          margin-top: 0.5rem;
+        }
+
+        .model-selector-container {
+          margin: 1rem 0 0.5rem 0;
+        }
+
+        .model-selector-container label {
+          font-size: 0.9rem;
+          margin-bottom: 0.3rem;
+        }
+
+        .fancy-dropdown {
+          padding: 0.8rem;
+          font-size: 0.9rem;
+        }
+
+        .fancy-dropdown-selected {
+          font-size: 0.9rem;
+        }
+
+        .fancy-dropdown-list {
+          max-height: 150px;
+          font-size: 0.85rem;
+        }
+
+        .fancy-dropdown-list li {
+          padding: 0.8rem;
+          font-size: 0.85rem;
+        }
+
+        /* Chat area mobile adjustments */
+        .chat-shell {
+          width: 100vw;
+          max-width: 100vw;
+          min-width: 100vw;
+          height: calc(100vh - 4rem);
+          padding: 0 0.5rem;
+        }
+
+        .chat-area {
+          padding: 0.5rem 0 5rem 0;
+          gap: 1rem;
+        }
+
+        .message.user {
+          max-width: 85%;
+          padding: 0.6rem 1rem;
+          font-size: 0.9rem;
+          border-radius: 1rem 1rem 0.3rem 1rem;
+        }
+
+        .message.assistant {
+          font-size: 0.9rem;
+          padding: 0 0.5rem;
+        }
+
+        .system-message {
+          padding: 0.5rem 0.8rem;
+          font-size: 0.8rem;
+          margin: 0.5rem 0;
+        }
+
+        /* Input area mobile adjustments */
+        .input-wrapper {
+          padding-bottom: 1rem;
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: var(--bg);
+          padding: 0.5rem;
+          z-index: 1000;
+        }
+
+        .input-area {
+          border-radius: 1rem;
+          padding: 0.6rem 0.8rem;
+          gap: 0.5rem;
+        }
+
+        .input-area textarea {
+          min-height: 40px;
+          max-height: 80px;
+          font-size: 0.9rem;
+          padding: 0.5rem;
+        }
+
+        .input-area button {
+          padding: 0.6rem 1.2rem;
+          font-size: 0.9rem;
+          border-radius: 0.8rem;
+        }
+
+        /* Code blocks mobile */
+        .chat-area pre code {
+          font-size: 0.75em;
+          padding: 0.6em 0.8em;
+          margin: 0.6em 0;
+        }
+
+        .copy-btn {
+          top: 0.3em;
+          right: 0.5em;
+          padding: 0.15em 0.4em;
+          font-size: 0.6em;
+        }
+
+        /* Loading mobile */
+        .loading {
+          padding: 0.8rem;
+          font-size: 0.9rem;
+          min-height: 50px;
+        }
+
+        .loader {
+          width: 24px;
+          height: 24px;
+        }
+
+        .loader::before {
+          width: 24px;
+          height: 12px;
+          border-radius: 0 0 16px 16px;
+        }
+
+        .loader::after {
+          width: 2.5px;
+          height: 24px;
+          border-radius: 1.25px;
+        }
+
+        /* Auth buttons mobile */
+        .sidebar-auth-btn {
+          padding: 0.8rem 0;
+          font-size: 0.9rem;
+          border-radius: 0.8rem;
+        }
+
+        /* Auth modal mobile */
+        #authModal {
+          padding: 1rem;
+        }
+
+        #loginForm, #registerForm {
+          min-width: 90vw;
+          max-width: 90vw;
+          padding: 1.5rem;
+        }
+
+        #loginForm h2, #registerForm h2 {
+          font-size: 1.5rem;
+        }
+
+        #loginForm input, #registerForm input {
+          padding: 0.8rem;
+          font-size: 0.9rem;
+        }
+
+        #loginSubmitBtn, #registerSubmitBtn {
+          padding: 0.8rem 0;
+          font-size: 0.9rem;
+        }
+
+        /* Usage stats mobile */
+        .usage-stats {
+          font-size: 0.7rem;
+          padding: 0.2rem 0.4rem;
+        }
+
+        /* Overlay adjustments */
+        #sidebarOverlay {
+          background: rgba(0,0,0,0.5);
+        }
+      }
+
+      /* Small mobile devices */
+      @media (max-width: 480px) {
+        .aikipedia-title {
+          font-size: clamp(1.5rem, 7vw, 2rem);
+        }
+
+        .chat-shell {
+          padding: 0 0.3rem;
+        }
+
+        .input-wrapper {
+          padding: 0.3rem;
+        }
+
+        .input-area {
+          padding: 0.5rem 0.6rem;
+        }
+
+        .input-area textarea {
+          min-height: 36px;
+          font-size: 0.85rem;
+        }
+
+        .input-area button {
+          padding: 0.5rem 1rem;
+          font-size: 0.85rem;
+        }
+
+        .message.user {
+          max-width: 90%;
+          padding: 0.5rem 0.8rem;
+          font-size: 0.85rem;
+        }
+
+        .message.assistant {
+          font-size: 0.85rem;
+        }
+
+        .system-message {
+          font-size: 0.75rem;
+          padding: 0.4rem 0.6rem;
+        }
+
+        .sidebar {
+          padding: 0.8rem;
+        }
+
+        .sidebar-auth-btn {
+          padding: 0.7rem 0;
+          font-size: 0.85rem;
+        }
+      }
+
+      /* Landscape mobile adjustments */
+      @media (max-width: 768px) and (orientation: landscape) {
+        .chat-shell {
+          height: calc(100vh - 3rem);
+        }
+
+        .input-wrapper {
+          padding: 0.3rem;
+        }
+
+        .input-area textarea {
+          max-height: 60px;
+        }
+
+        .aikipedia-title {
+          font-size: clamp(1.2rem, 4vw, 1.8rem);
+        }
+
+        .header {
+          margin-top: 0.3rem;
+          margin-bottom: 0.1rem;
+        }
+      }
+    </style>
+    <style>
+      .sidebar-auth-btn {
+        width: 90%;
+        padding: clamp(0.8rem, 2vw, 0.96rem) 0;
+        border-radius: 12.8px;
+        font-size: clamp(0.88rem, 2vw, 1.12rem);
+        font-weight: 600;
+        border: none;
+        outline: none;
+        transition: all 0.2s ease;
+        margin: 0 auto;
+        cursor: pointer;
+        box-shadow: 0 3.2px 9.6px rgba(0, 0, 0, 0.1);
+        letter-spacing: 0.01em;
+      }
+      .sidebar-auth-btn-primary {
+        background: var(--accent);
+        color: #000;
+        border: 0 3.2px 12.8px rgba(213,206,163,0.10);
+      }
+      .sidebar-auth-btn-primary:hover {
+        background: #000;
+        color: var(--accent);
+        border: 2px solid var(--accent);
+      }
+      .sidebar-auth-btn-secondary {
+        background: transparent;
+        color: var(--accent);
+        border: 2px solid var(--accent);
+      }
+      .sidebar-auth-btn-secondary:hover {
+        background: var(--accent);
+        color: #1A120B;
+        box-shadow: 0 3.2px 12.8px rgba(213,206,163,0.10);
+      }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  </head>
+  <body>
+    <div id="sidebarOverlay"></div>
+    <!-- Profile icon always visible, floating top left -->
+    <div class="profile" id="profileToggle" style="position:fixed;top:1.76rem;left:1.76rem;z-index:2101;box-shadow:0 1.6px 9.6px rgba(0,0,0,0.13);">G</div>
+    <aside class="sidebar" id="sidebar">
+      <div class="profile-details" id="profileDetails" style="padding: 0.5rem;">Hello, Guest</div>
+      <button id="logoutBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary" style="display:none; padding: 1.2rem;gap:0.88rem; margin-top:2rem; align-items:center;">Logout</button>
+      <button id="aboutUsBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary" style="padding: 1.2rem; gap: 0.88rem; margin-top: 0.8rem; align-items: center;">About Us</button>
+      <button id="apiBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary" style="padding: 1.2rem; gap: 0.88rem; margin-top: 0.8rem; align-items: center;">API</button>
+      <button id="paymentsBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary" style="padding: 1.2rem; gap: 0.88rem; margin-top: 0.8rem; align-items: center;">Buy echos</button>
+      <button id="homeBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary" style="padding: 1.2rem; gap: 0.88rem; margin-top: 0.8rem; align-items: center;">home</button>
+
+      <!-- Login/Register Buttons -->
+      <div id="authButtons" style="width:100%; display:flex; flex-direction:column; gap:0.88rem; margin-top:2rem; align-items:center;">
+        <button id="loginBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary">Login</button>
+        <button id="registerBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary">Register</button>
+      </div>
+      <div>
+     
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="header">
+        <span class="aikipedia-title">Aikipedia</span>
+      </div>
+      <!-- Compact Model Selector, top-right -->
+      <div id="modelSelectorCompact" style="position:absolute;top:5.2rem;right:2.5rem;z-index:1200;display:flex;flex-direction:column;align-items:flex-end;width:auto;min-width:0;">
+        <button id="modelSelectorBtn" style="background:var(--accent);color:#000;border:none;border-radius:20px;padding:0.5rem 1.2rem;font-weight:600;font-size:1rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.08);display:flex;align-items:center;gap:0.5rem;transition:background 0.2s, color 0.2s;">
+          <span id="modelSelectorBtnName">Qwen</span>
+          <span style="font-size:1.1rem;">▼</span>
+        </button>
+        <div id="modelDropdownList" style="display:none;position:absolute;top:120%;right:0;width:340px;background:var(--bg-secondary);border:1.5px solid var(--border);border-radius:14px;box-shadow:0 2px 16px rgba(0,0,0,0.13);z-index:1201;max-height:380px;overflow-y:auto;">
+          <!-- Model options will be injected here by JS -->
+        </div>
+        <!-- Credits Display -->
+        <div id="creditsDisplay" style="display:none;margin-top:1rem;cursor:pointer;align-items:center;gap:0.7rem;padding:0.7rem 1.1rem;background:var(--accent);border-radius:12px;border:none;box-shadow:0 2px 8px rgba(0,0,0,0.08);font-size:1.08rem;font-weight:600;color:#000;transition:none;min-width:120px;flex-direction:row;">
+          <img src="echo.png" alt="Echos" style="width:28px;height:28px;vertical-align:middle;" />
+          <span id="creditsAmount" style="margin:0 0.5rem 0 0.2rem;">--</span>
+          <button id="reloadCreditsBtn" title="Reload credits" style="background:none;border:none;outline:none;cursor:pointer;padding:0;margin:0;display:inline-flex;align-items:center;">
+            <svg id="reloadCreditsIcon" width="22" height="22" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="color:var(--bg-secondary);transition:color 0.2s;"><path d="M17.65 6.35A8 8 0 1 0 18 10h-2a6 6 0 1 1-1.76-4.24l-2.79 2.79H18V2.5l-2.35 2.35z" fill="currentColor"/></svg>
+          </button>
+        </div>
+      </div>
+      <style>
+        #modelSelectorCompact {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          width: auto;
+          min-width: 0;
+        }
+        #creditsDisplay {
+          display: none;
+          margin-top: 1rem;
+          cursor: pointer;
+          align-items: center;
+          gap: 0.7rem;
+          padding: 0.7rem 1.1rem;
+          background: var(--accent);
+          border-radius: 12px;
+          border: none;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+          font-size: 1.08rem;
+          font-weight: 600;
+          color: #000;
+          transition: none;
+          min-width: 120px;
+          flex-direction: row;
+        }
+        #reloadCreditsBtn {
+          background: none;
+          border: none;
+          outline: none;
+          cursor: pointer;
+          padding: 0;
+          margin: 0;
+          display: inline-flex;
+          align-items: center;
+        }
+        #reloadCreditsIcon {
+          color: #000;
+          transition: none;
+        }
+        #creditsAmount {
+          color: #000;
+        }
+        /* No hover effects */
+      </style>
+      <button class="clear-chat-btn" id="clearChat">Clear Chat</button>
+      <div class="chat-shell">
+        <div class="chat-area" id="chatContainer">
+          <div class="system-message">Welcome to Aikipedia Chat! Login to start a conversation.</div>
+        </div>
+        <div class="input-wrapper">
+          <form class="input-area" id="chatForm">
+            <input type="file" id="imageInput" accept="image/*" style="display:none" />
+            <button id="imageAttachBtn" type="button" title="Attach image" style="background:var(--accent);color:#000;border:none;border-radius:0.8em;padding:0.7rem 1.1rem;margin-right:0.5rem;display:flex;align-items:center;gap:0.4rem;cursor:pointer;font-size:1.1rem;">
+              <span id="imageIcon">🖼️</span>
+            </button>
+            <div id="imagePreview" style="display:none;align-items:center;gap:0.5rem;margin-right:0.5rem;"></div>
+            <textarea id="userInput" placeholder="Type your message..." required></textarea>
+            <button id="sendButton" type="submit">Send</button>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <!-- Auth Modal -->
+    <div id="authModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;">
+      <!-- Login Form -->
+      <div id="loginForm" style="background:var(--bg-secondary);padding:2.5rem 3rem;border-radius:20px;min-width:380px;max-width:420px;display:flex;flex-direction:column;gap:1.5rem;align-items:center;box-shadow:0 10px 25px rgba(0,0,0,0.2);transform:translateY(-20px);transition:transform 0.3s ease;">
+        <div style="text-align:center;margin-bottom:1rem;">
+          <h2 style="color:var(--accent);font-size:2rem;margin-bottom:0.5rem;">Welcome Back</h2>
+          <p style="color:var(--text);opacity:0.8;font-size:0.95rem;">Sign in to continue chatting</p>
+        </div>
+        
+        <div style="width:100%;display:flex;flex-direction:column;gap:1.2rem;">
+          <div>
+            <input id="loginUsername" placeholder="Username" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid var(--border);width:100%;background:var(--bg);color:var(--text);font-size:1rem;transition:border-color 0.3s ease;" />
+          </div>
+          <div>
+            <input id="loginPassword" type="password" placeholder="Password" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid var(--border);width:100%;background:var(--bg);color:var(--text);font-size:1rem;transition:border-color 0.3s ease;" />
+          </div>
+        </div>
+
+        <button id="loginSubmitBtn" style="background:var(--accent);color:#000;font-weight:600;width:100%;padding:1rem 0;border-radius:12px;border:none;cursor:pointer;font-size:1rem;transition:all 0.3s ease;margin-top:0.5rem;">Sign In</button>
+        
+        <div style="display:flex;gap:0.5rem;align-items:center;margin-top:0.5rem;">
+          <span style="color:var(--text);opacity:0.7;font-size:0.9rem;">New to Aikipedia?</span>
+          <button id="switchToRegisterBtn" style="background:none;border:none;color:var(--accent);cursor:pointer;font-weight:600;font-size:0.9rem;">Create Account</button>
+        </div>
+
+        <button id="loginCancelBtn" style="background:none;color:var(--text);border:none;cursor:pointer;font-size:0.9rem;opacity:0.7;margin-top:0.5rem;">Cancel</button>
+        
+        <div id="loginError" style="color:var(--error);font-size:0.95rem;text-align:center;min-height:1.2rem;"></div>
+      </div>
+
+      <!-- Register Form -->
+      <div id="registerForm" style="display:none;background:var(--bg-secondary);padding:2.5rem 3rem;border-radius:20px;min-width:380px;max-width:420px;flex-direction:column;gap:1.5rem;align-items:center;box-shadow:0 10px 25px rgba(0,0,0,0.2);transform:translateY(-20px);transition:transform 0.3s ease;">
+        <div style="text-align:center;margin-bottom:1rem;">
+          <h2 style="color:var(--accent);font-size:2rem;margin-bottom:0.5rem;">Create Account</h2>
+          <p style="color:var(--text);opacity:0.8;font-size:0.95rem;">Join Aikipedia to start chatting</p>
+        </div>
+        
+        <div style="width:100%;display:flex;flex-direction:column;gap:1.2rem;">
+          <div>
+            <input id="registerUsername" placeholder="Choose Username" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid var(--border);width:100%;background:var(--bg);color:var(--text);font-size:1rem;transition:border-color 0.3s ease;" />
+          </div>
+          <div>
+            <input id="registerPassword" type="password" placeholder="Create Password" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid var(--border);width:100%;background:var(--bg);color:var(--text);font-size:1rem;transition:border-color 0.3s ease;" />
+          </div>
+          <div>
+            <input id="registerConfirmPassword" type="password" placeholder="Confirm Password" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid var(--border);width:100%;background:var(--bg);color:var(--text);font-size:1rem;transition:border-color 0.3s ease;" />
+          </div>
+        </div>
+
+        <button id="registerSubmitBtn" style="background:var(--accent);color:#000;font-weight:600;width:100%;padding:1rem 0;border-radius:12px;border:none;cursor:pointer;font-size:1rem;transition:all 0.3s ease;margin-top:0.5rem;">Create Account</button>
+        
+        <div style="display:flex;gap:0.5rem;align-items:center;margin-top:0.5rem;">
+          <span style="color:var(--text);opacity:0.7;font-size:0.9rem;">Already have an account?</span>
+          <button id="switchToLoginBtn" style="background:none;border:none;color:var(--accent);cursor:pointer;font-weight:600;font-size:0.9rem;">Sign In</button>
+        </div>
+
+        <button id="registerCancelBtn" style="background:none;color:var(--text);border:none;cursor:pointer;font-size:0.9rem;opacity:0.7;margin-top:0.5rem;">Cancel</button>
+        
+        <div id="registerError" style="color:var(--error);font-size:0.95rem;text-align:center;min-height:1.2rem;"></div>
+      </div>
+    </div>
+
+    <div id="mobileNoticeModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);z-index:3000;align-items:center;justify-content:center;">
+      <div style="background:var(--bg-secondary);padding:2.2rem 2.5rem;border-radius:18px;min-width:260px;max-width:90vw;display:flex;flex-direction:column;gap:1.2rem;align-items:center;box-shadow:0 8px 22px rgba(0,0,0,0.18);">
+        <h2 style="color:var(--accent);font-size:1.4rem;margin-bottom:0.5rem;text-align:center;">Mobile Experience Notice</h2>
+        <p style="color:var(--text);opacity:0.9;font-size:1.05rem;text-align:center;">Aikipedia is not yet optimized for mobile browsers.<br>We are working on a dedicated app for a better experience.<br>Thank you for your patience!</p>
+        <button id="dismissMobileNoticeBtn" style="background:var(--accent);color:#000;font-weight:600;width:100%;padding:0.7rem 0;border-radius:10px;border:none;cursor:pointer;font-size:1rem;transition:all 0.2s ease;margin-top:0.5rem;">OK, got it</button>
+      </div>
+    </div>
+
+    <!-- Add this modal HTML just before </body> -->
+    <div id="imageModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.85);z-index:3000;align-items:center;justify-content:center;">
+      <span id="imageModalClose" style="position:absolute;top:2.5vw;right:3vw;font-size:2.8rem;color:#fff;cursor:pointer;font-weight:900;z-index:3010;">&times;</span>
+      <img id="imageModalImg" src="" alt="Full Image" style="max-width:90vw;max-height:90vh;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.25);" />
+    </div>
+
+    <script>
+      const chatContainer = document.getElementById("chatContainer");
+      const chatForm = document.getElementById("chatForm");
+      const userInput = document.getElementById("userInput");
+      const sendButton = document.getElementById("sendButton");
+      const profileToggle = document.getElementById("profileToggle");
+      const sidebar = document.getElementById("sidebar");
+      const modelDropdown = document.getElementById("modelDropdown");
+      const profileDetails = document.getElementById("profileDetails");
+      const authButtons = document.getElementById("authButtons");
+      const loginBtn = document.getElementById("loginBtn");
+      const registerBtn = document.getElementById("registerBtn");
+      const authModal = document.getElementById("authModal");
+      const loginUsername = document.getElementById("loginUsername");
+      const loginPassword = document.getElementById("loginPassword");
+      const loginSubmitBtn = document.getElementById("loginSubmitBtn");
+      const switchToRegisterBtn = document.getElementById("switchToRegisterBtn");
+      const loginCancelBtn = document.getElementById("loginCancelBtn");
+      const loginError = document.getElementById("loginError");
+      const registerUsername = document.getElementById("registerUsername");
+      const registerPassword = document.getElementById("registerPassword");
+      const registerConfirmPassword = document.getElementById("registerConfirmPassword");
+      const registerSubmitBtn = document.getElementById("registerSubmitBtn");
+      const switchToLoginBtn = document.getElementById("switchToLoginBtn");
+      const registerCancelBtn = document.getElementById("registerCancelBtn");
+      const registerError = document.getElementById("registerError");
+      const logoutBtn = document.getElementById("logoutBtn");
+      const connectionStatus = document.getElementById("connectionStatus");
+      const clearChatBtn = document.getElementById("clearChat");
+      const sidebarOverlay = document.getElementById("sidebarOverlay");
+      const imageInput = document.getElementById("imageInput");
+      const imageAttachBtn = document.getElementById("imageAttachBtn");
+      const imagePreview = document.getElementById("imagePreview");
+      let uploadedImageUrl = null;
+      let uploadedImageStoragePath = null;
+      let imageUploading = false;
+
+      let chatHistory = [];
+      let loggedInUser = null;
+      let loggedInUserId = null;
+      let authMode = "login";
+      document.getElementById("aboutUsBtn").onclick = function() {
+       window.location.href = "about_us.html";
+     };
+
+     document.getElementById("apiBtn").onclick = function() {
+       window.location.href = "api.html";
+     };
+     document.getElementById("paymentsBtn").onclick = function() {
+       window.location.href = "payments.html";
+     };
+     document.getElementById("homeBtn").onclick = function() {
+       window.location.href = "index.html";
+     };
+      
+      // Check if we have a stored session
+      function checkStoredSession() {
+        const storedUser = localStorage.getItem('aikipediaUser');
+        const storedUserId = localStorage.getItem('aikipediaUserId');
+        if (storedUser && storedUserId) {
+          setLoggedInUser(storedUser, storedUserId);
+          return true;
+        }
+        return false;
+      }
+
+      function setLoggedInUser(username, userId) {
+        loggedInUser = username;
+        loggedInUserId = userId;
+        localStorage.setItem('aikipediaUser', username);
+        localStorage.setItem('aikipediaUserId', userId);
+        profileDetails.textContent = `Hello, ${username}`;
+        profileToggle.textContent = username.charAt(0).toUpperCase();
+        authButtons.style.display = "none";
+        userInput.disabled = false;
+        sendButton.disabled = false;
+        logoutBtn.style.display = "block";
+        
+        // Add welcome message if chat is empty
+        if (chatHistory.length === 0) {
+          addSystemMessage(`Welcome, ${username}! You can start chatting now.`);
+        }
+        showCreditsDisplayIfLoggedIn();
+      }
+      
+      function setLoggedOut() {
+        loggedInUser = null;
+        loggedInUserId = null;
+        localStorage.removeItem('aikipediaUser');
+        localStorage.removeItem('aikipediaUserId');
+        profileDetails.textContent = `Hello, Guest`;
+        profileToggle.textContent = "G";
+        authButtons.style.display = "flex";
+        userInput.disabled = true;
+        sendButton.disabled = true;
+        logoutBtn.style.display = "none";
+        showCreditsDisplayIfLoggedIn();
+      }
+
+      // Handle login/register events
+      loginBtn.onclick = () => {
+        document.getElementById("loginForm").style.display = "flex";
+        document.getElementById("registerForm").style.display = "none";
+        authModal.style.display = "flex";
+        document.getElementById("loginForm").style.transform = "translateY(-20px)";
+        setTimeout(() => {
+          document.getElementById("loginForm").style.transform = "translateY(0)";
+        }, 10);
+      };
+      
+      registerBtn.onclick = () => {
+        document.getElementById("loginForm").style.display = "none";
+        document.getElementById("registerForm").style.display = "flex";
+        authModal.style.display = "flex";
+        document.getElementById("registerForm").style.transform = "translateY(-20px)";
+        setTimeout(() => {
+          document.getElementById("registerForm").style.transform = "translateY(0)";
+        }, 10);
+      };
+
+      // Switch between login and register forms
+      document.getElementById("switchToRegisterBtn").onclick = () => {
+        document.getElementById("loginForm").style.transform = "translateY(-20px)";
+        setTimeout(() => {
+          document.getElementById("loginForm").style.display = "none";
+          document.getElementById("registerForm").style.display = "flex";
+          document.getElementById("registerForm").style.transform = "translateY(-20px)";
+          setTimeout(() => {
+            document.getElementById("registerForm").style.transform = "translateY(0)";
+          }, 10);
+        }, 300);
+      };
+
+      document.getElementById("switchToLoginBtn").onclick = () => {
+        document.getElementById("registerForm").style.transform = "translateY(-20px)";
+        setTimeout(() => {
+          document.getElementById("registerForm").style.display = "none";
+          document.getElementById("loginForm").style.display = "flex";
+          document.getElementById("loginForm").style.transform = "translateY(-20px)";
+          setTimeout(() => {
+            document.getElementById("loginForm").style.transform = "translateY(0)";
+          }, 10);
+        }, 300);
+      };
+      
+      document.getElementById("loginCancelBtn").onclick = () => {
+        document.getElementById("loginForm").style.transform = "translateY(-20px)";
+        setTimeout(() => {
+          authModal.style.display = "none";
+        }, 300);
+      };
+
+      document.getElementById("registerCancelBtn").onclick = () => {
+        document.getElementById("registerForm").style.transform = "translateY(-20px)";
+        setTimeout(() => {
+          authModal.style.display = "none";
+        }, 300);
+      };
+
+      // Add input focus effects
+      const authInputs = document.querySelectorAll("#authModal input");
+      authInputs.forEach(input => {
+        input.addEventListener("focus", () => {
+          input.style.borderColor = "var(--accent)";
+          input.previousElementSibling.style.opacity = "1";
+        });
+        
+        input.addEventListener("blur", () => {
+          input.style.borderColor = "var(--border)";
+          input.previousElementSibling.style.opacity = "0.5";
+        });
+      });
+
+      // Add hover effects to buttons
+      const modalAuthButtons = document.querySelectorAll("#authModal button");
+      modalAuthButtons.forEach(button => {
+        if (!button.id.includes("Cancel") && !button.id.includes("switch")) {
+          button.addEventListener("mouseover", () => {
+            button.style.transform = "translateY(-2px)";
+            button.style.boxShadow = "0 5px 15px rgba(0,0,0,0.2)";
+          });
+          
+          button.addEventListener("mouseout", () => {
+            button.style.transform = "translateY(0)";
+            button.style.boxShadow = "none";
+          });
+        }
+      });
+
+      // // Handle form submissions
+      // chatForm.addEventListener("submit", async (e) => {
+      //   e.preventDefault();
+      //   if (!loggedInUser || !loggedInUserId) return;
+        
+      //   const message = userInput.value.trim();
+      //   if (!message) return;
+
+      //   const model = selectedModel || modelList[0].value;
+
+      //   addMessage("user", message);
+      //   userInput.value = "";
+      //   // Reset textarea height immediately after sending
+      //   userInput.style.height = "64px";
+      //   userInput.disabled = true;
+      //   sendButton.disabled = true;
+
+      //   const loadingDiv = document.createElement("div");
+      //   loadingDiv.className = "loading";
+      //   loadingDiv.innerHTML = "<span class='loader'></span>";
+      //   chatContainer.appendChild(loadingDiv);
+      //   chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: "smooth" });
+
+      //   try {
+      //     // Real backend request only
+      //     const res = await fetch("https://backend.aikipedia.workers.dev/chat", {
+      //       method: "POST",
+      //       headers: {
+      //         "Content-Type": "application/json"
+      //       },
+      //       body: JSON.stringify({ user_id: loggedInUserId, message, model, history: chatHistory }),
+      //     });
+
+      //     const data = await res.json();
+      //     if (!res.ok) throw new Error(data.error || "Something went wrong");
+
+      //     loadingDiv.remove();
+      //     addMessage("assistant", data.response);
+      //     displayCreditUsage(data);
+      //     // Add to chat history
+      //     chatHistory.push({ role: "user", content: message }, { role: "assistant", content: data.response });
+        
+      //   } catch (err) {
+      //     loadingDiv.remove();
+      //     let errorMsg;
+      //     if (err && err.message) {
+      //       errorMsg = err.message;
+      //     } else if (err && err.error) {
+      //       // If backend returns { error: { ... } }
+      //       if (typeof err.error === 'object') {
+      //         errorMsg = JSON.stringify(err.error, null, 2);
+      //       } else {
+      //         errorMsg = String(err.error);
+      //       }
+      //     } else if (typeof err === "object") {
+      //       errorMsg = JSON.stringify(err, null, 2);
+      //     } else {
+      //       errorMsg = String(err);
+      //     }
+          
+      //     addMessage("assistant", "❌ " + errorMsg);
+      //   } finally {
+      //     userInput.disabled = false;
+      //     sendButton.disabled = false;
+      //   }
+      // });
+
+      // Allow pressing Enter to send message
+      userInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          if (e.shiftKey) {
+            // Allow Shift+Enter for new line
+            return;
+          } else {
+            e.preventDefault();
+            if (!sendButton.disabled) {
+              chatForm.dispatchEvent(new Event("submit"));
+            }
+          }
+        }
+      });
+
+      // Auto-resize textarea as user types
+      userInput.addEventListener("input", function() {
+        this.style.height = "auto";
+        this.style.height = (this.scrollHeight > 200 ? 200 : this.scrollHeight) + "px";
+      });
+
+      // Initialize
+      window.addEventListener("DOMContentLoaded", async () => {
+        // Check for saved session
+        const hasSession = checkStoredSession();
+        
+        // Setup input state
+        userInput.disabled = !hasSession;
+        sendButton.disabled = !hasSession;
+        
+        // Show welcome message if no session
+        if (!hasSession) {
+          addSystemMessage("Welcome to Aikipedia Chat! Login to start a conversation.");
+        }
+        showCreditsDisplayIfLoggedIn();
+      });
+
+      // Service Worker Registration for PWA support
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+              console.log('Service Worker registered:', registration);
+            })
+            .catch(error => {
+              console.log('Service Worker registration failed:', error);
+            });
+        });
+      }
+
+      // Handle form submissions
+      document.getElementById("loginSubmitBtn").onclick = async () => {
+        const username = document.getElementById("loginUsername").value.trim();
+        const password = document.getElementById("loginPassword").value.trim();
+        
+        if (!username || !password) {
+          document.getElementById("loginError").textContent = "Please fill in all fields";
+          return;
+        }
+        
+        document.getElementById("loginError").textContent = "";
+        document.getElementById("loginSubmitBtn").disabled = true;
+        
+        try {
+          const res = await fetch("https://backend.aikipedia.workers.dev/flask", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "login", username, password })
+          });
+          
+          const data = await res.json();
+          if (!res.ok || data.error) {
+            throw new Error(data.error || "Login failed");
+          }
+          
+          setLoggedInUser(username, data.user_id);
+          authModal.style.display = "none";
+        } catch (err) {
+          let errorMsg;
+          if (err && err.message) {
+            errorMsg = err.message;
+          } else if (err && err.error) {
+            // If backend returns { error: { ... } }
+            if (typeof err.error === 'object') {
+              errorMsg = JSON.stringify(err.error, null, 2);
+            } else {
+              errorMsg = String(err.error);
+            }
+          } else if (typeof err === "object") {
+            errorMsg = JSON.stringify(err, null, 2);
+          } else {
+            errorMsg = String(err);
+          }
+          document.getElementById("loginError").textContent = errorMsg;
+        } finally {
+          document.getElementById("loginSubmitBtn").disabled = false;
+        }
+      };
+
+      document.getElementById("registerSubmitBtn").onclick = async () => {
+        const username = document.getElementById("registerUsername").value.trim();
+        const password = document.getElementById("registerPassword").value.trim();
+        const confirmPassword = document.getElementById("registerConfirmPassword").value.trim();
+        
+        if (!username || !password || !confirmPassword) {
+          document.getElementById("registerError").textContent = "Please fill in all fields";
+          return;
+        }
+        
+        if (password !== confirmPassword) {
+          document.getElementById("registerError").textContent = "Passwords do not match";
+          return;
+        }
+        
+        document.getElementById("registerError").textContent = "";
+        document.getElementById("registerSubmitBtn").disabled = true;
+        
+        try {
+          const res = await fetch("https://backend.aikipedia.workers.dev/flask", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "register", username, password })
+          });
+          
+          const data = await res.json();
+          if (!res.ok || data.error) {
+            throw new Error(data.error || "Registration failed");
+          }
+          
+          setLoggedInUser(username, data.user_id);
+          authModal.style.display = "none";
+        } catch (err) {
+          let errorMsg;
+          if (err && err.message) {
+            errorMsg = err.message;
+          } else if (err && err.error) {
+            // If backend returns { error: { ... } }
+            if (typeof err.error === 'object') {
+              errorMsg = JSON.stringify(err.error, null, 2);
+            } else {
+              errorMsg = String(err.error);
+            }
+          } else if (typeof err === "object") {
+            errorMsg = JSON.stringify(err, null, 2);
+          } else {
+            errorMsg = String(err);
+          }
+          document.getElementById("registerError").textContent = errorMsg;
+        } finally {
+          document.getElementById("registerSubmitBtn").disabled = false;
+        }
+      };
+
+      logoutBtn.onclick = () => {
+        setLoggedOut();
+        chatHistory = [];
+        chatContainer.innerHTML = "";
+        addSystemMessage("You've been logged out. Login to start a new conversation.");
+      };
+
+      // Clear chat functionality
+      clearChatBtn.onclick = () => {
+        if (confirm("Are you sure you want to clear the chat history?")) {
+          chatHistory = [];
+          chatContainer.innerHTML = "";
+          if (loggedInUser) {
+            addSystemMessage(`Chat cleared. You can start a new conversation, ${loggedInUser}.`);
+          } else {
+            addSystemMessage("Chat cleared. Login to start a conversation.");
+          }
+        }
+      };
+
+      // Toggle sidebar floating visibility
+      profileToggle.addEventListener("click", () => {
+        const isVisible = sidebar.classList.contains("visible");
+        if (!isVisible) {
+          sidebar.classList.add("visible");
+          sidebarOverlay.classList.add("visible");
+        } else {
+          sidebar.classList.remove("visible");
+          sidebarOverlay.classList.remove("visible");
+        }
+      });
+      // Hide sidebar when clicking overlay
+      sidebarOverlay.addEventListener("click", () => {
+        sidebar.classList.remove("visible");
+        sidebarOverlay.classList.remove("visible");
+      });
+
+      // Model Selector Data
+      const modelList = [
+        {
+          value: "qwen/qwen-2.5-coder-32b-instruct",
+          name: "Qwen",
+          desc: "Advanced Coding Capabilities. Great for code, math, and reasoning.",
+          cost: "₹6.47/₹16.18 per 1M tokens"
+        },
+        {
+          value: "google/gemini-2.5-flash-preview",
+          name: "Gemini Flash",
+          desc: "Best For Reasoning Tasks. Excellent for logic, reasoning, and general tasks.",
+          cost: "₹16.18/₹64.72 per 1M tokens"
+        },
+        {
+          value: "mistralai/codestral-2501",
+          name: "Codestral",
+          desc: "High-performance code generation. Fast, accurate code generation for many languages.",
+          cost: "₹32.36/₹97.08 per 1M tokens"
+        },
+        {
+          value: "deepseek/deepseek-chat-v3-0324",
+          name: "DeepSeek V3",
+          desc: "Advanced general-purpose model. Great for reasoning and conversation.",
+          cost: "₹30.20/₹94.78 per 1M tokens"
+        },
+        {
+          value: "anthropic/claude-3-haiku:beta",
+          name: "Claude 3 Haiku (beta)",
+          desc: "Fast, affordable, and supports image input. Great for general tasks and vision.",
+          cost: "₹3.24/₹16.18 per 1M tokens (est.)"
+        }
+      ];
+      let selectedModel = modelList[0].value;
+      const modelSelectorBtn = document.getElementById("modelSelectorBtn");
+      const modelSelectorBtnName = document.getElementById("modelSelectorBtnName");
+      const modelDropdownList = document.getElementById("modelDropdownList");
+      // Populate dropdown
+      modelDropdownList.innerHTML = modelList.map((m, i) => `
+        <div class="model-option" data-value="${m.value}" style="padding:1rem 1.2rem;cursor:pointer;display:flex;flex-direction:column;border-bottom:1px solid var(--border);background:var(--bg-secondary);">
+          <span style="font-weight:700;color:var(--accent);font-size:1rem;">${m.name}</span>
+          <span style="color:var(--text);font-size:0.93rem;opacity:0.8;">${m.desc}</span>
+          <span style="color:#7ecb7e;font-size:0.92rem;margin-top:0.1rem;"><b>Cost:</b> ${m.cost}</span>
+          <span style="color:var(--text);font-size:0.8rem;opacity:0.6;margin-top:0.1rem;">(input/output tokens)</span>
+        </div>
+      `).join("");
+      // Dropdown open/close logic
+      modelSelectorBtn.addEventListener("click", function(e) {
+        e.stopPropagation();
+        const isOpen = modelDropdownList.style.display === "block";
+        document.querySelectorAll('#modelDropdownList').forEach(el => el.style.display = 'none');
+        if (!isOpen) {
+          modelDropdownList.style.display = "block";
+        } else {
+          modelDropdownList.style.display = "none";
+        }
+      });
+      // Model selection logic
+      modelDropdownList.querySelectorAll(".model-option").forEach((el, idx) => {
+        el.addEventListener("click", function(e) {
+          e.stopPropagation();
+          selectedModel = modelList[idx].value;
+          modelSelectorBtnName.textContent = modelList[idx].name;
+          modelDropdownList.style.display = "none";
+          updateImageAttachBtnState();
+        });
+      });
+      document.addEventListener("click", function(e) {
+        if (!modelSelectorBtn.contains(e.target) && !modelDropdownList.contains(e.target)) {
+          modelDropdownList.style.display = "none";
+        }
+      });
+
+      function isImageModelSelected() {
+        return selectedModel === "google/gemini-2.5-flash-preview" || selectedModel === "anthropic/claude-3-haiku:beta";
+      }
+
+      function updateImageAttachBtnState() {
+        if (isImageModelSelected()) {
+          imageAttachBtn.disabled = false;
+          imageAttachBtn.style.opacity = 1;
+          imageAttachBtn.title = "Attach image (Gemini/Claude 3 Haiku)";
+        } else {
+          imageAttachBtn.disabled = true;
+          imageAttachBtn.style.opacity = 0.5;
+          imageAttachBtn.title = "Image input only supported for Gemini and Claude 3 Haiku";
+          clearImagePreview();
+        }
+        updateSendButtonState();
+      }
+
+      function updateSendButtonState() {
+        if (imageUploading) {
+          sendButton.disabled = true;
+          sendButton.title = "Please wait for the image to finish uploading";
+        } else {
+          sendButton.disabled = userInput.disabled || (isImageModelSelected() && uploadedImageUrl === null && imagePreview.style.display === "flex");
+          sendButton.title = sendButton.disabled ? "Please wait for the image to finish uploading" : "Send";
+        }
+      }
+
+      window.addEventListener("DOMContentLoaded", updateImageAttachBtnState);
+
+      imageAttachBtn.onclick = function(e) {
+        if (!isImageModelSelected()) return;
+        imageInput.click();
+      };
+
+      imageInput.onchange = async function(e) {
+        const file = imageInput.files[0];
+        if (!file) return;
+        imagePreview.innerHTML = `<span class='loader' style='width:28px;height:28px;'></span> <span style='color:var(--text);font-size:1rem;'>Uploading...</span>`;
+        imagePreview.style.display = "flex";
+        imageUploading = true;
+        updateSendButtonState();
+        uploadedImageUrl = null;
+        uploadedImageStoragePath = null;
+        // Read file as base64
+        const reader = new FileReader();
+        reader.onload = async function(ev) {
+          const base64 = ev.target.result;
+          try {
+            const res = await fetch("https://backend.aikipedia.workers.dev/upload-image", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ image_base64: base64, filename: file.name, user_id: loggedInUserId })
+            });
+            const data = await res.json();
+            if (res.ok && data.url) {
+              uploadedImageUrl = data.url;
+              uploadedImageStoragePath = data.storage_path;
+              const url = URL.createObjectURL(file);
+              imagePreview.innerHTML = `<img src="${url}" alt="preview" style="max-width:60px;max-height:60px;border-radius:8px;" /> <button id='removeImageBtn' type='button' style='background:none;border:none;color:var(--error);font-size:1.2rem;cursor:pointer;'>✖</button>`;
+              document.getElementById('removeImageBtn').onclick = function() {
+                clearImagePreview();
+                updateSendButtonState();
+              };
+            } else {
+              uploadedImageUrl = null;
+              uploadedImageStoragePath = null;
+              imagePreview.innerHTML = `<span style='color:var(--error);font-size:1rem;'>Image upload failed</span>`;
+              setTimeout(clearImagePreview, 2000);
+            }
+          } catch (err) {
+            uploadedImageUrl = null;
+            uploadedImageStoragePath = null;
+            imagePreview.innerHTML = `<span style='color:var(--error);font-size:1rem;'>Image upload error</span>`;
+            setTimeout(clearImagePreview, 2000);
+          }
+          imageUploading = false;
+          updateSendButtonState();
+        };
+        reader.readAsDataURL(file);
+      };
+
+      function clearImagePreview() {
+        imagePreview.innerHTML = "";
+        imagePreview.style.display = "none";
+        imageInput.value = "";
+        uploadedImageUrl = null;
+        uploadedImageStoragePath = null;
+        imageUploading = false;
+        updateSendButtonState();
+      }
+
+      // Modify chatForm submit
+      chatForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!loggedInUser || !loggedInUserId) return;
+        if (imageUploading) {
+          addSystemMessage("Please wait for the image to finish uploading before sending your message.");
+          return;
+        }
+        const message = userInput.value.trim();
+        if (!message) return;
+        const model = selectedModel || modelList[0].value;
+        addMessage("user", message, isImageModelSelected() ? uploadedImageUrl : undefined);
+        userInput.value = "";
+        userInput.style.height = "64px";
+        userInput.disabled = true;
+        sendButton.disabled = true;
+        imageAttachBtn.disabled = true;
+        const loadingDiv = document.createElement("div");
+        loadingDiv.className = "loading";
+        loadingDiv.innerHTML = "<span class='loader'></span>";
+        chatContainer.appendChild(loadingDiv);
+        chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: "smooth" });
+        let imageUrlToSend = uploadedImageUrl;
+        try {
+          const body = { user_id: loggedInUserId, message, model, history: chatHistory };
+          if (isImageModelSelected() && imageUrlToSend) {
+            body.image_url = imageUrlToSend;
+          }
+          const res = await fetch("https://backend.aikipedia.workers.dev/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || "Something went wrong");
+          loadingDiv.remove();
+          addMessage("assistant", data.response);
+          displayCreditUsage(data);
+          chatHistory.push({ role: "user", content: message }, { role: "assistant", content: data.response });
+        } catch (err) {
+          loadingDiv.remove();
+          let errorMsg = err && err.message ? err.message : (err && err.error ? (typeof err.error === 'object' ? JSON.stringify(err.error, null, 2) : String(err.error)) : (typeof err === "object" ? JSON.stringify(err, null, 2) : String(err)));
+          addMessage("assistant", "❌ " + errorMsg);
+          
+        } finally {
+          userInput.disabled = false;
+          sendButton.disabled = false;
+          updateImageAttachBtnState();
+        }
+      });
+
+      // Add message to chat
+      function addMessage(role, text, imageUrl) {
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `message ${role}`;
+
+        if (role === "user" && imageUrl) {
+          const img = document.createElement("img");
+          img.src = imageUrl;
+          img.alt = "uploaded image";
+          img.style.maxWidth = "240px";
+          img.style.maxHeight = "240px";
+          img.style.display = "block";
+          img.style.marginBottom = "0.5em";
+          img.style.borderRadius = "8px";
+          img.style.cursor = "pointer";
+          img.onclick = function() {
+            imageModalImg.src = imageUrl;
+            imageModal.style.display = 'flex';
+          };
+          messageDiv.appendChild(img);
+        }
+
+        if (role === "assistant") {
+          // Preprocess text to ensure proper math delimiters
+          let processedText = text
+            // Fix single-line equations
+            .replace(/(^|\s)\$([^$]+)\$($|\s)/g, '$1$$$2$$$3')
+            // Fix multi-line equations
+            .replace(/\\begin{equation}([\s\S]*?)\\end{equation}/g, '$$$1$$')
+            // Fix display-style \\[ \\]
+            .replace(/\\\[([\s\S]*?)\\\]/g, '$$$1$$');
+          messageDiv.innerHTML += marked.parse(processedText, {
+            highlight: function(code, lang) {
+              if (lang && hljs.getLanguage(lang)) {
+                return hljs.highlight(code, { language: lang }).value;
+              }
+              return hljs.highlightAuto(code).value;
+            }
+          });
+          setTimeout(() => {
+            renderMathInElement(messageDiv, {
+              delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false},
+                {left: '\\(', right: '\\)', display: false}
+              ],
+              throwOnError: false
+            });
+            document.querySelectorAll('pre code').forEach(hljs.highlightElement);
+            messageDiv.querySelectorAll('pre code').forEach((block) => {
+              if (!block.parentElement.querySelector('.copy-btn')) {
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'copy-btn';
+                copyBtn.textContent = 'Copy';
+                copyBtn.onclick = function(e) {
+                  e.stopPropagation();
+                  navigator.clipboard.writeText(block.textContent);
+                  copyBtn.textContent = 'Copied!';
+                  setTimeout(() => { copyBtn.textContent = 'Copy'; }, 1200);
+                };
+                block.parentElement.style.position = 'relative';
+                block.parentElement.appendChild(copyBtn);
+              }
+            });
+          }, 10);
+        } else if (role === "user") {
+          messageDiv.appendChild(document.createTextNode(text));
+        }
+
+        chatContainer.appendChild(messageDiv);
+        chatContainer.scrollTo({top: chatContainer.scrollHeight, behavior: "smooth"});
+      }
+      
+      // Add system message (gray centered message)
+      function addSystemMessage(text) {
+        const messageDiv = document.createElement("div");
+        messageDiv.className = "system-message";
+        messageDiv.textContent = text;
+        chatContainer.appendChild(messageDiv);
+        chatContainer.scrollTo({top: chatContainer.scrollHeight, behavior: "smooth"});
+      }
+
+      // Display token usage and cost
+      function displayCreditUsage(data) {
+        if (!data || !data.input_tokens) return;
+        const usageDiv = document.createElement('div');
+        usageDiv.className = 'usage-stats';
+        let costLine = `<small>Cost: ₹${data.cost.toFixed(4)} INR credits</small>`;
+        if (data.model === 'google/gemini-2.5-flash-preview' && data.image_url) {
+          costLine += '<small>Includes image charge</small>';
+        }
+        usageDiv.innerHTML = `
+          <small>Tokens: ${data.input_tokens} in / ${data.output_tokens} out (actual)</small>
+          ${costLine}
+        `;
+        chatContainer.appendChild(usageDiv);
+      }
+
+      // Credits Display Logic
+      const creditsDisplay = document.getElementById("creditsDisplay");
+      const creditsAmount = document.getElementById("creditsAmount");
+      const reloadCreditsBtn = document.getElementById("reloadCreditsBtn");
+      let creditsLoading = false;
+      let reloadCooldown = false;
+      
+      async function fetchAndShowCredits() {
+        if (!loggedInUserId) {
+          creditsDisplay.style.display = "none";
+          return;
+        }
+        creditsLoading = true;
+        creditsAmount.textContent = "...";
+        try {
+          const res = await fetch("https://backend.aikipedia.workers.dev/flask", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "get_credits", user_id: loggedInUserId })
+          });
+          const data = await res.json();
+          if (!res.ok || data.error) throw new Error(data.error || "Failed to fetch credits");
+          creditsAmount.textContent = data.money_left !== undefined ? parseFloat(data.money_left).toFixed(2) : "0.00";
+        } catch (e) {
+          creditsAmount.textContent = "--";
+        } finally {
+          creditsLoading = false;
+        }
+      }
+      // Reload button handler with 1-minute cooldown
+      reloadCreditsBtn.onclick = (e) => {
+        e.stopPropagation();
+        if (reloadCooldown || creditsLoading) return;
+        fetchAndShowCredits();
+        reloadCreditsBtn.disabled = true;
+        reloadCooldown = true;
+        setTimeout(() => {
+          reloadCreditsBtn.disabled = false;
+          reloadCooldown = false;
+        }, 60000); // 60 seconds
+      };
+      // Click credits area to go to payments
+      creditsDisplay.onclick = (e) => {
+        window.location.href = "payments.html";
+      };
+      // Show/hide credits display on login/logout
+      function showCreditsDisplayIfLoggedIn() {
+        if (loggedInUserId) {
+          creditsDisplay.style.display = "flex";
+          fetchAndShowCredits();
+        } else {
+          creditsDisplay.style.display = "none";
+        }
+      }
+
+      // Mobile notice popup logic
+      function isMobileDevice() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      }
+      function showMobileNoticeIfNeeded() {
+        if (!isMobileDevice()) return;
+        if (localStorage.getItem('aikipediaMobileNoticeDismissed')) return;
+        const modal = document.getElementById('mobileNoticeModal');
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        document.getElementById('dismissMobileNoticeBtn').onclick = function() {
+          modal.style.display = 'none';
+          document.body.style.overflow = '';
+          localStorage.setItem('aikipediaMobileNoticeDismissed', '1');
+        };
+      }
+      window.addEventListener('DOMContentLoaded', function() {
+        showMobileNoticeIfNeeded();
+      });
+
+      const imageModal = document.getElementById('imageModal');
+      const imageModalImg = document.getElementById('imageModalImg');
+      const imageModalClose = document.getElementById('imageModalClose');
+      imageModalClose.onclick = function() {
+        imageModal.style.display = 'none';
+        imageModalImg.src = '';
+      };
+      imageModal.onclick = function(e) {
+        if (e.target === imageModal) {
+          imageModal.style.display = 'none';
+          imageModalImg.src = '';
+        }
+      };
+    </script>
+    <!-- Background particles effect -->
+    <script src="background-particles.js"></script>
+    <!-- Cursor trail effect -->
+    <script src="cursor-trail.js"></script>
+  </body>
+</html>

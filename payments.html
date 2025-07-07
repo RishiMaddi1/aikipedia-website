@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buy Echos – Aikipedia Payments</title>
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #031626;
+      --bg-secondary: #010512;
+      --text: #a3b2d3;
+      --accent: #4889cd;
+      --border: #000137;
+      --error: #FCADB0;
+      --success: #2F686F;
+    }
+    body {
+      background: #181a20;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1rem 3rem 1rem;
+    }
+    h1 {
+      color: #4889cd;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      font-size: 2.2rem;
+    }
+    .desc {
+      text-align: center;
+      color: #a3b2d3;
+      margin-bottom: 2.5rem;
+      font-size: 1.1rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .card {
+      background: #23272f;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+      padding: 2rem 1.2rem 1.5rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border: 1.5px solid #4889cd22;
+      transition: box-shadow 0.2s, border 0.2s;
+    }
+    .card:hover {
+      box-shadow: 0 8px 32px rgba(72,137,205,0.18);
+      border: 1.5px solid #4889cd;
+    }
+    .echo-img {
+      width: 54px;
+      height: 54px;
+      margin-bottom: 1rem;
+      margin-top: 0.2rem;
+      display: block;
+    }
+    .echos {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #4889cd;
+      margin-bottom: 0.3rem;
+      letter-spacing: 0.01em;
+    }
+    .cost {
+      font-size: 1.1rem;
+      color: #a3b2d3;
+      margin-bottom: 1.2rem;
+    }
+    .razorpay-embed-btn {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+    @media (max-width: 600px) {
+      .container {
+        padding: 1rem 0.2rem 2rem 0.2rem;
+      }
+      .grid {
+        gap: 1.2rem;
+      }
+      .card {
+        padding: 1.2rem 0.5rem 1.2rem 0.5rem;
+      }
+      .echo-img {
+        width: 40px;
+        height: 40px;
+      }
+      h1 {
+        font-size: 1.4rem;
+      }
+    }
+    #creditsDisplay {
+      display: none;
+      position: fixed;
+      top: 1.2rem;
+      right: 2.2rem;
+      z-index: 2102;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.7rem 1.1rem;
+      background: var(--accent);
+      border-radius: 12px;
+      border: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      font-size: 1.08rem;
+      font-weight: 600;
+      color: #000;
+      transition: none;
+      min-width: 120px;
+      flex-direction: row;
+      display: flex;
+    }
+    #reloadCreditsBtn {
+      background: none;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 0;
+      margin: 0;
+      display: inline-flex;
+      align-items: center;
+    }
+    #reloadCreditsIcon {
+      color: #000;
+      transition: none;
+    }
+    #creditsAmount {
+      color: #000;
+    }
+    /* No hover effects */
+  </style>
+</head>
+<body>
+  <button id="backToChatBtn" style="position:fixed;top:clamp(0.5rem, 2vw, 1rem);left:clamp(0.5rem, 2vw, 1rem);z-index:2101;background-color:#4889cd;color:#000;border:none;border-radius:50%;padding:clamp(0.3rem, 1vw, 0.5rem);cursor:pointer;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+  </button>
+  <!-- Credits Display (fixed top right) -->
+  <div id="creditsDisplay" style="display:none;position:fixed;top:1.2rem;right:2.2rem;z-index:2102;align-items:center;gap:0.7rem;padding:0.7rem 1.1rem;background:var(--accent);border-radius:12px;border:none;box-shadow:0 2px 8px rgba(0,0,0,0.08);font-size:1.08rem;font-weight:600;color:#000;transition:none;min-width:120px;flex-direction:row;">
+    <img src="echo.png" alt="Echos" style="width:28px;height:28px;vertical-align:middle;" />
+    <span id="creditsAmount" style="margin:0 0.5rem 0 0.2rem;color:#000;">--</span>
+    <button id="reloadCreditsBtn" title="Reload credits" style="background:none;border:none;outline:none;cursor:pointer;padding:0;margin:0;display:inline-flex;align-items:center;">
+      <svg id="reloadCreditsIcon" width="22" height="22" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="color:#000;transition:none;"><path d="M17.65 6.35A8 8 0 1 0 18 10h-2a6 6 0 1 1-1.76-4.24l-2.79 2.79H18V2.5l-2.35 2.35z" fill="currentColor"/></svg>
+    </button>
+  </div>
+  <div class="container">
+    <h1>Buy Echos</h1>
+    <div class="desc">Purchase echos securely via Razorpay. Choose a pack below to top up your account instantly!</div>
+    <div class="grid">
+      <!-- Card 1 -->
+      <div class="card">
+        <img src="echo.png" alt="Echo" class="echo-img" />
+        <div class="echos">49 Echos</div>
+        <div class="cost">₹49</div>
+        <div class="razorpay-embed-btn" data-url="https://pages.razorpay.com/pl_QjQquQU77UbZiT/view" data-text="Buy 49 echos" data-color="#031626" data-size="medium">
+          <script>
+            (function(){
+              var d=document; var x=!d.getElementById('razorpay-embed-btn-js')
+              if(x){ var s=d.createElement('script'); s.defer=!0;s.id='razorpay-embed-btn-js';
+              s.src='https://cdn.razorpay.com/static/embed_btn/bundle.js';d.body.appendChild(s);} else{var rzp=window['__rzp__'];
+              rzp && rzp.init && rzp.init()}})();
+          </script>
+        </div>
+      </div>
+      <!-- Card 2 -->
+      <div class="card">
+        <img src="echo.png" alt="Echo" class="echo-img" />
+        <div class="echos">95 Echos</div>
+        <div class="cost">₹89</div>
+        <div class="razorpay-embed-btn" data-url="https://pages.razorpay.com/pl_Qjw5ZX6xGSZ1er/view" data-text="Buy 95 echos" data-color="#031626" data-size="medium">
+          <script>
+            (function(){
+              var d=document; var x=!d.getElementById('razorpay-embed-btn-js2')
+              if(x){ var s=d.createElement('script'); s.defer=!0;s.id='razorpay-embed-btn-js2';
+              s.src='https://cdn.razorpay.com/static/embed_btn/bundle.js';d.body.appendChild(s);} else{var rzp=window['__rzp__'];
+              rzp && rzp.init && rzp.init()}})();
+          </script>
+        </div>
+      </div>
+      <!-- Card 3 -->
+      <div class="card">
+        <img src="echo.png" alt="Echo" class="echo-img" />
+        <div class="echos">160 Echos</div>
+        <div class="cost">₹149</div>
+        <div class="razorpay-embed-btn" data-url="https://pages.razorpay.com/pl_QjwBsgePggv6kx/view" data-text="Buy 160 echos" data-color="#031626" data-size="medium">
+          <script>
+            (function(){
+              var d=document; var x=!d.getElementById('razorpay-embed-btn-js3')
+              if(x){ var s=d.createElement('script'); s.defer=!0;s.id='razorpay-embed-btn-js3';
+              s.src='https://cdn.razorpay.com/static/embed_btn/bundle.js';d.body.appendChild(s);} else{var rzp=window['__rzp__'];
+              rzp && rzp.init && rzp.init()}})();
+          </script>
+        </div>
+      </div>
+      <!-- Card 4 -->
+      <div class="card">
+        <img src="echo.png" alt="Echo" class="echo-img" />
+        <div class="echos">325 Echos</div>
+        <div class="cost">₹299</div>
+        <div class="razorpay-embed-btn" data-url="https://pages.razorpay.com/pl_QjwD383wiCB7HL/view" data-text="Buy 325 echos" data-color="#031626" data-size="medium">
+          <script>
+            (function(){
+              var d=document; var x=!d.getElementById('razorpay-embed-btn-js4')
+              if(x){ var s=d.createElement('script'); s.defer=!0;s.id='razorpay-embed-btn-js4';
+              s.src='https://cdn.razorpay.com/static/embed_btn/bundle.js';d.body.appendChild(s);} else{var rzp=window['__rzp__'];
+              rzp && rzp.init && rzp.init()}})();
+          </script>
+        </div>
+      </div>
+      <!-- Card 5 -->
+      <div class="card">
+        <img src="echo.png" alt="Echo" class="echo-img" />
+        <div class="echos">540 Echos</div>
+        <div class="cost">₹499</div>
+        <div class="razorpay-embed-btn" data-url="https://pages.razorpay.com/pl_QjwE6Z4iiiysHT/view" data-text="Buy 540 echos" data-color="#031626" data-size="medium">
+          <script>
+            (function(){
+              var d=document; var x=!d.getElementById('razorpay-embed-btn-js5')
+              if(x){ var s=d.createElement('script'); s.defer=!0;s.id='razorpay-embed-btn-js5';
+              s.src='https://cdn.razorpay.com/static/embed_btn/bundle.js';d.body.appendChild(s);} else{var rzp=window['__rzp__'];
+              rzp && rzp.init && rzp.init()}})();
+          </script>
+        </div>
+      </div>
+      <!-- Card 6 -->
+      <div class="card">
+        <img src="echo.png" alt="Echo" class="echo-img" />
+        <div class="echos">1100 Echos</div>
+        <div class="cost">₹999</div>
+        <div class="razorpay-embed-btn" data-url="https://pages.razorpay.com/pl_QjwFRavylAjZFH/view" data-text="Buy 1100 echos" data-color="#031626" data-size="medium">
+          <script>
+            (function(){
+              var d=document; var x=!d.getElementById('razorpay-embed-btn-js6')
+              if(x){ var s=d.createElement('script'); s.defer=!0;s.id='razorpay-embed-btn-js6';
+              s.src='https://cdn.razorpay.com/static/embed_btn/bundle.js';d.body.appendChild(s);} else{var rzp=window['__rzp__'];
+              rzp && rzp.init && rzp.init()}})();
+          </script>
+        </div>
+      </div>
+      <!-- Card 7 -->
+      <div class="card">
+        <img src="echo.png" alt="Echo" class="echo-img" />
+        <div class="echos">2199 Echos</div>
+        <div class="cost">₹2199</div>
+        <div class="razorpay-embed-btn" data-url="https://pages.razorpay.com/pl_QjwGwxHi0npaKX/view" data-text="Buy 2199 echos" data-color="#031626" data-size="medium">
+          <script>
+            (function(){
+              var d=document; var x=!d.getElementById('razorpay-embed-btn-js7')
+              if(x){ var s=d.createElement('script'); s.defer=!0;s.id='razorpay-embed-btn-js7';
+              s.src='https://cdn.razorpay.com/static/embed_btn/bundle.js';d.body.appendChild(s);} else{var rzp=window['__rzp__'];
+              rzp && rzp.init && rzp.init()}})();
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Background particles effect -->
+  <script src="background-particles.js"></script>
+  <!-- Cursor trail effect -->
+  <script src="cursor-trail.js"></script>
+  <script>
+    document.getElementById("backToChatBtn").onclick = function() {
+      window.location.href = "index.html";
+    };
+    // Credits Display Logic (copied from index.html, adapted for payments page)
+    const creditsDisplay = document.getElementById("creditsDisplay");
+    const creditsAmount = document.getElementById("creditsAmount");
+    const reloadCreditsBtn = document.getElementById("reloadCreditsBtn");
+    let creditsLoading = false;
+    let reloadCooldown = false;
+    // Get userId from localStorage
+    const loggedInUserId = localStorage.getItem('aikipediaUserId');
+    async function fetchAndShowCredits() {
+      if (!loggedInUserId) {
+        creditsDisplay.style.display = "none";
+        return;
+      }
+      creditsLoading = true;
+      creditsAmount.textContent = "...";
+      try {
+        const res = await fetch("https://backend.aikipedia.workers.dev/flask", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "get_credits", user_id: loggedInUserId })
+        });
+        const data = await res.json();
+        if (!res.ok || data.error) throw new Error(data.error || "Failed to fetch credits");
+        creditsAmount.textContent = data.money_left !== undefined ? parseFloat(data.money_left).toFixed(2) : "0.00";
+      } catch (e) {
+        creditsAmount.textContent = "--";
+      } finally {
+        creditsLoading = false;
+      }
+    }
+    // Reload button handler with 1-minute cooldown
+    reloadCreditsBtn.onclick = (e) => {
+      e.stopPropagation();
+      if (reloadCooldown || creditsLoading) return;
+      fetchAndShowCredits();
+      reloadCreditsBtn.disabled = true;
+      reloadCooldown = true;
+      setTimeout(() => {
+        reloadCreditsBtn.disabled = false;
+        reloadCooldown = false;
+      }, 60000); // 60 seconds
+    };
+    // Show/hide credits display on page load
+    window.addEventListener("DOMContentLoaded", () => {
+      if (loggedInUserId) {
+        creditsDisplay.style.display = "flex";
+        fetchAndShowCredits();
+      } else {
+        creditsDisplay.style.display = "none";
+      }
+    });
+  </script>
+</body>
+</html> 

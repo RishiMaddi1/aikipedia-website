@@ -1,0 +1,49 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer circle representing knowledge/completeness -->
+  <circle cx="50" cy="50" r="45" fill="none" stroke="#60a5fa" stroke-width="3"/>
+  
+  <!-- Inner neural network pattern -->
+  <g stroke="#60a5fa" stroke-width="2" fill="#60a5fa">
+    <!-- Central node -->
+    <circle cx="50" cy="50" r="4"/>
+    
+    <!-- Surrounding nodes -->
+    <circle cx="35" cy="35" r="3"/>
+    <circle cx="65" cy="35" r="3"/>
+    <circle cx="35" cy="65" r="3"/>
+    <circle cx="65" cy="65" r="3"/>
+    <circle cx="30" cy="50" r="2.5"/>
+    <circle cx="70" cy="50" r="2.5"/>
+    <circle cx="50" cy="30" r="2.5"/>
+    <circle cx="50" cy="70" r="2.5"/>
+    
+    <!-- Connections -->
+    <line x1="50" y1="50" x2="35" y2="35" stroke-width="1.5" opacity="0.7"/>
+    <line x1="50" y1="50" x2="65" y2="35" stroke-width="1.5" opacity="0.7"/>
+    <line x1="50" y1="50" x2="35" y2="65" stroke-width="1.5" opacity="0.7"/>
+    <line x1="50" y1="50" x2="65" y2="65" stroke-width="1.5" opacity="0.7"/>
+    <line x1="50" y1="50" x2="30" y2="50" stroke-width="1.5" opacity="0.7"/>
+    <line x1="50" y1="50" x2="70" y2="50" stroke-width="1.5" opacity="0.7"/>
+    <line x1="50" y1="50" x2="50" y2="30" stroke-width="1.5" opacity="0.7"/>
+    <line x1="50" y1="50" x2="50" y2="70" stroke-width="1.5" opacity="0.7"/>
+    
+    <!-- Additional connecting lines between outer nodes -->
+    <line x1="35" y1="35" x2="50" y2="30" stroke-width="1" opacity="0.5"/>
+    <line x1="65" y1="35" x2="50" y2="30" stroke-width="1" opacity="0.5"/>
+    <line x1="35" y1="65" x2="50" y2="70" stroke-width="1" opacity="0.5"/>
+    <line x1="65" y1="65" x2="50" y2="70" stroke-width="1" opacity="0.5"/>
+    <line x1="30" y1="50" x2="35" y2="35" stroke-width="1" opacity="0.5"/>
+    <line x1="30" y1="50" x2="35" y2="65" stroke-width="1" opacity="0.5"/>
+    <line x1="70" y1="50" x2="65" y2="35" stroke-width="1" opacity="0.5"/>
+    <line x1="70" y1="50" x2="65" y2="65" stroke-width="1" opacity="0.5"/>
+  </g>
+  
+  <!-- Subtle gradient overlay for depth -->
+  <defs>
+    <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#93c5fd;stop-opacity:0.2"/>
+      <stop offset="100%" style="stop-color:#60a5fa;stop-opacity:0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="50" cy="50" r="35" fill="url(#centerGlow)"/>
+</svg>
