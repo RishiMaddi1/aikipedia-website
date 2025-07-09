@@ -31,7 +31,7 @@
             --accent: #4889cd;
             --border: #000137;
             --error: #FCADB0;
-            --success: #2F686F  ;
+            --success: #2F686F ;
         }
 
         body {
@@ -275,33 +275,97 @@
     </style>
 </head>
 <body>
+    <!-- YouTube Video Placeholder -->
+    <div id="videoSection" style="width:100%;max-width:800px;margin:2rem auto 2.5rem auto;text-align:center;">
+      <div style="background:#222;border-radius:12px;min-height:320px;display:flex;align-items:center;justify-content:center;color:#888;font-size:1.2rem;">
+        <iframe width="100%" height="320" src="https://www.youtube.com/embed/jBd0W2hCBT0" title="YouTube video" frameborder="0" allowfullscreen style="border-radius:12px;"></iframe>
+      </div>
+    </div>
+    
     <button id="backToChatBtn" style="position:fixed;top:clamp(0.5rem, 2vw, 1rem);left:clamp(0.5rem, 2vw, 1rem);z-index:2101;background-color:var(--accent);color:#000;border:none;border-radius:50%;padding:clamp(0.3rem, 1vw, 0.5rem);cursor:pointer;">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
             <line x1="19" y1="12" x2="5" y2="12"></line>
             <polyline points="12 19 5 12 12 5"></polyline>
         </svg>
     </button>
-    <br><br>
-    <p>This platform is designed to empower developers, researchers, and hobbyists by allowing them to bring their own API keys and utilize them seamlessly for personal, professional, or hackathon projects. By integrating powerful LLM (Large Language Model) wrappers, users can create intelligent applications that leverage the latest in generative AI, NLP, and automation technologies. Whether you're building a chatbot, writing code assistants, or crafting innovative tools, our system gives you the flexibility to connect your own API services and unlock full potential with a customizable LLM stack.<br><br><strong>Note:</strong> All API calls now require your <span style="color:var(--accent)"><b>user_id</b></span> (not username) for authentication and usage tracking.</p>
-    <h2 style="color: var(--accent); margin-top: 2rem;">API Usage Examples</h2>
-<div class="api-wrapper">
-  <div class="api-tabs">
-    <button class="tab-btn active" data-lang="curl">cURL</button>
-    <button class="tab-btn" data-lang="python">Python</button>
-    <button class="tab-btn" data-lang="javascript">JavaScript</button>
-    <button class="tab-btn" data-lang="nodejs">Node.js</button>
-    <button class="tab-btn" data-lang="go">Go</button>
-    <button class="tab-btn" data-lang="java">Java</button>
-    <button class="tab-btn" data-lang="php">PHP</button>
-    <button class="tab-btn" data-lang="ruby">Ruby</button>
-    <button class="tab-btn" data-lang="csharp">C#</button>
-  </div>
+    <br>
 
-  <div class="code-box">
-    <div class="flip-container">
-    <div class="code-block active" id="curl">
-      <button class="copy-btn">📋</button>
-      <pre><code class="language-bash">curl -X POST \
+    <!-- USER ID/API KEY SECTION -->
+    <div style="max-width:420px;margin:2.5rem auto 1.5rem auto;display:flex;justify-content:center;align-items:center;gap:0.7em;">
+      <div id="userIdBox" style="display:none;max-width:320px;padding:0.25em 0.8em;background:var(--bg-secondary);color:var(--accent);border:1.2px solid var(--accent);border-radius:2em;font-size:0.98em;font-family:monospace;font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,0.06);letter-spacing:0.01em;line-height:1.6;white-space:nowrap;text-align:center;"></div>
+      <button id="copyUserIdBtn" style="display:none;padding:0.25em 0.8em;background:var(--accent);color:#000;border:none;border-radius:2em;font-size:0.98em;font-weight:600;cursor:pointer;transition:background 0.2s;">Copy</button>
+    </div>
+
+    <!-- TOP TEXT -->
+    <div style="text-align:center;margin-bottom:1.5rem;font-size:1.08em;color:var(--accent);font-weight:600;">Your user_id is your API key for this platform.</div>
+
+    <!-- Model Table Section -->
+    <h2 style="color: var(--accent); margin-top: 2.5rem;">Available Models</h2>
+    <div style="overflow-x:auto;margin-bottom:2.5rem;">
+      <table style="width:100%;max-width:900px;margin:auto;border-collapse:collapse;background:var(--bg-secondary);color:var(--text);border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+        <thead style="background:var(--bg);">
+          <tr style="color:var(--accent);font-weight:700;">
+            <th style="padding:1em 0.5em;">Model Name</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Supports Image?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding-left:0.5em;">Qwen</td>
+            <td style="padding-left:0.5em;">Text</td>
+            <td style="padding-left:0.5em;">Advanced coding, math, and reasoning</td>
+            <td style="padding-left:0.5em;">No</td>
+          </tr>
+          <tr>
+            <td style="padding-left:0.5em;">Gemini Flash</td>
+            <td style="padding-left:0.5em;">Text & Vision</td>
+            <td style="padding-left:0.5em;">Logic, reasoning, general tasks, images</td>
+            <td style="padding-left:0.5em;">Yes</td>
+          </tr>
+          <tr>
+            <td style="padding-left:0.5em;">Codestral</td>
+            <td style="padding-left:0.5em;">Text</td>
+            <td style="padding-left:0.5em;">High-performance code generation</td>
+            <td style="padding-left:0.5em;">No</td>
+          </tr>
+          <tr>
+            <td style="padding-left:0.5em;">DeepSeek V3</td>
+            <td style="padding-left:0.5em;">Text</td>
+            <td style="padding-left:0.5em;">General-purpose, reasoning, conversation</td>
+            <td style="padding-left:0.5em;">No</td>
+          </tr>
+          <tr>
+            <td style="padding-left:0.5em;">Claude 3 Haiku (beta)</td>
+            <td style="padding-left:0.5em;">Text & Vision</td>
+            <td style="padding-left:0.5em;">Fast, affordable, supports image input</td>
+            <td style="padding-left:0.5em;">Yes</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- TEXT MODELS SECTION -->
+    <h2 style="color: var(--accent); margin-top: 2.5rem;">Text Model API Usage</h2>
+    <p>Text models are ideal for chat, code, math, and reasoning tasks. <b>They do not accept images.</b> Use these models for pure text-based interactions.</p>
+    <div class="api-wrapper">
+      <div class="api-tabs">
+        <button class="tab-btn active" data-lang="curl-text">cURL</button>
+        <button class="tab-btn" data-lang="python-text">Python</button>
+        <button class="tab-btn" data-lang="javascript-text">JavaScript</button>
+        <button class="tab-btn" data-lang="nodejs-text">Node.js</button>
+        <button class="tab-btn" data-lang="go-text">Go</button>
+        <button class="tab-btn" data-lang="java-text">Java</button>
+        <button class="tab-btn" data-lang="php-text">PHP</button>
+        <button class="tab-btn" data-lang="ruby-text">Ruby</button>
+        <button class="tab-btn" data-lang="csharp-text">C#</button>
+      </div>
+      <div class="code-box">
+        <div class="flip-container">
+          <div class="code-block active" id="curl-text">
+            <button class="copy-btn">📋</button>
+            <pre><code class="language-bash">curl -X POST \
   https://backend.aikipedia.workers.dev/chat \
   -H 'Content-Type: application/json' \
   -d '{
@@ -310,9 +374,9 @@
     "model": "qwen/qwen-2.5-coder-32b-instruct",
     "history": []
 }'</code></pre>
-    </div>
-</div>
-    <div class="code-block" id="python">
+          </div>
+        </div>
+        <div class="code-block" id="python-text">
         <div class="flip-container">
       <button class="copy-btn">📋</button>
       <pre><code class="language-python">import requests
@@ -330,7 +394,7 @@ print(response.json())</code></pre>
     </div>
     </div>
 
-    <div class="code-block" id="javascript">
+    <div class="code-block" id="javascript-text">
         <div class="flip-container">
       <button class="copy-btn">📋</button>
       <pre><code class="language-javascript">fetch("https://backend.aikipedia.workers.dev/chat", {
@@ -348,7 +412,7 @@ print(response.json())</code></pre>
     </div>
     </div>
 
-    <div class="code-block" id="nodejs">
+    <div class="code-block" id="nodejs-text">
         <div class="flip-container">
       <button class="copy-btn">📋</button>
       <pre><code class="language-javascript">const axios = require("axios");
@@ -362,7 +426,7 @@ axios.post("https://backend.aikipedia.workers.dev/chat", {
     </div>
     </div>
 
-    <div class="code-block" id="go">
+    <div class="code-block" id="go-text">
         <div class="flip-container">
       <button class="copy-btn">📋</button>
       <pre><code class="language-go">package main
@@ -388,7 +452,7 @@ func main() {
     </div>
     </div>
 
-    <div class="code-block" id="java">
+    <div class="code-block" id="java-text">
         <div class="flip-container">
       <button class="copy-btn">📋</button>
       <pre><code class="language-java">HttpClient client = HttpClient.newHttpClient();
@@ -403,7 +467,7 @@ System.out.println(response.body());</code></pre>
     </div>
     </div> 
 
-    <div class="code-block" id="php">
+    <div class="code-block" id="php-text">
         <div class="flip-container">
       <button class="copy-btn">📋</button>
       <pre><code class="language-php">&lt;?php
@@ -428,7 +492,7 @@ echo $result;
 ?&gt;</code></pre>
     </div>
 </div>
-    <div class="code-block" id="ruby">
+    <div class="code-block" id="ruby-text">
         <div class="flip-container">
       <button class="copy-btn">📋</button>
       <pre><code class="language-ruby">require 'net/http'
@@ -446,7 +510,7 @@ puts res.body</code></pre>
     </div>
     </div>
 
-    <div class="code-block" id="csharp">
+    <div class="code-block" id="csharp-text">
         <div class="flip-container">
       <button class="copy-btn">📋</button>
       <pre><code class="language-csharp">using System.Net.Http;
@@ -469,12 +533,211 @@ Console.WriteLine(responseBody);</code></pre>
   </div>
 </div>
 
-  <div id="userIdBox" style="display:none;margin:2.5rem auto 1.5rem auto;max-width:320px;padding:0.25em 0.8em;background:var(--bg-secondary);color:var(--accent);border:1.2px solid var(--accent);border-radius:2em;font-size:0.98em;font-family:monospace;font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,0.06);letter-spacing:0.01em;line-height:1.6;white-space:nowrap;text-align:center;"></div>
+    <!-- VISION MODELS SECTION -->
+    <h2 style="color: var(--accent); margin-top: 2.5rem;">Vision Model API Usage</h2>
+    <p>Vision models support both text and image input. Use these models to send images along with your message. <b>Only Gemini Flash and Claude 3 Haiku currently support images.</b></p>
+    <div class="api-wrapper">
+      <div class="api-tabs">
+        <button class="tab-btn active" data-lang="curl-vision">cURL</button>
+        <button class="tab-btn" data-lang="python-vision">Python</button>
+        <button class="tab-btn" data-lang="javascript-vision">JavaScript</button>
+        <button class="tab-btn" data-lang="nodejs-vision">Node.js</button>
+        <button class="tab-btn" data-lang="go-vision">Go</button>
+        <button class="tab-btn" data-lang="java-vision">Java</button>
+        <button class="tab-btn" data-lang="php-vision">PHP</button>
+        <button class="tab-btn" data-lang="ruby-vision">Ruby</button>
+        <button class="tab-btn" data-lang="csharp-vision">C#</button>
+      </div>
+      <div class="code-box">
+        <div class="flip-container">
+          <div class="code-block active" id="curl-vision">
+            <button class="copy-btn">📋</button>
+            <pre><code class="language-bash">curl -X POST \
+  https://backend.aikipedia.workers.dev/chat \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "user_id": "your_user_id",
+    "message": "Describe this image",
+    "model": "google/gemini-2.5-flash-preview",
+    "image_url": "https://your-uploaded-image-url",
+    "history": []
+}'</code></pre>
+          </div>
+        </div>
+        <div class="code-block" id="python-vision">
+        <div class="flip-container">
+      <button class="copy-btn">📋</button>
+      <pre><code class="language-python">import requests
 
-    <button id="resetUserIdBtn" style="margin:1.5em 0;padding:0.7em 1.2em;background:var(--accent);color:#000;border:none;border-radius:8px;cursor:pointer;font-weight:600;">Reset my API key (user_id)</button>
-    <div id="resetUserIdMsg" style="margin-top:1em;color:var(--accent);font-weight:600;"></div>
+response = requests.post(
+  "https://backend.aikipedia.workers.dev/chat",
+  json={
+    "user_id": "your_user_id",
+    "message": "Describe this image",
+    "model": "google/gemini-2.5-flash-preview",
+    "image_url": "https://your-uploaded-image-url",
+    "history": []
+  }
+)
+print(response.json())</code></pre>
+    </div>
+    </div>
 
-    <script>
+    <div class="code-block" id="javascript-vision">
+        <div class="flip-container">
+      <button class="copy-btn">📋</button>
+      <pre><code class="language-javascript">fetch("https://backend.aikipedia.workers.dev/chat", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    user_id: "your_user_id",
+    message: "Describe this image",
+    model: "google/gemini-2.5-flash-preview",
+    image_url: "https://your-uploaded-image-url",
+    history: []
+  })
+})
+.then(res => res.json())
+.then(console.log);</code></pre>
+    </div>
+    </div>
+
+    <div class="code-block" id="nodejs-vision">
+        <div class="flip-container">
+      <button class="copy-btn">📋</button>
+      <pre><code class="language-javascript">const axios = require("axios");
+
+axios.post("https://backend.aikipedia.workers.dev/chat", {
+  user_id: "your_user_id",
+  message: "Describe this image",
+  model: "google/gemini-2.5-flash-preview",
+  image_url: "https://your-uploaded-image-url",
+  history: []
+}).then(res => console.log(res.data));</code></pre>
+    </div>
+    </div>
+
+    <div class="code-block" id="go-vision">
+        <div class="flip-container">
+      <button class="copy-btn">📋</button>
+      <pre><code class="language-go">package main
+
+import (
+  "bytes"
+  "encoding/json"
+  "net/http"
+  "fmt"
+)
+
+func main() {
+  payload := map[string]interface{}{
+    "user_id": "your_user_id",
+    "message": "Describe this image",
+    "model": "google/gemini-2.5-flash-preview",
+    "image_url": "https://your-uploaded-image-url",
+    "history": []string{},
+  }
+  jsonData, _ := json.Marshal(payload)
+  resp, _ := http.Post("https://backend.aikipedia.workers.dev/chat", "application/json", bytes.NewBuffer(jsonData))
+  fmt.Println(resp.Status)
+}</code></pre>
+    </div>
+    </div>
+
+    <div class="code-block" id="java-vision">
+        <div class="flip-container">
+      <button class="copy-btn">📋</button>
+      <pre><code class="language-java">HttpClient client = HttpClient.newHttpClient();
+HttpRequest request = HttpRequest.newBuilder()
+  .uri(URI.create("https://backend.aikipedia.workers.dev/chat"))
+  .header("Content-Type", "application/json")
+  .POST(HttpRequest.BodyPublishers.ofString("{\"user_id\":\"your_user_id\",\"message\":\"Describe this image\",\"model\":\"google/gemini-2.5-flash-preview\",\"image_url\":\"https://your-uploaded-image-url\",\"history\":[]}"))
+  .build();
+
+HttpResponse&lt;String&gt; response = client.send(request, HttpResponse.BodyHandlers.ofString());
+System.out.println(response.body());</code></pre>
+    </div>
+    </div> 
+
+    <div class="code-block" id="php-vision">
+        <div class="flip-container">
+      <button class="copy-btn">📋</button>
+      <pre><code class="language-php">&lt;?php
+$payload = json_encode([
+  "user_id" => "your_user_id",
+  "message" => "Describe this image",
+  "model" => "google/gemini-2.5-flash-preview",
+  "image_url" => "https://your-uploaded-image-url",
+  "history" => []
+]);
+
+$options = [
+  'http' => [
+    'header'  => "Content-type: application/json\r\n",
+    'method'  => 'POST',
+    'content' => $payload,
+  ],
+];
+
+$context  = stream_context_create($options);
+$result = file_get_contents("https://backend.aikipedia.workers.dev/chat", false, $context);
+echo $result;
+?&gt;</code></pre>
+    </div>
+</div>
+    <div class="code-block" id="ruby-vision">
+        <div class="flip-container">
+      <button class="copy-btn">📋</button>
+      <pre><code class="language-ruby">require 'net/http'
+require 'json'
+
+uri = URI('https://backend.aikipedia.workers.dev/chat')
+res = Net::HTTP.post(uri, {
+  user_id: "your_user_id",
+  message: "Describe this image",
+  model: "google/gemini-2.5-flash-preview",
+  image_url: "https://your-uploaded-image-url",
+  history: []
+}.to_json, "Content-Type" => "application/json")
+
+puts res.body</code></pre>
+    </div>
+    </div>
+
+    <div class="code-block" id="csharp-vision">
+        <div class="flip-container">
+      <button class="copy-btn">📋</button>
+      <pre><code class="language-csharp">using System.Net.Http;
+using System.Text;
+using System.Text.Json;
+
+var client = new HttpClient();
+var content = new StringContent(JsonSerializer.Serialize(new {
+  user_id = "your_user_id",
+  message = "Describe this image",
+  model = "google/gemini-2.5-flash-preview",
+  image_url = "https://your-uploaded-image-url",
+  history = new string[] {}
+}), Encoding.UTF8, "application/json");
+
+var response = await client.PostAsync("https://backend.aikipedia.workers.dev/chat", content);
+string responseBody = await response.Content.ReadAsStringAsync();
+Console.WriteLine(responseBody);</code></pre>
+    </div>
+    </div>
+  </div>
+</div>
+
+    <!-- API KEY OPTIONS BELOW VISION MODELS -->
+    <div style="max-width:420px;margin:3rem auto 1.5rem auto;">
+      <button id="showApiKeyOptionsBtn" style="padding:0.6em 1.2em;background:var(--accent);color:#000;border:none;border-radius:8px;cursor:pointer;font-weight:600;">Show API Key Options</button>
+      <div id="apiKeyOptions" style="display:none;flex-direction:column;align-items:center;gap:0.5em;margin-top:0.7em;">
+        <button id="resetUserIdBtn" style="margin:0.5em 0;padding:0.7em 1.2em;background:var(--accent);color:#000;border:none;border-radius:8px;cursor:pointer;font-weight:600;">Reset my API key (user_id)</button>
+        <div id="resetUserIdMsg" style="margin-top:1em;color:var(--accent);font-weight:600;"></div>
+      </div>
+    </div>
+
+  <script>
       document.getElementById("backToChatBtn").onclick = function() {
         window.location.href = "index.html";
       };
@@ -522,7 +785,7 @@ Console.WriteLine(responseBody);</code></pre>
 
       blocks.forEach(block => {
         block.classList.remove('active');
-        if (block.id === lang) {
+        if (block.id.startsWith(lang.split('-')[0])) { // Match prefix for text models
           block.classList.add('active');
         }
       });
@@ -569,13 +832,33 @@ Console.WriteLine(responseBody);</code></pre>
     const user = localStorage.getItem('aikipediaUser');
     const userId = localStorage.getItem('aikipediaUserId');
     const userIdBox = document.getElementById('userIdBox');
+    const copyUserIdBtn = document.getElementById('copyUserIdBtn');
     if (user && userId) {
       userIdBox.style.display = 'block';
-      userIdBox.innerHTML = `ID: <span style='color:var(--accent);'>${userId}</span>`;
+      userIdBox.innerHTML = `user_id: <span style='color:var(--accent);'>${userId}</span>`;
+      copyUserIdBtn.style.display = 'inline-block';
+      copyUserIdBtn.onclick = function() {
+        navigator.clipboard.writeText(userId);
+        copyUserIdBtn.textContent = 'Copied!';
+        setTimeout(() => { copyUserIdBtn.textContent = 'Copy'; }, 1200);
+      };
     } else {
       userIdBox.style.display = 'none';
+      copyUserIdBtn.style.display = 'none';
     }
   });
+
+  // Toggle API Key Options
+  document.getElementById('showApiKeyOptionsBtn').onclick = function() {
+    const options = document.getElementById('apiKeyOptions');
+    if (options.style.display === 'none' || options.style.display === '') {
+      options.style.display = 'flex';
+      this.textContent = 'Hide API Key Options';
+    } else {
+      options.style.display = 'none';
+      this.textContent = 'Show API Key Options';
+    }
+  };
 </script>
 
 <script>
@@ -596,7 +879,7 @@ Console.WriteLine(responseBody);</code></pre>
       const userIdBox = document.getElementById('userIdBox');
       if (userIdBox) {
         userIdBox.style.display = 'block';
-        userIdBox.innerHTML = `ID: <span style='color:var(--accent);'>${data.new_user_id}</span>`;
+        userIdBox.innerHTML = `user_id: <span style='color:var(--accent);'>${data.new_user_id}</span>`;
       }
     } else {
       document.getElementById('resetUserIdMsg').textContent = "Failed to reset user_id: " + (data.error || "Unknown error");

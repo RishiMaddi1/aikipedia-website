@@ -2,9 +2,6 @@
 
 ![image](https://github.com/user-attachments/assets/8caa66cf-5785-417a-aacf-0c9c1b928e8c)
 
-use username:testing1; password testing1 To try the website
-
-
 # Aikipedia Chat
 
 Aikipedia Chat is a platform designed to provide affordable access to advanced AI models. By acting as an intermediary, we offer a cost-effective solution for users in India to leverage powerful AI capabilities without the high upfront costs typically associated with these services.
