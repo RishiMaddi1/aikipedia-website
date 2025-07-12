@@ -1,6 +1,7 @@
 # https://aikipedia.in/
 
-![image](https://github.com/user-attachments/assets/8caa66cf-5785-417a-aacf-0c9c1b928e8c)
+![image](https://github.com/user-attachments/assets/475d5723-34c5-4930-ae4c-48244dc245f5)
+
 
 # Aikipedia Chat
 
