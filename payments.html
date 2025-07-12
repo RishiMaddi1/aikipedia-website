@@ -162,6 +162,21 @@
   <div class="container">
     <h1>Buy Echos</h1>
     <div class="desc">Purchase echos securely via Razorpay. Choose a pack below to top up your account instantly!</div>
+    
+    <!-- USER ID SECTION -->
+    <div style="max-width:420px;margin:2.5rem auto 1.5rem auto;display:flex;justify-content:center;align-items:center;gap:0.7em;">
+      <div id="userIdBox" style="display:none;max-width:320px;padding:0.25em 0.8em;background:var(--bg-secondary);color:var(--accent);border:1.2px solid var(--accent);border-radius:2em;font-size:0.98em;font-family:monospace;font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,0.06);letter-spacing:0.01em;line-height:1.6;white-space:nowrap;text-align:center;"></div>
+      <button id="copyUserIdBtn" style="display:none;padding:0.25em 0.8em;background:var(--accent);color:#000;border:none;border-radius:2em;font-size:0.98em;font-weight:600;cursor:pointer;transition:background 0.2s;">Copy</button>
+    </div>
+
+    <!-- IMPORTANT NOTICE -->
+    <div style="text-align:center;margin-bottom:2rem;padding:1rem 1.5rem;background:var(--bg-secondary);border:1.5px solid var(--accent);border-radius:12px;max-width:600px;margin-left:auto;margin-right:auto;">
+      <div style="color:var(--accent);font-weight:700;font-size:1.1rem;margin-bottom:0.5rem;">⚠️ Important Payment Notice</div>
+      <div style="color:var(--text);font-size:0.95rem;line-height:1.5;">
+        When making your payment, please ensure you enter your exact <strong>user_id</strong> in the payment form. 
+        This is crucial for crediting your account correctly. Your user_id is displayed above.
+      </div>
+    </div>
     <div class="grid">
       <!-- Card 1 -->
       <div class="card">
@@ -278,6 +293,28 @@
     document.getElementById("backToChatBtn").onclick = function() {
       window.location.href = "index.html";
     };
+    
+    // Show user_id if logged in (same as api.html localStorage keys)
+    window.addEventListener('DOMContentLoaded', function() {
+      const user = localStorage.getItem('aikipediaUser');
+      const userId = localStorage.getItem('aikipediaUserId');
+      const userIdBox = document.getElementById('userIdBox');
+      const copyUserIdBtn = document.getElementById('copyUserIdBtn');
+      if (user && userId) {
+        userIdBox.style.display = 'block';
+        userIdBox.innerHTML = `user_id: <span style='color:var(--accent);'>${userId}</span>`;
+        copyUserIdBtn.style.display = 'inline-block';
+        copyUserIdBtn.onclick = function() {
+          navigator.clipboard.writeText(userId);
+          copyUserIdBtn.textContent = 'Copied!';
+          setTimeout(() => { copyUserIdBtn.textContent = 'Copy'; }, 1200);
+        };
+      } else {
+        userIdBox.style.display = 'none';
+        copyUserIdBtn.style.display = 'none';
+      }
+    });
+    
     // Credits Display Logic (copied from index.html, adapted for payments page)
     const creditsDisplay = document.getElementById("creditsDisplay");
     const creditsAmount = document.getElementById("creditsAmount");

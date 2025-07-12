@@ -288,6 +288,15 @@
             <polyline points="12 19 5 12 12 5"></polyline>
         </svg>
     </button>
+    
+    <!-- Credits Display -->
+    <div id="creditsDisplay" style="display:none;position:fixed;top:clamp(0.5rem, 2vw, 1rem);right:clamp(0.5rem, 2vw, 1rem);z-index:2101;cursor:pointer;align-items:center;gap:0.7rem;padding:0.7rem 1.1rem;background:var(--accent);border-radius:12px;border:none;box-shadow:0 2px 8px rgba(0,0,0,0.08);font-size:1.08rem;font-weight:600;color:#000;transition:none;min-width:120px;flex-direction:row;">
+      <img src="echo.png" alt="Echos" style="width:28px;height:28px;vertical-align:middle;" />
+      <span id="creditsAmount" style="margin:0 0.5rem 0 0.2rem;">--</span>
+      <button id="reloadCreditsBtn" title="Reload credits" style="background:none;border:none;outline:none;cursor:pointer;padding:0;margin:0;display:inline-flex;align-items:center;">
+        <svg id="reloadCreditsIcon" width="22" height="22" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="color:var(--bg-secondary);transition:color 0.2s;"><path d="M17.65 6.35A8 8 0 1 0 18 10h-2a6 6 0 1 1-1.76-4.24l-2.79 2.79H18V2.5l-2.35 2.35z" fill="currentColor"/></svg>
+      </button>
+    </div>
     <br>
 
     <!-- USER ID/API KEY SECTION -->
@@ -846,7 +855,70 @@ Console.WriteLine(responseBody);</code></pre>
       userIdBox.style.display = 'none';
       copyUserIdBtn.style.display = 'none';
     }
+    
+    // Credits Display Logic
+    showCreditsDisplayIfLoggedIn();
   });
+
+  // Credits Display Logic
+  const creditsDisplay = document.getElementById("creditsDisplay");
+  const creditsAmount = document.getElementById("creditsAmount");
+  const reloadCreditsBtn = document.getElementById("reloadCreditsBtn");
+  let creditsLoading = false;
+  let reloadCooldown = false;
+  
+  async function fetchAndShowCredits() {
+    const userId = localStorage.getItem('aikipediaUserId');
+    if (!userId) {
+      creditsDisplay.style.display = "none";
+      return;
+    }
+    creditsLoading = true;
+    creditsAmount.textContent = "...";
+    try {
+      const res = await fetch("https://backend.aikipedia.workers.dev/flask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "get_credits", user_id: userId })
+      });
+      const data = await res.json();
+      if (!res.ok || data.error) throw new Error(data.error || "Failed to fetch credits");
+      creditsAmount.textContent = data.money_left !== undefined ? parseFloat(data.money_left).toFixed(2) : "0.00";
+    } catch (e) {
+      creditsAmount.textContent = "--";
+    } finally {
+      creditsLoading = false;
+    }
+  }
+  
+  // Reload button handler with 1-minute cooldown
+  reloadCreditsBtn.onclick = (e) => {
+    e.stopPropagation();
+    if (reloadCooldown || creditsLoading) return;
+    fetchAndShowCredits();
+    reloadCreditsBtn.disabled = true;
+    reloadCooldown = true;
+    setTimeout(() => {
+      reloadCreditsBtn.disabled = false;
+      reloadCooldown = false;
+    }, 60000); // 60 seconds
+  };
+  
+  // Click credits area to go to payments
+  creditsDisplay.onclick = (e) => {
+    window.location.href = "payments.html";
+  };
+  
+  // Show/hide credits display on login/logout
+  function showCreditsDisplayIfLoggedIn() {
+    const userId = localStorage.getItem('aikipediaUserId');
+    if (userId) {
+      creditsDisplay.style.display = "flex";
+      fetchAndShowCredits();
+    } else {
+      creditsDisplay.style.display = "none";
+    }
+  }
 
   // Toggle API Key Options
   document.getElementById('showApiKeyOptionsBtn').onclick = function() {
