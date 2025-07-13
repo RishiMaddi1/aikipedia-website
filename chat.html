@@ -1827,7 +1827,7 @@
           value: "anthropic/claude-3-haiku:beta",
           name: "Claude 3 Haiku (beta)",
           desc: "Fast, affordable, and supports image input. Great for general tasks and vision.",
-          cost: "₹3.24/₹16.18 per 1M tokens (est.)"
+          cost: "₹26.975/₹134.875 per 1M tokens"
         }
       ];
       let selectedModel = modelList[0].value;
@@ -2100,7 +2100,7 @@
         if (!data || !data.input_tokens) return;
         const usageDiv = document.createElement('div');
         usageDiv.className = 'usage-stats';
-        let costLine = `<small>Cost: ₹${data.cost.toFixed(4)} INR credits</small>`;
+        let costLine = `<small>Cost: ${data.cost.toFixed(4)} echos</small>`;
         if (data.model === 'google/gemini-2.5-flash-preview' && data.image_url) {
           costLine += '<small>Includes image charge</small>';
         }
