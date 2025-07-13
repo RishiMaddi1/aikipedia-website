@@ -293,7 +293,7 @@
     /* Model Cards */
     .models-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
       gap: 2rem;
       margin-top: 3rem;
     }
@@ -346,12 +346,13 @@
     }
 
     .model-cost {
-      font-size: 0.8 rem;
+      font-size: 0.75rem;
       font-weight: 600;
       color: #10b981;
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      line-height: 1.4;
     }
 
     /* Payment Grid */
@@ -748,6 +749,10 @@
         Powerful conversational AI for coding, writing, and problem-solving
       </p>
     </div>
+    <div style="text-align:center;margin-bottom:2rem;">
+      <h3 style="color:#4889cd;font-size:1.2rem;font-weight:600;margin-bottom:0.5rem;">Cost per 1 Million Tokens</h3>
+      <p style="color:#94a3b8;font-size:0.9rem;">All prices in Indian Rupees (₹)</p>
+    </div>
     <div class="models-grid">
       <div class="model-card">
         <div class="model-name">Qwen-2.5-Coder <span style="font-size:0.9em;color:#94a3b8;">(qwen/qwen-2.5-coder-32b-instruct)</span></div>
@@ -755,7 +760,6 @@
           Specialized in code generation and technical discussions.
         </div>
         <div class="model-cost">
-          <span style="font-weight:600;">Cost/1 Million Tokens:</span><br>
           <span style="color:#2f7fdb;">Input:</span> ₹6.474 &nbsp;|&nbsp; <span style="color:#2f7fdb;">Output:</span> ₹16.185
         </div>
       </div>
@@ -765,7 +769,6 @@
           Fast and versatile for general conversations and reasoning.<br>+₹0.051377 per image (when image_url is provided)
         </div>
         <div class="model-cost">
-          <span style="font-weight:600;">Cost/1 Million Tokens:</span><br>
           <span style="color:#2f7fdb;">Input:</span> ₹16.185 &nbsp;|&nbsp; <span style="color:#2f7fdb;">Output:</span> ₹64.74
         </div>
       </div>
@@ -775,7 +778,6 @@
           High-performance code generation model ideal for software development tasks.
         </div>
         <div class="model-cost">
-          <span style="font-weight:600;">Cost/1 Million Tokens:</span><br>
           <span style="color:#2f7fdb;">Input:</span> ₹32.37 &nbsp;|&nbsp; <span style="color:#2f7fdb;">Output:</span> ₹97.11
         </div>
       </div>
@@ -785,7 +787,6 @@
           Advanced general-purpose model by DeepSeek, great for reasoning and conversation.
         </div>
         <div class="model-cost">
-          <span style="font-weight:600;">Cost/1 Million Tokens:</span><br>
           <span style="color:#2f7fdb;">Input:</span> ₹30.212 &nbsp;|&nbsp; <span style="color:#2f7fdb;">Output:</span> ₹95.004
         </div>
       </div>
@@ -795,7 +796,6 @@
           Fast, affordable, and supports image input. Great for general tasks and vision.
         </div>
         <div class="model-cost">
-          <span style="font-weight:600;">Cost/1 Million Tokens:</span><br>
           <span style="color:#2f7fdb;">Input:</span> ₹26.975 &nbsp;|&nbsp; <span style="color:#2f7fdb;">Output:</span> ₹134.875
         </div>
       </div>
@@ -810,6 +810,10 @@
       <p class="section-subtitle">
         AI that understands images, documents, and visual content
       </p>
+    </div>
+    <div style="text-align:center;margin-bottom:2rem;">
+      <h3 style="color:#4889cd;font-size:1.2rem;font-weight:600;margin-bottom:0.5rem;">Cost per 1000 Images</h3>
+      <p style="color:#94a3b8;font-size:0.9rem;">All prices in Indian Rupees (₹)</p>
     </div>
     <div class="models-grid">
       <div class="model-card">
