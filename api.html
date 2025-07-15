@@ -358,6 +358,7 @@
     <!-- TEXT MODELS SECTION -->
     <h2 style="color: var(--accent); margin-top: 2.5rem;">Text Model API Usage</h2>
     <p>Text models are ideal for chat, code, math, and reasoning tasks. <b>They do not accept images.</b> Use these models for pure text-based interactions.</p>
+    <p style="color:#2f7fdb;font-size:1em;font-weight:500;margin-bottom:0.5em;">New: <b>systemPrompt</b> is now required in every request. Leave it blank ("") to use the model's default, or fill in your own custom prompt.</p>
     <div class="api-wrapper">
       <div class="api-tabs">
         <button class="tab-btn active" data-lang="curl-text">cURL</button>
@@ -374,6 +375,7 @@
         <div class="flip-container">
           <div class="code-block active" id="curl-text">
             <button class="copy-btn">📋</button>
+            <div style="color:#94a3b8;font-size:0.95em;margin-bottom:0.5em;"># systemPrompt is required. Leave it blank ("") for default, or fill in your own.</div>
             <pre><code class="language-bash">curl -X POST \
   https://backend.aikipedia.workers.dev/chat \
   -H 'Content-Type: application/json' \
@@ -381,7 +383,8 @@
     "user_id": "your_user_id",
     "message": "your_message",
     "model": "qwen/qwen-2.5-coder-32b-instruct",
-    "history": []
+    "history": [],
+    "systemPrompt": ""
 }'</code></pre>
           </div>
         </div>
@@ -396,7 +399,8 @@ response = requests.post(
     "user_id": "your_user_id",
     "message": "your_message",
     "model": "qwen/qwen-2.5-coder-32b-instruct",
-    "history": []
+    "history": [],
+    "systemPrompt": "" # systemPrompt is required; leave blank for default or fill in your own
   }
 )
 print(response.json())</code></pre>
@@ -413,7 +417,8 @@ print(response.json())</code></pre>
     user_id: "your_user_id",
     message: "your_message",
     model: "qwen/qwen-2.5-coder-32b-instruct",
-    history: []
+    history: [],
+    systemPrompt: ""
   })
 })
 .then(res => res.json())
@@ -430,7 +435,8 @@ axios.post("https://backend.aikipedia.workers.dev/chat", {
   user_id: "your_user_id",
   message: "your_message",
   model: "qwen/qwen-2.5-coder-32b-instruct",
-  history: []
+  history: [],
+  systemPrompt: ""
 }).then(res => console.log(res.data));</code></pre>
     </div>
     </div>
@@ -453,6 +459,7 @@ func main() {
     "message": "your_message",
     "model": "qwen/qwen-2.5-coder-32b-instruct",
     "history": []string{},
+    "systemPrompt": ""
   }
   jsonData, _ := json.Marshal(payload)
   resp, _ := http.Post("https://backend.aikipedia.workers.dev/chat", "application/json", bytes.NewBuffer(jsonData))
@@ -468,7 +475,7 @@ func main() {
 HttpRequest request = HttpRequest.newBuilder()
   .uri(URI.create("https://backend.aikipedia.workers.dev/chat"))
   .header("Content-Type", "application/json")
-  .POST(HttpRequest.BodyPublishers.ofString("{\"user_id\":\"your_user_id\",\"message\":\"your_message\",\"model\":\"qwen/qwen-2.5-coder-32b-instruct\",\"history\":[]}"))
+  .POST(HttpRequest.BodyPublishers.ofString("{\"user_id\":\"your_user_id\",\"message\":\"your_message\",\"model\":\"qwen/qwen-2.5-coder-32b-instruct\",\"history\":[],\"systemPrompt\":\"\"}"))
   .build();
 
 HttpResponse&lt;String&gt; response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -484,7 +491,8 @@ $payload = json_encode([
   "user_id" => "your_user_id",
   "message" => "your_message",
   "model" => "qwen/qwen-2.5-coder-32b-instruct",
-  "history" => []
+  "history" => [],
+  "systemPrompt" => ""
 ]);
 
 $options = [
@@ -512,7 +520,8 @@ res = Net::HTTP.post(uri, {
   user_id: "your_user_id",
   message: "your_message",
   model: "qwen/qwen-2.5-coder-32b-instruct",
-  history: []
+  history: [],
+  systemPrompt: ""
 }.to_json, "Content-Type" => "application/json")
 
 puts res.body</code></pre>
@@ -531,7 +540,8 @@ var content = new StringContent(JsonSerializer.Serialize(new {
   user_id = "your_user_id",
   message = "your_message",
   model = "qwen/qwen-2.5-coder-32b-instruct",
-  history = new string[] {}
+  history = new string[] {},
+  systemPrompt = ""
 }), Encoding.UTF8, "application/json");
 
 var response = await client.PostAsync("https://backend.aikipedia.workers.dev/chat", content);
@@ -545,6 +555,7 @@ Console.WriteLine(responseBody);</code></pre>
     <!-- VISION MODELS SECTION -->
     <h2 style="color: var(--accent); margin-top: 2.5rem;">Vision Model API Usage</h2>
     <p>Vision models support both text and image input. Use these models to send images along with your message. <b>Only Gemini Flash and Claude 3 Haiku currently support images.</b></p>
+    <p style="color:#2f7fdb;font-size:1em;font-weight:500;margin-bottom:0.5em;">New: <b>systemPrompt</b> is now required in every request. Leave it blank ("") to use the model's default, or fill in your own custom prompt.</p>
     <div class="api-wrapper">
       <div class="api-tabs">
         <button class="tab-btn active" data-lang="curl-vision">cURL</button>
@@ -561,6 +572,7 @@ Console.WriteLine(responseBody);</code></pre>
         <div class="flip-container">
           <div class="code-block active" id="curl-vision">
             <button class="copy-btn">📋</button>
+            <div style="color:#94a3b8;font-size:0.95em;margin-bottom:0.5em;"># systemPrompt is required. Leave it blank ("") for default, or fill in your own.</div>
             <pre><code class="language-bash">curl -X POST \
   https://backend.aikipedia.workers.dev/chat \
   -H 'Content-Type: application/json' \
@@ -569,7 +581,8 @@ Console.WriteLine(responseBody);</code></pre>
     "message": "Describe this image",
     "model": "google/gemini-2.5-flash-preview",
     "image_url": "https://your-uploaded-image-url",
-    "history": []
+    "history": [],
+    "systemPrompt": ""
 }'</code></pre>
           </div>
         </div>
@@ -585,7 +598,8 @@ response = requests.post(
     "message": "Describe this image",
     "model": "google/gemini-2.5-flash-preview",
     "image_url": "https://your-uploaded-image-url",
-    "history": []
+    "history": [],
+    "systemPrompt": "" # systemPrompt is required; leave blank for default or fill in your own
   }
 )
 print(response.json())</code></pre>
@@ -603,7 +617,8 @@ print(response.json())</code></pre>
     message: "Describe this image",
     model: "google/gemini-2.5-flash-preview",
     image_url: "https://your-uploaded-image-url",
-    history: []
+    history: [],
+    systemPrompt: ""
   })
 })
 .then(res => res.json())
@@ -621,7 +636,8 @@ axios.post("https://backend.aikipedia.workers.dev/chat", {
   message: "Describe this image",
   model: "google/gemini-2.5-flash-preview",
   image_url: "https://your-uploaded-image-url",
-  history: []
+  history: [],
+  systemPrompt: ""
 }).then(res => console.log(res.data));</code></pre>
     </div>
     </div>
@@ -645,6 +661,7 @@ func main() {
     "model": "google/gemini-2.5-flash-preview",
     "image_url": "https://your-uploaded-image-url",
     "history": []string{},
+    "systemPrompt": ""
   }
   jsonData, _ := json.Marshal(payload)
   resp, _ := http.Post("https://backend.aikipedia.workers.dev/chat", "application/json", bytes.NewBuffer(jsonData))
@@ -660,7 +677,7 @@ func main() {
 HttpRequest request = HttpRequest.newBuilder()
   .uri(URI.create("https://backend.aikipedia.workers.dev/chat"))
   .header("Content-Type", "application/json")
-  .POST(HttpRequest.BodyPublishers.ofString("{\"user_id\":\"your_user_id\",\"message\":\"Describe this image\",\"model\":\"google/gemini-2.5-flash-preview\",\"image_url\":\"https://your-uploaded-image-url\",\"history\":[]}"))
+  .POST(HttpRequest.BodyPublishers.ofString("{\"user_id\":\"your_user_id\",\"message\":\"Describe this image\",\"model\":\"google/gemini-2.5-flash-preview\",\"image_url\":\"https://your-uploaded-image-url\",\"history\":[],\"systemPrompt\":\"\"}"))
   .build();
 
 HttpResponse&lt;String&gt; response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -677,7 +694,8 @@ $payload = json_encode([
   "message" => "Describe this image",
   "model" => "google/gemini-2.5-flash-preview",
   "image_url" => "https://your-uploaded-image-url",
-  "history" => []
+  "history" => [],
+  "systemPrompt" => ""
 ]);
 
 $options = [
@@ -706,7 +724,8 @@ res = Net::HTTP.post(uri, {
   message: "Describe this image",
   model: "google/gemini-2.5-flash-preview",
   image_url: "https://your-uploaded-image-url",
-  history: []
+  history: [],
+  systemPrompt: ""
 }.to_json, "Content-Type" => "application/json")
 
 puts res.body</code></pre>
@@ -726,7 +745,8 @@ var content = new StringContent(JsonSerializer.Serialize(new {
   message = "Describe this image",
   model = "google/gemini-2.5-flash-preview",
   image_url = "https://your-uploaded-image-url",
-  history = new string[] {}
+  history = new string[] {},
+  systemPrompt = ""
 }), Encoding.UTF8, "application/json");
 
 var response = await client.PostAsync("https://backend.aikipedia.workers.dev/chat", content);
