@@ -13,7 +13,7 @@ The primary goal of Aikipedia Chat is to democratize access to AI models by offe
 
 ## Features
 
-- **Affordable Access**: Purchase credits starting at just ₹69, making AI model usage accessible to a wider audience.
+- **Affordable Access**: Purchase credits starting at just ₹49, making AI model usage accessible to a wider audience.
 - **Pay-Per-Use Model**: Only pay for what you use, with no long-term commitments or subscriptions.
 - **API Integration**: Use your credits to access AI models via API, perfect for integrating into hackathon projects or other applications.
 - **User-Friendly Interface**: Intuitive chat interface for interacting with AI models.
