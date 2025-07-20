@@ -645,8 +645,11 @@
         <div>
           <input id="loginUsername" placeholder="Username" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid #000137;width:100%;background:#181a20;color:#e2e8f0;font-size:1rem;transition:border-color 0.3s ease;" />
         </div>
-        <div>
+        <div style="position:relative;width:100%;display:flex;align-items:center;">
           <input id="loginPassword" type="password" placeholder="Password" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid #000137;width:100%;background:#181a20;color:#e2e8f0;font-size:1rem;transition:border-color 0.3s ease;" />
+          <span class="toggle-password" data-target="loginPassword" style="position:absolute;right:1.2rem;cursor:pointer;user-select:none;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="9" ry="5.5"/><circle cx="12" cy="12" r="2.5"/></svg>
+          </span>
         </div>
       </div>
 
@@ -673,11 +676,17 @@
         <div>
           <input id="registerUsername" placeholder="Choose Username" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid #000137;width:100%;background:#181a20;color:#e2e8f0;font-size:1rem;transition:border-color 0.3s ease;" />
         </div>
-        <div>
+        <div style="position:relative;width:100%;display:flex;align-items:center;">
           <input id="registerPassword" type="password" placeholder="Create Password" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid #000137;width:100%;background:#181a20;color:#e2e8f0;font-size:1rem;transition:border-color 0.3s ease;" />
+          <span class="toggle-password" data-target="registerPassword" style="position:absolute;right:1.2rem;cursor:pointer;user-select:none;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="9" ry="5.5"/><circle cx="12" cy="12" r="2.5"/></svg>
+          </span>
         </div>
-        <div>
+        <div style="position:relative;width:100%;display:flex;align-items:center;">
           <input id="registerConfirmPassword" type="password" placeholder="Confirm Password" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid #000137;width:100%;background:#181a20;color:#e2e8f0;font-size:1rem;transition:border-color 0.3s ease;" />
+          <span class="toggle-password" data-target="registerConfirmPassword" style="position:absolute;right:1.2rem;cursor:pointer;user-select:none;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="9" ry="5.5"/><circle cx="12" cy="12" r="2.5"/></svg>
+          </span>
         </div>
       </div>
 

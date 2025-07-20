@@ -180,6 +180,16 @@
   text-align: center;
   min-height: 1.2rem;
 }
+.toggle-password {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding-left: 0.5rem;
+  transition: stroke 0.2s;
+}
+.toggle-password svg {
+  pointer-events: none;
+}
 @media (max-width: 900px) {
   .sidebar.visible {
     width: 64vw;

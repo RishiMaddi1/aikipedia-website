@@ -68,6 +68,31 @@
     authButtons.style.display = "flex";
     if (logoutBtn) logoutBtn.style.display = "none";
   }
+  // Password visibility toggle logic
+  function setupPasswordToggles() {
+    const toggles = document.querySelectorAll('.toggle-password');
+    toggles.forEach(toggle => {
+      toggle.onclick = function() {
+        const targetId = this.getAttribute('data-target');
+        const input = document.getElementById(targetId);
+        if (input) {
+          if (input.type === 'password') {
+            input.type = 'text';
+            this.querySelector('svg').style.stroke = '#4889cd'; // highlight when visible
+          } else {
+            input.type = 'password';
+            this.querySelector('svg').style.stroke = '#888';
+          }
+        }
+      };
+    });
+  }
+  // Call on DOMContentLoaded and after modal switches
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupPasswordToggles);
+  } else {
+    setupPasswordToggles();
+  }
   loginBtn.onclick = () => {
     document.getElementById("loginForm").style.display = "flex";
     document.getElementById("registerForm").style.display = "none";
@@ -75,6 +100,7 @@
     document.getElementById("loginForm").style.transform = "translateY(-20px)";
     setTimeout(() => {
       document.getElementById("loginForm").style.transform = "translateY(0)";
+      setupPasswordToggles();
     }, 10);
   };
   registerBtn.onclick = () => {
@@ -84,6 +110,7 @@
     document.getElementById("registerForm").style.transform = "translateY(-20px)";
     setTimeout(() => {
       document.getElementById("registerForm").style.transform = "translateY(0)";
+      setupPasswordToggles();
     }, 10);
   };
   document.getElementById("switchToRegisterBtn").onclick = () => {
@@ -94,6 +121,7 @@
       document.getElementById("registerForm").style.transform = "translateY(-20px)";
       setTimeout(() => {
         document.getElementById("registerForm").style.transform = "translateY(0)";
+        setupPasswordToggles();
       }, 10);
     }, 300);
   };
@@ -105,6 +133,7 @@
       document.getElementById("loginForm").style.transform = "translateY(-20px)";
       setTimeout(() => {
         document.getElementById("loginForm").style.transform = "translateY(0)";
+        setupPasswordToggles();
       }, 10);
     }, 300);
   };
