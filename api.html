@@ -346,7 +346,7 @@
             <td style="padding-left:0.5em;">No</td>
           </tr>
           <tr>
-            <td style="padding-left:0.5em;">Claude 3 Haiku (beta)</td>
+            <td style="padding-left:0.5em;">Claude 3 Haiku</td>
             <td style="padding-left:0.5em;">Text & Vision</td>
             <td style="padding-left:0.5em;">Fast, affordable, supports image input</td>
             <td style="padding-left:0.5em;">Yes</td>
@@ -579,7 +579,7 @@ Console.WriteLine(responseBody);</code></pre>
   -d '{
     "user_id": "your_user_id",
     "message": "Describe this image",
-    "model": "google/gemini-2.5-flash-preview",
+    "model": "google/gemini-2.5-flash",
     "image_url": "https://your-uploaded-image-url",
     "history": [],
     "systemPrompt": ""
@@ -596,7 +596,7 @@ response = requests.post(
   json={
     "user_id": "your_user_id",
     "message": "Describe this image",
-    "model": "google/gemini-2.5-flash-preview",
+    "model": "google/gemini-2.5-flash",
     "image_url": "https://your-uploaded-image-url",
     "history": [],
     "systemPrompt": "" # systemPrompt is required; leave blank for default or fill in your own
@@ -615,7 +615,7 @@ print(response.json())</code></pre>
   body: JSON.stringify({
     user_id: "your_user_id",
     message: "Describe this image",
-    model: "google/gemini-2.5-flash-preview",
+    model: "google/gemini-2.5-flash",
     image_url: "https://your-uploaded-image-url",
     history: [],
     systemPrompt: ""
@@ -634,7 +634,7 @@ print(response.json())</code></pre>
 axios.post("https://backend.aikipedia.workers.dev/chat", {
   user_id: "your_user_id",
   message: "Describe this image",
-  model: "google/gemini-2.5-flash-preview",
+  model: "google/gemini-2.5-flash",
   image_url: "https://your-uploaded-image-url",
   history: [],
   systemPrompt: ""
@@ -658,7 +658,7 @@ func main() {
   payload := map[string]interface{}{
     "user_id": "your_user_id",
     "message": "Describe this image",
-    "model": "google/gemini-2.5-flash-preview",
+    "model": "google/gemini-2.5-flash",
     "image_url": "https://your-uploaded-image-url",
     "history": []string{},
     "systemPrompt": ""
@@ -677,7 +677,7 @@ func main() {
 HttpRequest request = HttpRequest.newBuilder()
   .uri(URI.create("https://backend.aikipedia.workers.dev/chat"))
   .header("Content-Type", "application/json")
-  .POST(HttpRequest.BodyPublishers.ofString("{\"user_id\":\"your_user_id\",\"message\":\"Describe this image\",\"model\":\"google/gemini-2.5-flash-preview\",\"image_url\":\"https://your-uploaded-image-url\",\"history\":[],\"systemPrompt\":\"\"}"))
+  .POST(HttpRequest.BodyPublishers.ofString("{\"user_id\":\"your_user_id\",\"message\":\"Describe this image\",\"model\":\"google/gemini-2.5-flash\",\"image_url\":\"https://your-uploaded-image-url\",\"history\":[],\"systemPrompt\":\"\"}"))
   .build();
 
 HttpResponse&lt;String&gt; response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -692,7 +692,7 @@ System.out.println(response.body());</code></pre>
 $payload = json_encode([
   "user_id" => "your_user_id",
   "message" => "Describe this image",
-  "model" => "google/gemini-2.5-flash-preview",
+  "model" => "google/gemini-2.5-flash",
   "image_url" => "https://your-uploaded-image-url",
   "history" => [],
   "systemPrompt" => ""
@@ -722,7 +722,7 @@ uri = URI('https://backend.aikipedia.workers.dev/chat')
 res = Net::HTTP.post(uri, {
   user_id: "your_user_id",
   message: "Describe this image",
-  model: "google/gemini-2.5-flash-preview",
+  model: "google/gemini-2.5-flash",
   image_url: "https://your-uploaded-image-url",
   history: [],
   systemPrompt: ""
@@ -743,7 +743,7 @@ var client = new HttpClient();
 var content = new StringContent(JsonSerializer.Serialize(new {
   user_id = "your_user_id",
   message = "Describe this image",
-  model = "google/gemini-2.5-flash-preview",
+  model = "google/gemini-2.5-flash",
   image_url = "https://your-uploaded-image-url",
   history = new string[] {},
   systemPrompt = ""
