@@ -268,7 +268,8 @@
         min-width: 0;
       }
 
-      /* Clear fixed profile button (top-left): same offsets as #profileToggle */
+      /* #profileToggle is fixed in the top-left; thread content starts *below* it (padding-top only).
+         No need to indent the whole rail past the icon horizontally — below that row the width is free. */
       .thread-rail {
         display: none;
         flex-direction: column;
@@ -278,8 +279,8 @@
         max-width: min(320px, 42vw);
         background: var(--bg-secondary);
         border-right: 1px solid var(--border);
-        padding-top: calc(1.76rem + clamp(29.12px, 6.72vw, 40.32px) + 0.75rem);
-        padding-left: calc(1.76rem + clamp(29.12px, 6.72vw, 40.32px) + 0.6rem);
+        padding-top: calc(1.76rem + max(40px, clamp(29.12px, 6.72vw, 40.32px)) + 0.85rem);
+        padding-left: 0.75rem;
         padding-right: 0.75rem;
         padding-bottom: 1rem;
         max-height: 100vh;
@@ -419,6 +420,36 @@
         font-size: 0.72rem;
         opacity: 0.75;
         margin-top: 0.2rem;
+      }
+
+      .thread-context-menu {
+        position: fixed;
+        z-index: 3002;
+        min-width: 11rem;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+        padding: 0.35rem 0;
+        display: none;
+      }
+      .thread-context-menu.open {
+        display: block;
+      }
+      .thread-context-menu button {
+        display: block;
+        width: 100%;
+        text-align: left;
+        padding: 0.55rem 1rem;
+        border: none;
+        background: transparent;
+        color: var(--text);
+        cursor: pointer;
+        font-size: 0.88rem;
+      }
+      .thread-context-menu button:hover {
+        background: rgba(72, 137, 205, 0.18);
+        color: var(--accent);
       }
 
       .main-column {
@@ -1365,6 +1396,9 @@
         </div>
         <button type="button" id="newChatBtn">+ New chat</button>
         <div id="threadList"></div>
+        <div id="threadContextMenu" class="thread-context-menu" role="menu" aria-hidden="true">
+          <button type="button" id="threadContextRename" role="menuitem">Rename</button>
+        </div>
       </aside>
       <div class="main-column">
       <div class="header">
@@ -1714,6 +1748,40 @@
         return false;
       }
 
+      function syncThreadRailExpandVisibility() {
+        if (!threadRail || !threadRailExpand) return;
+        const show =
+          threadRail.classList.contains("visible") && threadRail.classList.contains("collapsed");
+        threadRailExpand.classList.toggle("visible", show);
+      }
+
+      function applyThreadRailCollapsedPreference() {
+        if (!threadRail) return;
+        if (localStorage.getItem(THREAD_RAIL_COLLAPSED_KEY) === "1") {
+          threadRail.classList.add("collapsed");
+        } else {
+          threadRail.classList.remove("collapsed");
+        }
+        syncThreadRailExpandVisibility();
+      }
+
+      if (threadRailCollapse) {
+        threadRailCollapse.onclick = () => {
+          if (!threadRail) return;
+          threadRail.classList.add("collapsed");
+          localStorage.setItem(THREAD_RAIL_COLLAPSED_KEY, "1");
+          syncThreadRailExpandVisibility();
+        };
+      }
+      if (threadRailExpand) {
+        threadRailExpand.onclick = () => {
+          if (!threadRail) return;
+          threadRail.classList.remove("collapsed");
+          localStorage.setItem(THREAD_RAIL_COLLAPSED_KEY, "0");
+          syncThreadRailExpandVisibility();
+        };
+      }
+
       function setLoggedInUser(username, userId) {
         loggedInUser = username;
         loggedInUserId = userId;
@@ -1725,7 +1793,10 @@
         userInput.disabled = false;
         sendButton.disabled = false;
         logoutBtn.style.display = "block";
-        if (threadRail) threadRail.classList.add("visible");
+        if (threadRail) {
+          threadRail.classList.add("visible");
+          applyThreadRailCollapsedPreference();
+        }
         
         // Add welcome message if chat is empty
         if (chatHistory.length === 0) {
@@ -1747,7 +1818,11 @@
         userInput.disabled = true;
         sendButton.disabled = true;
         logoutBtn.style.display = "none";
-        if (threadRail) threadRail.classList.remove("visible");
+        if (threadRailExpand) threadRailExpand.classList.remove("visible");
+        if (threadRail) {
+          threadRail.classList.remove("visible");
+          threadRail.classList.remove("collapsed");
+        }
         if (threadList) threadList.innerHTML = "";
         showCreditsDisplayIfLoggedIn();
       }
