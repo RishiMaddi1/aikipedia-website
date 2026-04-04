@@ -258,13 +258,180 @@
       .main {
         flex: 1;
         display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        justify-content: flex-start;
+        background: transparent;
+        min-height: 100vh;
+        position: relative;
+        width: 100vw;
+        min-width: 0;
+      }
+
+      /* Clear fixed profile button (top-left): same offsets as #profileToggle */
+      .thread-rail {
+        display: none;
+        flex-direction: column;
+        flex: 0 0 auto;
+        width: 280px;
+        min-width: 220px;
+        max-width: min(320px, 42vw);
+        background: var(--bg-secondary);
+        border-right: 1px solid var(--border);
+        padding-top: calc(1.76rem + clamp(29.12px, 6.72vw, 40.32px) + 0.75rem);
+        padding-left: calc(1.76rem + clamp(29.12px, 6.72vw, 40.32px) + 0.6rem);
+        padding-right: 0.75rem;
+        padding-bottom: 1rem;
+        max-height: 100vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        font-size: 0.85rem;
+        z-index: 5;
+        box-sizing: border-box;
+        transition: width 0.2s ease, min-width 0.2s ease, padding 0.2s ease, opacity 0.2s ease;
+      }
+      .thread-rail.visible {
+        display: flex;
+      }
+      .thread-rail.collapsed {
+        width: 0 !important;
+        min-width: 0 !important;
+        max-width: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        border-right: none;
+        overflow: hidden;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .thread-rail-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.35rem;
+        margin-bottom: 0.55rem;
+        min-width: 0;
+      }
+      .thread-rail-title {
+        color: var(--accent);
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        padding: 0;
+        margin: 0;
+        flex: 1;
+        min-width: 0;
+      }
+      .thread-rail-collapse-btn {
+        flex-shrink: 0;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg);
+        color: var(--accent);
+        font-size: 1.1rem;
+        line-height: 1;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+      }
+      .thread-rail-collapse-btn:hover {
+        border-color: var(--accent);
+        background: rgba(72, 137, 205, 0.12);
+      }
+      .thread-rail-expand-btn {
+        display: none;
+        position: fixed;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 2100;
+        width: 2rem;
+        min-height: 4.5rem;
+        padding: 0.35rem 0.15rem;
+        border: none;
+        border-radius: 0 10px 10px 0;
+        background: var(--bg-secondary);
+        color: var(--accent);
+        font-size: 1.15rem;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+        align-items: center;
+        justify-content: center;
+        line-height: 1.2;
+      }
+      .thread-rail-expand-btn:hover {
+        background: rgba(72, 137, 205, 0.2);
+      }
+      .thread-rail-expand-btn.visible {
+        display: flex;
+      }
+      #newChatBtn {
+        width: 100%;
+        min-width: 0;
+        padding: 0.6rem 0.65rem;
+        margin-bottom: 0.65rem;
+        border-radius: 10px;
+        border: 2px solid var(--accent);
+        background: transparent;
+        color: var(--accent);
+        font-weight: 600;
+        font-size: 0.85rem;
+        cursor: pointer;
+      }
+      #newChatBtn:hover {
+        background: var(--accent);
+        color: #000;
+      }
+      .thread-item {
+        padding: 0.55rem 0.5rem;
+        margin-bottom: 0.4rem;
+        border-radius: 8px;
+        cursor: pointer;
+        color: var(--text);
+        border: 1px solid transparent;
+        line-height: 1.35;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+        min-width: 0;
+      }
+      .thread-item:hover {
+        border-color: var(--border);
+        background: rgba(72, 137, 205, 0.08);
+      }
+      .thread-item.active {
+        border-color: var(--accent);
+        background: rgba(72, 137, 205, 0.12);
+      }
+      .thread-item .thread-item-title {
+        font-weight: 600;
+        color: #e2e8f0;
+        font-size: 0.88rem;
+      }
+      .thread-item .thread-item-meta {
+        font-size: 0.72rem;
+        opacity: 0.75;
+        margin-top: 0.2rem;
+      }
+
+      .main-column {
+        flex: 1;
+        display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: flex-end;
         background: transparent;
         min-height: 100vh;
         position: relative;
-        width: 100vw;
+        min-width: 0;
+        width: 100%;
       }
 
       .chat-shell {
@@ -1190,6 +1357,16 @@
     </aside>
 
     <main class="main">
+      <button type="button" id="threadRailExpand" class="thread-rail-expand-btn" aria-label="Show chat list" title="Show chats">&#8250;</button>
+      <aside class="thread-rail" id="threadRail" aria-label="Chat threads">
+        <div class="thread-rail-header">
+          <h2 class="thread-rail-title">Chats</h2>
+          <button type="button" id="threadRailCollapse" class="thread-rail-collapse-btn" aria-label="Hide chat list" title="Minimize">&#8249;</button>
+        </div>
+        <button type="button" id="newChatBtn">+ New chat</button>
+        <div id="threadList"></div>
+      </aside>
+      <div class="main-column">
       <div class="header">
         <span class="aikipedia-title">Aikipedia</span>
       </div>
@@ -1272,6 +1449,7 @@
             <button id="sendButton" type="submit">Send</button>
           </form>
         </div>
+      </div>
       </div>
     </main>
 
@@ -1389,6 +1567,12 @@
       const logoutBtn = document.getElementById("logoutBtn");
       const connectionStatus = document.getElementById("connectionStatus");
       const clearChatBtn = document.getElementById("clearChat");
+      const threadRail = document.getElementById("threadRail");
+      const threadList = document.getElementById("threadList");
+      const newChatBtn = document.getElementById("newChatBtn");
+      const threadRailCollapse = document.getElementById("threadRailCollapse");
+      const threadRailExpand = document.getElementById("threadRailExpand");
+      const THREAD_RAIL_COLLAPSED_KEY = "aikipediaThreadRailCollapsed";
       const sidebarOverlay = document.getElementById("sidebarOverlay");
       const imageInput = document.getElementById("imageInput");
       const imageAttachBtn = document.getElementById("imageAttachBtn");
@@ -1397,10 +1581,114 @@
       let uploadedImageStoragePath = null;
       let imageUploading = false;
 
+      const BACKEND_BASE = "https://backend.aikipedia.workers.dev";
+
       let chatHistory = [];
+      let activeConversationId = null;
       let loggedInUser = null;
       let loggedInUserId = null;
       let authMode = "login";
+
+      function escapeHtml(str) {
+        if (str == null) return "";
+        const d = document.createElement("div");
+        d.textContent = String(str);
+        return d.innerHTML;
+      }
+
+      function renderThreadList(conversations) {
+        if (!threadList) return;
+        threadList.innerHTML = "";
+        (conversations || []).forEach((c) => {
+          const div = document.createElement("div");
+          div.className = "thread-item" + (c.id === activeConversationId ? " active" : "");
+          div.dataset.id = c.id;
+          const title = c.title && String(c.title).trim() ? c.title : "New chat";
+          const meta = c.updated_at ? new Date(c.updated_at).toLocaleString() : "";
+          div.innerHTML =
+            '<div class="thread-item-title">' +
+            escapeHtml(title) +
+            '</div><div class="thread-item-meta">' +
+            escapeHtml(meta) +
+            "</div>";
+          div.onclick = () => selectThread(c.id);
+          threadList.appendChild(div);
+        });
+      }
+
+      async function fetchConversations() {
+        if (!loggedInUserId) return;
+        try {
+          const res = await fetch(BACKEND_BASE + "/conversations/list", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user_id: loggedInUserId }),
+          });
+          const data = await res.json();
+          if (!res.ok) return;
+          renderThreadList(data.conversations || []);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      async function selectThread(conversationId) {
+        if (!loggedInUserId) return;
+        activeConversationId = conversationId;
+        chatHistory = [];
+        chatContainer.innerHTML = "";
+        clearImagePreview();
+        try {
+          const res = await fetch(BACKEND_BASE + "/conversations/messages", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user_id: loggedInUserId, conversation_id: conversationId }),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || "Failed to load messages");
+          for (const m of data.messages || []) {
+            if (m.role === "user") {
+              addMessage("user", m.content, m.image_url || undefined);
+              chatHistory.push({ role: "user", content: m.content });
+            } else if (m.role === "assistant") {
+              addMessage("assistant", m.content);
+              chatHistory.push({ role: "assistant", content: m.content });
+            }
+          }
+          document.querySelectorAll(".thread-item").forEach((el) => {
+            el.classList.toggle("active", el.dataset.id === conversationId);
+          });
+          chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: "auto" });
+        } catch (err) {
+          addSystemMessage("Failed to load chat: " + (err && err.message ? err.message : String(err)));
+        }
+      }
+
+      if (newChatBtn) {
+        newChatBtn.onclick = async () => {
+          if (!loggedInUserId) return;
+          try {
+            const res = await fetch(BACKEND_BASE + "/conversations/create", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ user_id: loggedInUserId }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Failed to create chat");
+            activeConversationId = data.conversation_id;
+            chatHistory = [];
+            chatContainer.innerHTML = "";
+            addSystemMessage("New chat started. Type a message below.");
+            await fetchConversations();
+            document.querySelectorAll(".thread-item").forEach((el) => {
+              el.classList.toggle("active", el.dataset.id === activeConversationId);
+            });
+          } catch (e) {
+            addSystemMessage("Could not start chat: " + (e && e.message ? e.message : String(e)));
+          }
+        };
+      }
+
       document.getElementById("aboutUsBtn").onclick = function() {
        window.location.href = "about_us.html";
      };
@@ -1437,17 +1725,20 @@
         userInput.disabled = false;
         sendButton.disabled = false;
         logoutBtn.style.display = "block";
+        if (threadRail) threadRail.classList.add("visible");
         
         // Add welcome message if chat is empty
         if (chatHistory.length === 0) {
-          addSystemMessage(`Welcome, ${username}! You can start chatting now.`);
+          addSystemMessage(`Welcome, ${username}! Use “New chat” or send a message to start a saved conversation.`);
         }
         showCreditsDisplayIfLoggedIn();
+        fetchConversations();
       }
       
       function setLoggedOut() {
         loggedInUser = null;
         loggedInUserId = null;
+        activeConversationId = null;
         localStorage.removeItem('aikipediaUser');
         localStorage.removeItem('aikipediaUserId');
         profileDetails.textContent = `Hello, Guest`;
@@ -1456,6 +1747,8 @@
         userInput.disabled = true;
         sendButton.disabled = true;
         logoutBtn.style.display = "none";
+        if (threadRail) threadRail.classList.remove("visible");
+        if (threadList) threadList.innerHTML = "";
         showCreditsDisplayIfLoggedIn();
       }
 
@@ -1574,7 +1867,7 @@
 
       //   try {
       //     // Real backend request only
-      //     const res = await fetch("https://backend.aikipedia.workers.dev/chat", {
+      //     const res = await fetch(BACKEND_BASE + "/chat", {
       //       method: "POST",
       //       headers: {
       //         "Content-Type": "application/json"
@@ -1680,7 +1973,7 @@
         document.getElementById("loginSubmitBtn").disabled = true;
         
         try {
-          const res = await fetch("https://backend.aikipedia.workers.dev/flask", {
+          const res = await fetch(BACKEND_BASE + "/flask", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ action: "login", username, password })
@@ -1734,7 +2027,7 @@
         document.getElementById("registerSubmitBtn").disabled = true;
         
         try {
-          const res = await fetch("https://backend.aikipedia.workers.dev/flask", {
+          const res = await fetch(BACKEND_BASE + "/flask", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ action: "register", username, password })
@@ -1772,6 +2065,7 @@
       logoutBtn.onclick = () => {
         setLoggedOut();
         chatHistory = [];
+        activeConversationId = null;
         chatContainer.innerHTML = "";
         addSystemMessage("You've been logged out. Login to start a new conversation.");
       };
@@ -1780,6 +2074,7 @@
       clearChatBtn.onclick = () => {
         if (confirm("Are you sure you want to clear the chat history?")) {
           chatHistory = [];
+          activeConversationId = null;
           chatContainer.innerHTML = "";
           if (loggedInUser) {
             addSystemMessage(`Chat cleared. You can start a new conversation, ${loggedInUser}.`);
@@ -1928,7 +2223,7 @@
         reader.onload = async function(ev) {
           const base64 = ev.target.result;
           try {
-            const res = await fetch("https://backend.aikipedia.workers.dev/upload-image", {
+            const res = await fetch(BACKEND_BASE + "/upload-image", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ image_base64: base64, filename: file.name, user_id: loggedInUserId })
@@ -1995,11 +2290,31 @@
         chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: "smooth" });
         let imageUrlToSend = uploadedImageUrl;
         try {
-          const body = { user_id: loggedInUserId, message, model, history: chatHistory };
+          if (!activeConversationId) {
+            const cr = await fetch(BACKEND_BASE + "/conversations/create", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ user_id: loggedInUserId, title: message.slice(0, 80) }),
+            });
+            const created = await cr.json();
+            if (!cr.ok) throw new Error(created.error || "Could not create conversation");
+            activeConversationId = created.conversation_id;
+            await fetchConversations();
+            document.querySelectorAll(".thread-item").forEach((el) => {
+              el.classList.toggle("active", el.dataset.id === activeConversationId);
+            });
+          }
+          const body = {
+            user_id: loggedInUserId,
+            message,
+            model,
+            history: chatHistory,
+            conversation_id: activeConversationId,
+          };
           if (isImageModelSelected() && imageUrlToSend) {
             body.image_url = imageUrlToSend;
           }
-          const res = await fetch("https://backend.aikipedia.workers.dev/chat", {
+          const res = await fetch(BACKEND_BASE + "/chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body),
@@ -2010,6 +2325,7 @@
           addMessage("assistant", data.response);
           displayCreditUsage(data);
           chatHistory.push({ role: "user", content: message }, { role: "assistant", content: data.response });
+          fetchConversations();
         } catch (err) {
           loadingDiv.remove();
           let errorMsg = err && err.message ? err.message : (err && err.error ? (typeof err.error === 'object' ? JSON.stringify(err.error, null, 2) : String(err.error)) : (typeof err === "object" ? JSON.stringify(err, null, 2) : String(err)));
@@ -2135,7 +2451,7 @@
         creditsLoading = true;
         creditsAmount.textContent = "...";
         try {
-          const res = await fetch("https://backend.aikipedia.workers.dev/flask", {
+          const res = await fetch(BACKEND_BASE + "/flask", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ action: "get_credits", user_id: loggedInUserId })

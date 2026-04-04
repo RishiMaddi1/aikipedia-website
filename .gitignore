@@ -1,2 +1,3 @@
 # Backend worker source — keep local only (not published in repo)
 worker.js
+chat_threads.sql
