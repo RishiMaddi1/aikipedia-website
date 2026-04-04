@@ -38,6 +38,68 @@
   document.getElementById("chatBtn").onclick = function() {
     window.location.href = "chat.html";
   };
+  document.getElementById("createGroupBtn").onclick = function() {
+    const user = localStorage.getItem('aikipediaUser');
+    if (!user) {
+      alert("Please login first");
+      document.getElementById("loginBtn").click();
+      return;
+    }
+    // Hide login and register forms, show create group form
+    document.getElementById("loginForm").style.display = "none";
+    document.getElementById("registerForm").style.display = "none";
+    document.getElementById("createGroupForm").style.display = "flex";
+    authModal.style.display = "flex";
+    document.getElementById("createGroupForm").style.transform = "translateY(-20px)";
+    setTimeout(() => {
+      document.getElementById("createGroupForm").style.transform = "translateY(0)";
+    }, 10);
+  };
+  document.getElementById("createGroupCancelBtn").onclick = () => {
+    document.getElementById("createGroupForm").style.transform = "translateY(-20px)";
+    setTimeout(() => {
+      document.getElementById("createGroupForm").style.display = "none";
+      authModal.style.display = "none";
+    }, 300);
+  };
+  document.getElementById("createGroupSubmitBtn").onclick = async () => {
+    const groupName = document.getElementById("groupName").value.trim();
+    const maxMembers = document.getElementById("groupMaxMembers").value;
+    const userId = localStorage.getItem('aikipediaUserId');
+
+    if (!groupName) {
+      document.getElementById("createGroupError").textContent = "Please enter a group name";
+      return;
+    }
+
+    document.getElementById("createGroupError").textContent = "";
+    document.getElementById("createGroupSubmitBtn").disabled = true;
+
+    try {
+      const res = await fetch("https://backend.aikipedia.workers.dev/groups/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: userId,
+          title: groupName,
+          max_members: maxMembers || 50
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || data.error) {
+        throw new Error(data.error || "Failed to create group");
+      }
+
+      authModal.style.display = "none";
+      window.location.href = `chat.html?group=${data.conversation_id}`;
+    } catch (err) {
+      document.getElementById("createGroupError").textContent = err.message || "Failed to create group";
+    } finally {
+      document.getElementById("createGroupSubmitBtn").disabled = false;
+    }
+  };
 
   function checkStoredSession() {
     const storedUser = localStorage.getItem('aikipediaUser');

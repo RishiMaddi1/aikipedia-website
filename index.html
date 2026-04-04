@@ -623,6 +623,7 @@
     <button id="apiBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary" style="padding: 1.2rem; gap: 0.88rem; margin-top: 0.8rem; align-items: center;">API</button>
     <button id="paymentsBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary" style="padding: 1.2rem; gap: 0.88rem; margin-top: 0.8rem; align-items: center;">Buy echos</button>
     <button id="chatBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary" style="padding: 1.2rem; gap: 0.88rem; margin-top: 0.8rem; align-items: center;">chat</button>
+    <button id="createGroupBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary" style="padding: 1.2rem; gap: 0.88rem; margin-top: 0.8rem; align-items: center;">Create Group</button>
     <!-- Login/Register Buttons -->
     <div id="authButtons" style="width:100%; display:flex; flex-direction:column; gap:0.88rem; margin-top:2rem; align-items:center;">
       <button id="loginBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary">Login</button>
@@ -700,6 +701,25 @@
       <button id="registerCancelBtn" style="background:none;color:#e2e8f0;border:none;cursor:pointer;font-size:0.9rem;opacity:0.7;margin-top:0.5rem;">Cancel</button>
       
       <div id="registerError" style="color:#FCADB0;font-size:0.95rem;text-align:center;min-height:1.2rem;"></div>
+    </div>
+    <!-- Create Group Form -->
+    <div id="createGroupForm" style="display:none;background:#1a1f2e;padding:2.5rem 3rem;border-radius:20px;min-width:380px;max-width:420px;flex-direction:column;gap:1.5rem;align-items:center;box-shadow:0 10px 25px rgba(0,0,0,0.2);transform:translateY(-20px);transition:transform 0.3s ease;">
+      <div style="text-align:center;margin-bottom:1rem;">
+        <h2 style="color:#4889cd;font-size:2rem;margin-bottom:0.5rem;">Create Group</h2>
+        <p style="color:#e2e8f0;opacity:0.8;font-size:0.95rem;">Start a group chat with AI</p>
+      </div>
+      <div style="width:100%;display:flex;flex-direction:column;gap:1.2rem;">
+        <div>
+          <input id="groupName" placeholder="Group name" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid #000137;width:100%;background:#181a20;color:#e2e8f0;font-size:1rem;transition:border-color 0.3s ease;" />
+        </div>
+        <div>
+          <label style="color:#94a3b8;font-size:0.9rem;margin-bottom:0.5rem;display:block;">Max members (optional)</label>
+          <input id="groupMaxMembers" type="number" placeholder="50" min="2" max="100" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid #000137;width:100%;background:#181a20;color:#e2e8f0;font-size:1rem;transition:border-color 0.3s ease;" />
+        </div>
+      </div>
+      <button id="createGroupSubmitBtn" style="background:#4889cd;color:#000;font-weight:600;width:100%;padding:1rem 0;border-radius:12px;border:none;cursor:pointer;font-size:1rem;transition:all 0.3s ease;margin-top:0.5rem;">Create Group</button>
+      <button id="createGroupCancelBtn" style="background:none;color:#e2e8f0;border:none;cursor:pointer;font-size:0.9rem;opacity:0.7;margin-top:0.5rem;">Cancel</button>
+      <div id="createGroupError" style="color:#FCADB0;font-size:0.95rem;text-align:center;min-height:1.2rem;"></div>
     </div>
   </div>
   <!-- Hero Section -->
@@ -919,6 +939,7 @@
   </section>
 
   <!-- Background particles effect -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="background-particles.js"></script>
   <!-- Cursor trail effect -->
   <script src="cursor-trail.js"></script>

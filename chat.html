@@ -395,6 +395,20 @@
         background: var(--accent);
         color: #000;
       }
+      .thread-section-heading {
+        padding: 0.55rem 0.5rem;
+        margin-top: 0.8rem;
+        margin-bottom: 0.3rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        opacity: 0.8;
+      }
+      .thread-section-heading:first-of-type {
+        margin-top: 0;
+      }
       .thread-item {
         display: flex;
         align-items: flex-start;
@@ -1364,6 +1378,11 @@
           margin-bottom: 0.1rem;
         }
       }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
     </style>
     <style>
       .sidebar-auth-btn {
@@ -1462,6 +1481,12 @@
             <svg id="reloadCreditsIcon" width="22" height="22" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="color:var(--bg-secondary);transition:color 0.2s;"><path d="M17.65 6.35A8 8 0 1 0 18 10h-2a6 6 0 1 1-1.76-4.24l-2.79 2.79H18V2.5l-2.35 2.35z" fill="currentColor"/></svg>
           </button>
         </div>
+        <!-- Group Pot Display (shown for group chats) -->
+        <div id="groupPotBar" style="display:none;margin-top:0.8rem;align-items:center;gap:0.7rem;padding:0.6rem 1rem;background:rgba(72,137,205,0.1);border-radius:10px;border:1px solid rgba(72,137,205,0.2);">
+          <span style="font-size:0.9rem;color:var(--text);">Group Pot:</span>
+          <span id="groupPotBalance" style="font-weight:600;color:var(--accent);">--</span>
+          <button id="addToPotBtn" type="button" style="padding:0.3rem 0.8rem;background:var(--accent);color:#000;border:none;border-radius:6px;font-size:0.85rem;font-weight:600;cursor:pointer;transition:background 0.2s;">Add</button>
+        </div>
       </div>
       <style>
         #modelSelectorCompact {
@@ -1514,6 +1539,17 @@
           <div class="system-message">Welcome to Aikipedia Chat! Login to start a conversation.</div>
         </div>
         <div class="input-wrapper">
+          <!-- Lock Status Banner -->
+          <div id="lockStatusBanner" style="display:none;background:rgba(72,137,205,0.15);border:1px solid var(--accent);border-radius:8px;padding:0.6rem 1rem;margin-bottom:0.8rem;align-items:center;justify-content:space-between;gap:1rem;">
+            <span style="color:var(--accent);font-size:0.9rem;">
+              <span id="lockStatusText">Waiting for AI to respond...</span>
+            </span>
+            <span id="lockStatusSpinner" style="width:16px;height:16px;border:2px solid var(--accent);border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;"></span>
+          </div>
+
+          <!-- Typing Indicator -->
+          <div id="typingIndicator" style="display:none;font-size:0.85rem;color:var(--text);opacity:0.7;margin-bottom:0.5rem;height:1.2rem;"></div>
+
           <form class="input-area" id="chatForm">
             <input type="file" id="imageInput" accept="image/*" style="display:none" />
             <button id="imageAttachBtn" type="button" title="Attach image" style="background:var(--accent);color:#000;border:none;border-radius:0.8em;padding:0.7rem 1.1rem;margin-right:0.5rem;display:flex;align-items:center;gap:0.4rem;cursor:pointer;font-size:1.1rem;">
@@ -1524,7 +1560,6 @@
             <button id="sendButton" type="submit">Send</button>
           </form>
         </div>
-      </div>
       </div>
     </main>
 
@@ -1596,6 +1631,47 @@
         <button id="registerCancelBtn" style="background:none;color:var(--text);border:none;cursor:pointer;font-size:0.9rem;opacity:0.7;margin-top:0.5rem;">Cancel</button>
         
         <div id="registerError" style="color:var(--error);font-size:0.95rem;text-align:center;min-height:1.2rem;"></div>
+      </div>
+    </div>
+
+    <!-- Add to Pot Modal -->
+    <div id="addToPotModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);z-index:2500;align-items:center;justify-content:center;">
+      <div style="background:var(--bg-secondary);padding:2.5rem 3rem;border-radius:20px;min-width:380px;max-width:420px;display:flex;flex-direction:column;gap:1.5rem;align-items:center;box-shadow:0 10px 25px rgba(0,0,0,0.2);transform:translateY(-20px);transition:transform 0.3s ease;">
+        <div style="text-align:center;margin-bottom:1rem;">
+          <h2 style="color:var(--accent);font-size:2rem;margin-bottom:0.5rem;">Add to Group Pot</h2>
+          <p style="color:var(--text);opacity:0.8;font-size:0.95rem;">Share your credits with the group</p>
+        </div>
+
+        <div style="width:100%;display:flex;flex-direction:column;gap:1.2rem;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="color:var(--text);">Your Balance:</span>
+            <span id="userBalanceDisplay" style="color:var(--accent);font-weight:600;">--</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="color:var(--text);">Group Pot:</span>
+            <span id="potBalanceDisplay" style="color:var(--accent);font-weight:600;">--</span>
+          </div>
+          <div>
+            <label style="color:var(--text);font-size:0.9rem;margin-bottom:0.5rem;display:block;">Amount to add:</label>
+            <input id="addToPotAmount" type="number" min="1" step="1" placeholder="Enter amount" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid var(--border);width:100%;background:var(--bg);color:var(--text);font-size:1rem;" />
+          </div>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+            <button class="quick-amount-btn" data-amount="10" style="flex:1;padding:0.6rem;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:0.9rem;">10</button>
+            <button class="quick-amount-btn" data-amount="25" style="flex:1;padding:0.6rem;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:0.9rem;">25</button>
+            <button class="quick-amount-btn" data-amount="50" style="flex:1;padding:0.6rem;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:0.9rem;">50</button>
+            <button class="quick-amount-btn" data-amount="100" style="flex:1;padding:0.6rem;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:0.9rem;">100</button>
+            <button class="quick-amount-btn" data-amount="all" style="flex:1;padding:0.6rem;background:var(--accent);color:#000;border:1px solid var(--accent);border-radius:8px;cursor:pointer;font-size:0.9rem;font-weight:600;">All</button>
+          </div>
+        </div>
+
+        <button id="addToPotSubmitBtn" style="background:var(--accent);color:#000;font-weight:600;width:100%;padding:1rem 0;border-radius:12px;border:none;cursor:pointer;font-size:1rem;transition:all 0.3s ease;margin-top:0.5rem;">Add to Pot</button>
+
+        <a href="payments.html" style="color:var(--accent);font-size:0.9rem;text-decoration:underline;">Need more credits?</a>
+
+        <button id="addToPotCancelBtn" style="background:none;color:var(--text);border:none;cursor:pointer;font-size:0.9rem;opacity:0.7;margin-top:0.5rem;">Cancel</button>
+
+        <div id="addToPotError" style="color:var(--error);font-size:0.95rem;text-align:center;min-height:1.2rem;"></div>
+        <div id="addToPotSuccess" style="color:var(--success);font-size:0.95rem;text-align:center;min-height:1.2rem;"></div>
       </div>
     </div>
 
@@ -1682,26 +1758,70 @@
       function renderThreadList(conversations) {
         if (!threadList) return;
         threadList.innerHTML = "";
-        (conversations || []).forEach((c) => {
-          const div = document.createElement("div");
-          div.className = "thread-item" + (c.id === activeConversationId ? " active" : "");
-          div.dataset.id = c.id;
-          const title = c.title && String(c.title).trim() ? c.title : "New chat";
-          const meta = c.updated_at ? new Date(c.updated_at).toLocaleString() : "";
-          div.innerHTML =
-            '<div class="thread-item-body">' +
-            '<div class="thread-item-title">' +
-            escapeHtml(title) +
-            '</div><div class="thread-item-meta">' +
-            escapeHtml(meta) +
-            '</div></div>' +
-            '<button type="button" class="thread-item-menu-btn" aria-label="Chat options" title="Options">&#8942;</button>';
-          div.onclick = (e) => {
-            if (e.target.closest(".thread-item-menu-btn")) return;
-            selectThread(c.id);
-          };
-          threadList.appendChild(div);
-        });
+
+        const regularChats = (conversations || []).filter(c => !c.is_group);
+        const groupChats = (conversations || []).filter(c => c.is_group);
+
+        // Render regular chats section
+        if (regularChats.length > 0) {
+          const sectionHeading = document.createElement("div");
+          sectionHeading.className = "thread-section-heading";
+          sectionHeading.textContent = "Chats";
+          threadList.appendChild(sectionHeading);
+
+          regularChats.forEach((c) => {
+            const div = document.createElement("div");
+            div.className = "thread-item" + (c.id === activeConversationId ? " active" : "");
+            div.dataset.id = c.id;
+            div.dataset.isGroup = "false";
+            const title = c.title && String(c.title).trim() ? c.title : "New chat";
+            const meta = c.updated_at ? new Date(c.updated_at).toLocaleString() : "";
+            div.innerHTML =
+              '<div class="thread-item-body">' +
+              '<div class="thread-item-title">' +
+              escapeHtml(title) +
+              '</div><div class="thread-item-meta">' +
+              escapeHtml(meta) +
+              '</div></div>' +
+              '<button type="button" class="thread-item-menu-btn" aria-label="Chat options" title="Options">&#8942;</button>';
+            div.onclick = (e) => {
+              if (e.target.closest(".thread-item-menu-btn")) return;
+              selectThread(c.id, false);
+            };
+            threadList.appendChild(div);
+          });
+        }
+
+        // Render group chats section
+        if (groupChats.length > 0) {
+          const sectionHeading = document.createElement("div");
+          sectionHeading.className = "thread-section-heading";
+          sectionHeading.textContent = "Group Chats";
+          threadList.appendChild(sectionHeading);
+
+          groupChats.forEach((c) => {
+            const div = document.createElement("div");
+            div.className = "thread-item" + (c.id === activeConversationId ? " active" : "");
+            div.dataset.id = c.id;
+            div.dataset.isGroup = "true";
+            div.dataset.groupPotBalance = c.group_pot_balance || "0";
+            const title = c.title && String(c.title).trim() ? c.title : "New Group";
+            const meta = c.updated_at ? new Date(c.updated_at).toLocaleString() : "";
+            div.innerHTML =
+              '<div class="thread-item-body">' +
+              '<div class="thread-item-title">' +
+              escapeHtml(title) +
+              '</div><div class="thread-item-meta">' +
+              '👥 ' + escapeHtml(meta) +
+              '</div></div>' +
+              '<button type="button" class="thread-item-menu-btn" aria-label="Chat options" title="Options">&#8942;</button>';
+            div.onclick = (e) => {
+              if (e.target.closest(".thread-item-menu-btn")) return;
+              selectThread(c.id, true, c.group_pot_balance || "0");
+            };
+            threadList.appendChild(div);
+          });
+        }
       }
 
       function hideThreadContextMenu() {
@@ -1777,7 +1897,7 @@
           const newId = await importSharedConversation(token);
           sessionStorage.removeItem(PENDING_SHARE_KEY);
           await fetchConversations();
-          await selectThread(newId);
+          await selectThread(newId, false);
           addSystemMessage(
             "Imported shared chat into your account. You can rename it from the chat list (⋯)."
           );
@@ -1814,22 +1934,102 @@
       async function fetchConversations() {
         if (!loggedInUserId) return;
         try {
+          // Fetch regular conversations
           const res = await fetch(BACKEND_BASE + "/conversations/list", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ user_id: loggedInUserId }),
           });
           const data = await res.json();
-          if (!res.ok) return;
-          renderThreadList(data.conversations || []);
+
+          // Fetch user's groups
+          let groups = [];
+          try {
+            const groupsRes = await fetch(BACKEND_BASE + "/groups/list", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ user_id: loggedInUserId }),
+            });
+            const groupsData = await groupsRes.json();
+            if (groupsRes.ok && groupsData.groups) {
+              groups = groupsData.groups;
+            }
+          } catch (e) {
+            console.error("Failed to fetch groups:", e);
+          }
+
+          // Merge conversations and groups, with groups marked is_group=true
+          const allConversations = [
+            ...(data.conversations || []).filter(c => !c.is_group),
+            ...groups.map(g => ({
+              id: g.id,
+              title: g.title,
+              updated_at: g.updated_at,
+              is_group: true,
+              group_pot_balance: g.group_pot_balance || 0
+            }))
+          ];
+
+          // Sort by updated_at desc
+          allConversations.sort((a, b) => {
+            const dateA = new Date(a.updated_at || 0);
+            const dateB = new Date(b.updated_at || 0);
+            return dateB - dateA;
+          });
+
+          renderThreadList(allConversations);
         } catch (e) {
           console.error(e);
         }
       }
 
-      async function selectThread(conversationId) {
+      async function selectThread(conversationId, isGroup = false, groupPotBalance = "0") {
         if (!loggedInUserId) return;
         activeConversationId = conversationId;
+
+        // Show/hide group pot bar based on conversation type
+        const groupPotBar = document.getElementById("groupPotBar");
+        const groupPotBalanceEl = document.getElementById("groupPotBalance");
+        if (isGroup) {
+          groupPotBar.style.display = "flex";
+          groupPotBalanceEl.textContent = groupPotBalance + " echos";
+
+          // Set global group variables for existing functionality
+          currentGroupId = conversationId;
+          currentConversationId = conversationId;
+          isGroupChat = true;
+
+          // Subscribe to Realtime for group
+          if (typeof subscribeToGroupChat === 'function') {
+            subscribeToGroupChat(conversationId, {
+              onLockStatusChange: (data) => {
+                if (typeof updateLockStatus === 'function') {
+                  updateLockStatus(data);
+                }
+              },
+              onPotBalanceChange: (balance) => {
+                groupPotBalanceEl.textContent = balance + " echos";
+              },
+              onNewMessage: (message) => {
+                appendMessageToChat(message);
+              },
+              onTyping: (data) => {
+                if (typeof showTyping === 'function') {
+                  showTyping(data);
+                }
+              }
+            });
+          }
+        } else {
+          groupPotBar.style.display = "none";
+          // Unsubscribe from any existing group
+          if (typeof unsubscribeFromConversation === 'function' && currentConversationId) {
+            unsubscribeFromConversation(currentConversationId);
+          }
+          isGroupChat = false;
+          currentGroupId = null;
+        }
+
         chatHistory = [];
         chatContainer.innerHTML = "";
         clearImagePreview();
@@ -1871,6 +2071,8 @@
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || "Failed to create chat");
             activeConversationId = data.conversation_id;
+            // Hide group pot for new chats (they're regular chats by default)
+            document.getElementById("groupPotBar").style.display = "none";
             chatHistory = [];
             chatContainer.innerHTML = "";
             addSystemMessage("New chat started. Type a message below.");
@@ -2682,6 +2884,19 @@
             body: JSON.stringify(body),
           });
           const data = await res.json();
+
+          // Handle group lock (status 423)
+          if (res.status === 423 || (data.locked && data.error)) {
+            loadingDiv.remove();
+            addSystemMessage(data.locked_by
+              ? `Please wait: ${data.locked_by} is currently sending a message.`
+              : data.error || "Please wait for the current message to be processed.");
+            userInput.disabled = false;
+            sendButton.disabled = false;
+            updateImageAttachBtnState();
+            return;
+          }
+
           if (!res.ok) throw new Error(data.error || "Something went wrong");
           loadingDiv.remove();
           addMessage("assistant", data.response);
@@ -2780,6 +2995,20 @@
         messageDiv.textContent = text;
         chatContainer.appendChild(messageDiv);
         chatContainer.scrollTo({top: chatContainer.scrollHeight, behavior: "smooth"});
+      }
+
+      // Add system message (for lock warnings, etc.)
+      function addSystemMessage(text) {
+        const messageDiv = document.createElement("div");
+        messageDiv.className = "message system";
+        messageDiv.style.textAlign = "center";
+        messageDiv.style.color = "var(--accent)";
+        messageDiv.style.fontSize = "0.9rem";
+        messageDiv.style.padding = "0.5rem";
+        messageDiv.style.opacity = "0.8";
+        messageDiv.textContent = text;
+        chatContainer.appendChild(messageDiv);
+        chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: "smooth" });
       }
 
       // Display token usage and cost
@@ -2886,10 +3115,379 @@
           imageModalImg.src = '';
         }
       };
+
+      // ============================================================================
+      // GROUP CHAT FUNCTIONALITY
+      // ============================================================================
+
+      let currentConversationId = null;
+      let currentGroupId = null;
+      let isGroupChat = false;
+      let supabaseChannel = null;
+      let typingTimeout = null;
+
+      const lockStatusBanner = document.getElementById('lockStatusBanner');
+      const lockStatusText = document.getElementById('lockStatusText');
+      const groupPotBar = document.getElementById('groupPotBar');
+      const groupPotBalance = document.getElementById('groupPotBalance');
+      const addToPotBtn = document.getElementById('addToPotBtn');
+      const addToPotModal = document.getElementById('addToPotModal');
+      const addToPotCancelBtn = document.getElementById('addToPotCancelBtn');
+      const addToPotSubmitBtn = document.getElementById('addToPotSubmitBtn');
+      const typingIndicator = document.getElementById('typingIndicator');
+
+      // Check if URL has group parameter
+      function checkGroupFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const groupId = urlParams.get('group');
+        if (groupId) {
+          loadGroupChat(groupId);
+        }
+      }
+
+      // Load a group chat
+      async function loadGroupChat(groupId) {
+        if (!supabase) {
+          console.error('Supabase not loaded');
+          return;
+        }
+
+        currentGroupId = groupId;
+        currentConversationId = groupId;
+        isGroupChat = true;
+
+        try {
+          const conv = await getConversationDetails(groupId);
+          if (!conv || !conv.is_group) {
+            console.error('Invalid group');
+            return;
+          }
+
+          // Show group UI elements
+          groupPotBar.style.display = 'flex';
+          groupPotBalance.textContent = `${conv.group_pot_balance || 0} Echos`;
+
+          // Subscribe to Realtime updates
+          subscribeToGroupChat(groupId, {
+            onLockStatusChange: (data) => {
+              updateLockStatus(data);
+            },
+            onPotBalanceChange: (balance) => {
+              groupPotBalance.textContent = `${balance} Echos`;
+            },
+            onNewMessage: (message) => {
+              // Message will be handled by existing logic
+              appendMessageToChat(message);
+            },
+            onMemberChange: (data) => {
+              console.log('Member change:', data);
+            },
+            onTyping: (data) => {
+              showTyping(data);
+            }
+          });
+
+        } catch (err) {
+          console.error('Error loading group:', err);
+        }
+      }
+
+      // Update lock status UI
+      function updateLockStatus(data) {
+        if (data.isLocked) {
+          lockStatusBanner.style.display = 'flex';
+          lockStatusText.textContent = `Waiting for AI to respond to ${data.lockedBy || 'someone'}...`;
+          sendButton.disabled = true;
+          sendButton.textContent = 'Wait...';
+          userInput.disabled = true;
+        } else {
+          lockStatusBanner.style.display = 'none';
+          sendButton.disabled = false;
+          sendButton.textContent = 'Send';
+          userInput.disabled = false;
+        }
+      }
+
+      // Show typing indicator
+      function showTyping(data) {
+        if (!data.typing) {
+          typingIndicator.style.display = 'none';
+          return;
+        }
+
+        const myUserId = localStorage.getItem('aikipediaUserId');
+        if (data.user_id === myUserId) return; // Don't show own typing
+
+        typingIndicator.textContent = `${data.username || 'Someone'} is typing...`;
+        typingIndicator.style.display = 'block';
+
+        setTimeout(() => {
+          typingIndicator.style.display = 'none';
+        }, 3000);
+      }
+
+      // Add to Pot button click
+      addToPotBtn.onclick = async () => {
+        const userId = localStorage.getItem('aikipediaUserId');
+        if (!userId) {
+          alert('Please login first');
+          return;
+        }
+
+        // Fetch balances
+        try {
+          const userCredits = await fetch('https://backend.aikipedia.workers.dev/flask', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'get_credits', user_id: userId })
+          }).then(r => r.json());
+
+          const conv = await getConversationDetails(currentConversationId);
+
+          document.getElementById('userBalanceDisplay').textContent = `${userCredits.money_left || 0} Echos`;
+          document.getElementById('potBalanceDisplay').textContent = `${conv.group_pot_balance || 0} Echos`;
+
+          addToPotModal.style.display = 'flex';
+        } catch (err) {
+          console.error('Error fetching balances:', err);
+        }
+      };
+
+      // Add to Pot cancel
+      addToPotCancelBtn.onclick = () => {
+        addToPotModal.style.display = 'none';
+        document.getElementById('addToPotError').textContent = '';
+        document.getElementById('addToPotSuccess').textContent = '';
+      };
+
+      // Quick amount buttons
+      document.querySelectorAll('.quick-amount-btn').forEach(btn => {
+        btn.onclick = () => {
+          const amount = btn.dataset.amount;
+          const input = document.getElementById('addToPotAmount');
+
+          if (amount === 'all') {
+            const userBalance = parseFloat(document.getElementById('userBalanceDisplay').textContent) || 0;
+            input.value = Math.floor(userBalance);
+          } else {
+            input.value = amount;
+          }
+        };
+      });
+
+      // Add to Pot submit
+      addToPotSubmitBtn.onclick = async () => {
+        const amount = document.getElementById('addToPotAmount').value;
+        const userId = localStorage.getItem('aikipediaUserId');
+
+        if (!amount || amount <= 0) {
+          document.getElementById('addToPotError').textContent = 'Please enter a valid amount';
+          return;
+        }
+
+        addToPotSubmitBtn.disabled = true;
+        document.getElementById('addToPotError').textContent = '';
+        document.getElementById('addToPotSuccess').textContent = '';
+
+        try {
+          const res = await fetch('https://backend.aikipedia.workers.dev/groups/add-to-pot', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              conversation_id: currentConversationId,
+              user_id: userId,
+              amount: parseFloat(amount)
+            })
+          });
+
+          const data = await res.json();
+
+          if (!res.ok || data.error) {
+            throw new Error(data.error || 'Failed to add to pot');
+          }
+
+          document.getElementById('addToPotSuccess').textContent = `Added ${data.amount_added} Echos to group pot!`;
+          document.getElementById('potBalanceDisplay').textContent = `${data.new_pot_balance} Echos`;
+          groupPotBalance.textContent = `${data.new_pot_balance} Echos`;
+
+          setTimeout(() => {
+            addToPotModal.style.display = 'none';
+            document.getElementById('addToPotSuccess').textContent = '';
+          }, 1500);
+
+        } catch (err) {
+          document.getElementById('addToPotError').textContent = err.message;
+        } finally {
+          addToPotSubmitBtn.disabled = false;
+        }
+      };
+
+      // Broadcast typing when user types
+      userInput.addEventListener('input', () => {
+        if (!isGroupChat || !currentConversationId) return;
+
+        if (typingTimeout) clearTimeout(typingTimeout);
+
+        broadcastTyping(currentConversationId, true);
+
+        typingTimeout = setTimeout(() => {
+          broadcastTyping(currentConversationId, false);
+        }, 3000);
+      });
+
+      // Initialize
+      window.addEventListener('DOMContentLoaded', () => {
+        checkGroupFromURL();
+
+        // Override send button for groups
+        const originalSend = chatForm.onsubmit;
+        chatForm.onsubmit = async (e) => {
+          if (!originalSend) return true;
+
+          const result = originalSend.call(this, e);
+          return result;
+        };
+      });
+
+      // Helper to append message from Realtime
+      function appendMessageToChat(message) {
+        // This integrates with your existing message display logic
+        // Messages from other users will appear here
+        console.log('New message:', message);
+      }
+
+      // Load user's groups
+      async function loadUserGroups() {
+        const userId = localStorage.getItem('aikipediaUserId');
+        if (!userId) return;
+
+        try {
+          const res = await fetch('https://backend.aikipedia.workers.dev/groups/list', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: userId })
+          });
+
+          const data = await res.json();
+          if (res.ok && data.groups) {
+            console.log('User groups:', data.groups);
+            // Groups can be displayed in a sidebar dropdown or list
+            // For now, they're logged and can be accessed via URL params
+          }
+        } catch (err) {
+          console.error('Error loading groups:', err);
+        }
+      }
+
+      // Add to Pot modal handlers (ensure DOM is ready)
+      window.addEventListener('DOMContentLoaded', () => {
+        // Add to Pot button click
+        addToPotBtn.onclick = async () => {
+          const userId = localStorage.getItem('aikipediaUserId');
+          if (!userId) {
+            alert('Please login first');
+            return;
+          }
+
+          // Fetch balances
+          try {
+            const userCredits = await fetch('https://backend.aikipedia.workers.dev/flask', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'get_credits', user_id: userId })
+            }).then(r => r.json());
+
+            const conv = await getConversationDetails(currentConversationId);
+
+            document.getElementById('userBalanceDisplay').textContent = `${userCredits.money_left || 0} Echos`;
+            document.getElementById('potBalanceDisplay').textContent = `${conv.group_pot_balance || 0} Echos`;
+
+            addToPotModal.style.display = 'flex';
+          } catch (err) {
+            console.error('Error opening add to pot modal:', err);
+          }
+        };
+
+        // Add to Pot cancel
+        addToPotCancelBtn.onclick = () => {
+          addToPotModal.style.display = 'none';
+          document.getElementById('addToPotError').textContent = '';
+          document.getElementById('addToPotSuccess').textContent = '';
+        };
+
+        // Quick amount buttons
+        document.querySelectorAll('.quick-amount-btn').forEach(btn => {
+          btn.onclick = () => {
+            const amount = btn.dataset.amount;
+            const input = document.getElementById('addToPotAmount');
+
+            if (amount === 'all') {
+              const userBalance = parseFloat(document.getElementById('userBalanceDisplay').textContent) || 0;
+              input.value = Math.floor(userBalance);
+            } else {
+              input.value = amount;
+            }
+          };
+        });
+
+        // Add to Pot submit
+        addToPotSubmitBtn.onclick = async () => {
+          const amount = document.getElementById('addToPotAmount').value;
+          const userId = localStorage.getItem('aikipediaUserId');
+
+          if (!amount || amount <= 0) {
+            document.getElementById('addToPotError').textContent = 'Please enter a valid amount';
+            return;
+          }
+
+          addToPotSubmitBtn.disabled = true;
+          document.getElementById('addToPotError').textContent = '';
+          document.getElementById('addToPotSuccess').textContent = '';
+
+          try {
+            const res = await fetch('https://backend.aikipedia.workers.dev/groups/add-to-pot', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                conversation_id: currentConversationId,
+                user_id: userId,
+                amount: parseFloat(amount)
+              })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok || data.error) {
+              throw new Error(data.error || 'Failed to add to pot');
+            }
+
+            document.getElementById('addToPotSuccess').textContent = `Added ${data.amount_added} Echos to group pot!`;
+            document.getElementById('potBalanceDisplay').textContent = `${data.new_pot_balance} Echos`;
+            groupPotBalance.textContent = `${data.new_pot_balance} Echos`;
+
+            setTimeout(() => {
+              addToPotModal.style.display = 'none';
+              document.getElementById('addToPotSuccess').textContent = '';
+            }, 1500);
+
+          } catch (err) {
+            document.getElementById('addToPotError').textContent = err.message;
+          } finally {
+            addToPotSubmitBtn.disabled = false;
+          }
+        };
+      });
+
+      // Call on page load
+      window.addEventListener('DOMContentLoaded', () => {
+        loadUserGroups();
+      });
     </script>
     <!-- Background particles effect -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="background-particles.js"></script>
     <!-- Cursor trail effect -->
     <script src="cursor-trail.js"></script>
+    <script src="supabase-client.js"></script>
   </body>
 </html>
