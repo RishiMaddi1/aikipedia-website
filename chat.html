@@ -392,6 +392,9 @@
         color: #000;
       }
       .thread-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.35rem;
         padding: 0.55rem 0.5rem;
         margin-bottom: 0.4rem;
         border-radius: 8px;
@@ -402,6 +405,32 @@
         word-break: break-word;
         overflow-wrap: anywhere;
         min-width: 0;
+      }
+      .thread-item-body {
+        flex: 1;
+        min-width: 0;
+      }
+      .thread-item-menu-btn {
+        flex-shrink: 0;
+        width: 1.75rem;
+        height: 1.75rem;
+        margin: -0.1rem 0 0 0;
+        padding: 0;
+        border: 1px solid transparent;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--accent);
+        cursor: pointer;
+        font-size: 1.15rem;
+        line-height: 1;
+        opacity: 0.55;
+      }
+      .thread-item:hover .thread-item-menu-btn,
+      .thread-item-menu-btn:hover,
+      .thread-item-menu-btn:focus-visible {
+        opacity: 1;
+        border-color: var(--border);
+        background: rgba(72, 137, 205, 0.12);
       }
       .thread-item:hover {
         border-color: var(--border);
@@ -420,6 +449,13 @@
         font-size: 0.72rem;
         opacity: 0.75;
         margin-top: 0.2rem;
+      }
+      .thread-item-menu-btn:focus {
+        outline: none;
+      }
+      .thread-item-menu-btn:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 1px;
       }
 
       .thread-context-menu {
@@ -1397,7 +1433,7 @@
         <button type="button" id="newChatBtn">+ New chat</button>
         <div id="threadList"></div>
         <div id="threadContextMenu" class="thread-context-menu" role="menu" aria-hidden="true">
-          <button type="button" id="threadContextRename" role="menuitem">Rename</button>
+          <button type="button" id="threadContextRename" role="menuitem">Rename…</button>
         </div>
       </aside>
       <div class="main-column">
@@ -1606,6 +1642,8 @@
       const newChatBtn = document.getElementById("newChatBtn");
       const threadRailCollapse = document.getElementById("threadRailCollapse");
       const threadRailExpand = document.getElementById("threadRailExpand");
+      const threadContextMenu = document.getElementById("threadContextMenu");
+      const threadContextRename = document.getElementById("threadContextRename");
       const THREAD_RAIL_COLLAPSED_KEY = "aikipediaThreadRailCollapsed";
       const sidebarOverlay = document.getElementById("sidebarOverlay");
       const imageInput = document.getElementById("imageInput");
@@ -1622,6 +1660,8 @@
       let loggedInUser = null;
       let loggedInUserId = null;
       let authMode = "login";
+      let threadContextConversationId = null;
+      let threadContextCurrentTitle = "";
 
       function escapeHtml(str) {
         if (str == null) return "";
@@ -1640,14 +1680,67 @@
           const title = c.title && String(c.title).trim() ? c.title : "New chat";
           const meta = c.updated_at ? new Date(c.updated_at).toLocaleString() : "";
           div.innerHTML =
+            '<div class="thread-item-body">' +
             '<div class="thread-item-title">' +
             escapeHtml(title) +
             '</div><div class="thread-item-meta">' +
             escapeHtml(meta) +
-            "</div>";
-          div.onclick = () => selectThread(c.id);
+            '</div></div>' +
+            '<button type="button" class="thread-item-menu-btn" aria-label="Chat options" title="Options">&#8942;</button>';
+          div.onclick = (e) => {
+            if (e.target.closest(".thread-item-menu-btn")) return;
+            selectThread(c.id);
+          };
           threadList.appendChild(div);
         });
+      }
+
+      function hideThreadContextMenu() {
+        if (!threadContextMenu) return;
+        threadContextMenu.classList.remove("open");
+        threadContextMenu.setAttribute("aria-hidden", "true");
+        threadContextConversationId = null;
+        threadContextCurrentTitle = "";
+      }
+
+      function showThreadOptionsMenu(anchorEl) {
+        if (!threadContextMenu || !anchorEl) return;
+        threadContextMenu.classList.add("open");
+        threadContextMenu.setAttribute("aria-hidden", "false");
+        requestAnimationFrame(() => {
+          const r = anchorEl.getBoundingClientRect();
+          const w = threadContextMenu.offsetWidth;
+          const h = threadContextMenu.offsetHeight;
+          let left = r.right - w;
+          if (left < 8) left = 8;
+          if (left + w > window.innerWidth - 8) left = Math.max(8, window.innerWidth - w - 8);
+          let top = r.bottom + 4;
+          if (top + h > window.innerHeight - 8) top = Math.max(8, r.top - h - 4);
+          threadContextMenu.style.left = left + "px";
+          threadContextMenu.style.top = top + "px";
+        });
+      }
+
+      async function renameConversation(conversationId, title) {
+        if (!loggedInUserId || !conversationId) return;
+        try {
+          const res = await fetch(BACKEND_BASE + "/conversations/rename", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              user_id: loggedInUserId,
+              conversation_id: conversationId,
+              title,
+            }),
+          });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok) throw new Error(data.error || "Rename failed");
+          await fetchConversations();
+        } catch (err) {
+          addSystemMessage(
+            "Could not rename: " + (err && err.message ? err.message : String(err))
+          );
+        }
       }
 
       async function fetchConversations() {
@@ -1782,6 +1875,64 @@
         };
       }
 
+      if (threadList) {
+        threadList.addEventListener("click", (e) => {
+          const btn = e.target.closest(".thread-item-menu-btn");
+          if (!btn || !threadList.contains(btn)) return;
+          e.stopPropagation();
+          e.preventDefault();
+          const item = btn.closest(".thread-item");
+          if (!item) return;
+          const id = item.dataset.id;
+          const titleEl = item.querySelector(".thread-item-title");
+          const curTitle = titleEl ? titleEl.textContent.trim() : "";
+          const sameOpen =
+            threadContextMenu &&
+            threadContextMenu.classList.contains("open") &&
+            threadContextConversationId === id;
+          if (sameOpen) {
+            hideThreadContextMenu();
+            return;
+          }
+          threadContextConversationId = id;
+          threadContextCurrentTitle = curTitle;
+          showThreadOptionsMenu(btn);
+        });
+        threadList.addEventListener("scroll", () => hideThreadContextMenu(), { passive: true });
+      }
+      document.addEventListener(
+        "click",
+        (e) => {
+          if (e.target.closest(".thread-item-menu-btn")) return;
+          if (
+            threadContextMenu &&
+            threadContextMenu.classList.contains("open") &&
+            !threadContextMenu.contains(e.target)
+          ) {
+            hideThreadContextMenu();
+          }
+        },
+        true
+      );
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") hideThreadContextMenu();
+      });
+      if (threadContextRename) {
+        threadContextRename.addEventListener("click", (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          const id = threadContextConversationId;
+          const cur = threadContextCurrentTitle;
+          hideThreadContextMenu();
+          if (!id || !loggedInUserId) return;
+          const next = window.prompt("Rename chat", cur);
+          if (next === null) return;
+          const trimmed = String(next).trim();
+          if (!trimmed) return;
+          renameConversation(id, trimmed);
+        });
+      }
+
       function setLoggedInUser(username, userId) {
         loggedInUser = username;
         loggedInUserId = userId;
@@ -1807,6 +1958,7 @@
       }
       
       function setLoggedOut() {
+        hideThreadContextMenu();
         loggedInUser = null;
         loggedInUserId = null;
         activeConversationId = null;
