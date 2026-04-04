@@ -25,6 +25,10 @@
         --success: #2F686F;
       }
 
+      #authModal .toggle-password {
+        z-index: 2;
+      }
+
 ::-webkit-scrollbar {
   width: 6px;
   background-color: var(--border); /* Use the border color for the scrollbar track */
@@ -1981,6 +1985,27 @@
         showCreditsDisplayIfLoggedIn();
       }
 
+      function setupPasswordToggles() {
+        document.querySelectorAll("#authModal .toggle-password").forEach((toggle) => {
+          toggle.onclick = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const targetId = this.getAttribute("data-target");
+            const input = document.getElementById(targetId);
+            if (!input) return;
+            const svg = this.querySelector("svg");
+            if (input.type === "password") {
+              input.type = "text";
+              if (svg) svg.style.stroke = "#4889cd";
+            } else {
+              input.type = "password";
+              if (svg) svg.style.stroke = "#888";
+            }
+          };
+        });
+      }
+      setupPasswordToggles();
+
       // Handle login/register events
       loginBtn.onclick = () => {
         document.getElementById("loginForm").style.display = "flex";
@@ -1989,6 +2014,7 @@
         document.getElementById("loginForm").style.transform = "translateY(-20px)";
         setTimeout(() => {
           document.getElementById("loginForm").style.transform = "translateY(0)";
+          setupPasswordToggles();
         }, 10);
       };
       
@@ -1999,6 +2025,7 @@
         document.getElementById("registerForm").style.transform = "translateY(-20px)";
         setTimeout(() => {
           document.getElementById("registerForm").style.transform = "translateY(0)";
+          setupPasswordToggles();
         }, 10);
       };
 
@@ -2173,6 +2200,7 @@
           addSystemMessage("Welcome to Aikipedia Chat! Login to start a conversation.");
         }
         showCreditsDisplayIfLoggedIn();
+        setupPasswordToggles();
       });
 
       // Service Worker Registration for PWA support
