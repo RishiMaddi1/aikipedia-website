@@ -1438,6 +1438,7 @@
         <div id="threadList"></div>
         <div id="threadContextMenu" class="thread-context-menu" role="menu" aria-hidden="true">
           <button type="button" id="threadContextRename" role="menuitem">Rename…</button>
+          <button type="button" id="threadContextShare" role="menuitem">Share (copy link)</button>
         </div>
       </aside>
       <div class="main-column">
@@ -1648,6 +1649,7 @@
       const threadRailExpand = document.getElementById("threadRailExpand");
       const threadContextMenu = document.getElementById("threadContextMenu");
       const threadContextRename = document.getElementById("threadContextRename");
+      const threadContextShare = document.getElementById("threadContextShare");
       const THREAD_RAIL_COLLAPSED_KEY = "aikipediaThreadRailCollapsed";
       const sidebarOverlay = document.getElementById("sidebarOverlay");
       const imageInput = document.getElementById("imageInput");
@@ -1660,6 +1662,7 @@
       const BACKEND_BASE = "https://backend.aikipedia.workers.dev";
       /** Max prior messages to send on /chat (worker keeps last 4 for the model; 8 = 2× that for lean payloads + headroom). */
       const CHAT_HISTORY_SEND_MAX = 8;
+      const PENDING_SHARE_KEY = "aikipediaPendingShare";
 
       let chatHistory = [];
       let activeConversationId = null;
@@ -1725,6 +1728,65 @@
           threadContextMenu.style.left = left + "px";
           threadContextMenu.style.top = top + "px";
         });
+      }
+
+      function stripShareQueryFromUrl() {
+        try {
+          const u = new URL(window.location.href);
+          if (!u.searchParams.has("share")) return;
+          u.searchParams.delete("share");
+          const q = u.searchParams.toString();
+          window.history.replaceState({}, "", u.pathname + (q ? "?" + q : "") + (u.hash || ""));
+        } catch (e) {
+          /* ignore */
+        }
+      }
+
+      async function createShareLinkForConversation(conversationId) {
+        const res = await fetch(BACKEND_BASE + "/conversations/share/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: loggedInUserId, conversation_id: conversationId }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || "Could not create share link");
+        return data.share_token;
+      }
+
+      async function importSharedConversation(token) {
+        const res = await fetch(BACKEND_BASE + "/conversations/share/import", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: loggedInUserId, token }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || "Import failed");
+        return data.conversation_id;
+      }
+
+      async function tryConsumePendingShare() {
+        if (!loggedInUserId) return;
+        const params = new URLSearchParams(window.location.search);
+        let token = params.get("share");
+        if (!token) token = sessionStorage.getItem(PENDING_SHARE_KEY);
+        if (!token) return;
+        token = String(token).trim();
+        if (!token) return;
+        stripShareQueryFromUrl();
+        try {
+          const newId = await importSharedConversation(token);
+          sessionStorage.removeItem(PENDING_SHARE_KEY);
+          await fetchConversations();
+          await selectThread(newId);
+          addSystemMessage(
+            "Imported shared chat into your account. You can rename it from the chat list (⋯)."
+          );
+        } catch (err) {
+          sessionStorage.setItem(PENDING_SHARE_KEY, token);
+          addSystemMessage(
+            "Could not import shared chat: " + (err && err.message ? err.message : String(err))
+          );
+        }
       }
 
       async function renameConversation(conversationId, title) {
@@ -1938,6 +2000,35 @@
           renameConversation(id, trimmed);
         });
       }
+      if (threadContextShare) {
+        threadContextShare.addEventListener("click", (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          const id = threadContextConversationId;
+          hideThreadContextMenu();
+          if (!id || !loggedInUserId) return;
+          void (async () => {
+            try {
+              const shareToken = await createShareLinkForConversation(id);
+              const link =
+                window.location.origin +
+                window.location.pathname +
+                "?share=" +
+                encodeURIComponent(shareToken);
+              try {
+                await navigator.clipboard.writeText(link);
+                addSystemMessage("Share link copied. Anyone logged in can open it to add a copy to their chats.");
+              } catch (clipErr) {
+                window.prompt("Copy this link:", link);
+              }
+            } catch (err) {
+              addSystemMessage(
+                "Could not create share link: " + (err && err.message ? err.message : String(err))
+              );
+            }
+          })();
+        });
+      }
 
       function setLoggedInUser(username, userId) {
         loggedInUser = username;
@@ -1960,11 +2051,15 @@
           addSystemMessage(`Welcome, ${username}! Use “New chat” or send a message to start a saved conversation.`);
         }
         showCreditsDisplayIfLoggedIn();
-        fetchConversations();
+        void (async () => {
+          await fetchConversations();
+          await tryConsumePendingShare();
+        })();
       }
       
       function setLoggedOut() {
         hideThreadContextMenu();
+        sessionStorage.removeItem(PENDING_SHARE_KEY);
         loggedInUser = null;
         loggedInUserId = null;
         activeConversationId = null;
@@ -2188,6 +2283,13 @@
 
       // Initialize
       window.addEventListener("DOMContentLoaded", async () => {
+        const sp = new URLSearchParams(window.location.search);
+        const shareTok = sp.get("share");
+        if (shareTok && String(shareTok).trim()) {
+          sessionStorage.setItem(PENDING_SHARE_KEY, String(shareTok).trim());
+          stripShareQueryFromUrl();
+        }
+
         // Check for saved session
         const hasSession = checkStoredSession();
         
@@ -2198,6 +2300,9 @@
         // Show welcome message if no session
         if (!hasSession) {
           addSystemMessage("Welcome to Aikipedia Chat! Login to start a conversation.");
+          if (sessionStorage.getItem(PENDING_SHARE_KEY)) {
+            addSystemMessage("Log in to import the shared chat into your account.");
+          }
         }
         showCreditsDisplayIfLoggedIn();
         setupPasswordToggles();
