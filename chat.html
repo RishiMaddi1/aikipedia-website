@@ -1654,6 +1654,8 @@
       let imageUploading = false;
 
       const BACKEND_BASE = "https://backend.aikipedia.workers.dev";
+      /** Max prior messages to send on /chat (worker keeps last 4 for the model; 8 = 2× that for lean payloads + headroom). */
+      const CHAT_HISTORY_SEND_MAX = 8;
 
       let chatHistory = [];
       let activeConversationId = null;
@@ -2535,7 +2537,7 @@
             user_id: loggedInUserId,
             message,
             model,
-            history: chatHistory,
+            history: chatHistory.slice(-CHAT_HISTORY_SEND_MAX),
             conversation_id: activeConversationId,
           };
           if (isImageModelSelected() && imageUrlToSend) {
