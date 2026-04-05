@@ -3550,16 +3550,28 @@
         }
       };
 
-      // Broadcast typing when user types
+      // Broadcast typing when user types (debounced - only send once per typing session)
+      let lastTypingBroadcast = 0;
+      const TYPING_DEBOUNCE_MS = 2000; // Wait 2 seconds before broadcasting typing again
+
       userInput.addEventListener('input', () => {
         if (!isGroupChat || !currentConversationId) return;
 
+        const now = Date.now();
+
+        // Only broadcast if we haven't broadcast in the last 2 seconds
+        if (now - lastTypingBroadcast > TYPING_DEBOUNCE_MS) {
+          broadcastTyping(currentConversationId, true);
+          lastTypingBroadcast = now;
+        }
+
+        // Clear existing timeout
         if (typingTimeout) clearTimeout(typingTimeout);
 
-        broadcastTyping(currentConversationId, true);
-
+        // Auto-stop typing after 3 seconds of no input
         typingTimeout = setTimeout(() => {
           broadcastTyping(currentConversationId, false);
+          lastTypingBroadcast = 0; // Reset so next input will broadcast again
         }, 3000);
       });
 
