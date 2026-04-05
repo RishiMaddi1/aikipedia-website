@@ -1773,6 +1773,8 @@
       let loggedInUserId = null;
       let authMode = "login";
       let threadContextConversationId = null;
+      /** Username cache for group chat */
+      const usernameCache = new Map();
       let threadContextCurrentTitle = "";
 
       function escapeHtml(str) {
@@ -2069,6 +2071,7 @@
 
         chatHistory = [];
         appliedGroupMessageIds = new Set();
+        usernameCache.clear(); // Clear username cache when switching conversations
         groupExpectOwnUserRealtime = false;
         chatContainer.innerHTML = "";
         clearImagePreview();
@@ -2100,6 +2103,10 @@
               const usersData = await usersRes.json();
               if (usersData && usersData.usernames) {
                 Object.assign(usernames, usersData.usernames);
+                // Populate cache for real-time messages
+                for (const [userId, username] of Object.entries(usersData.usernames)) {
+                  usernameCache.set(userId, username);
+                }
               }
             } catch (e) {
               console.error('Failed to fetch usernames:', e);
@@ -3340,6 +3347,7 @@
 
           chatHistory = [];
           appliedGroupMessageIds = new Set();
+          usernameCache.clear(); // Clear cache when loading new group
           groupExpectOwnUserRealtime = false;
           chatContainer.innerHTML = "";
           if (loggedInUserId) {
@@ -3370,6 +3378,10 @@
                     const usersData = await usersRes.json();
                     if (usersData && usersData.usernames) {
                       Object.assign(usernames, usersData.usernames);
+                      // Populate cache for real-time messages
+                      for (const [userId, username] of Object.entries(usersData.usernames)) {
+                        usernameCache.set(userId, username);
+                      }
                     }
                   } catch (e) {
                     console.error('Failed to fetch usernames:', e);
@@ -3606,21 +3618,27 @@
           typeof message.content === "string" ? message.content : String(message.content ?? "");
 
         if (message.role === "user") {
-          // Fetch username for user messages
+          // Fetch username for user messages (with cache)
           let username = null;
           if (message.user_id) {
-            try {
-              const userRes = await fetch(BACKEND_BASE + '/users/usernames', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_ids: [message.user_id] })
-              });
-              const userData = await userRes.json();
-              if (userData && userData.usernames && userData.usernames[message.user_id]) {
-                username = userData.usernames[message.user_id];
+            // Check cache first
+            if (usernameCache.has(message.user_id)) {
+              username = usernameCache.get(message.user_id);
+            } else {
+              try {
+                const userRes = await fetch(BACKEND_BASE + '/users/usernames', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ user_ids: [message.user_id] })
+                });
+                const userData = await userRes.json();
+                if (userData && userData.usernames && userData.usernames[message.user_id]) {
+                  username = userData.usernames[message.user_id];
+                  usernameCache.set(message.user_id, username); // Cache it
+                }
+              } catch (e) {
+                console.error('Failed to fetch username:', e);
               }
-            } catch (e) {
-              console.error('Failed to fetch username:', e);
             }
           }
           addMessage("user", text, message.image_url || undefined, username);
