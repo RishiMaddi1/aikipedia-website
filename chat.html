@@ -1741,6 +1741,10 @@
       const PENDING_SHARE_KEY = "aikipediaPendingShare";
 
       let chatHistory = [];
+      /** Row ids we've already rendered (group realtime + history load + /chat response). */
+      let appliedGroupMessageIds = new Set();
+      /** True after we optimistically show our user bubble in a group send; first user INSERT from Realtime is skipped. */
+      let groupExpectOwnUserRealtime = false;
       let activeConversationId = null;
       let loggedInUser = null;
       let loggedInUserId = null;
@@ -1897,12 +1901,18 @@
           const imported = await importSharedConversation(token);
           const newId = imported.conversation_id;
           const importedIsGroup = !!imported.is_group;
+          const potStr =
+            imported.group_pot_balance !== undefined && imported.group_pot_balance !== null
+              ? String(imported.group_pot_balance)
+              : "0";
           sessionStorage.removeItem(PENDING_SHARE_KEY);
           await fetchConversations();
-          await selectThread(newId, importedIsGroup, "0");
+          await selectThread(newId, importedIsGroup, importedIsGroup ? potStr : "0");
           addSystemMessage(
             importedIsGroup
-              ? "Imported shared group into your account. You start with an empty group pot — use Add to fund it. Rename from the list (⋯) if you like."
+              ? imported.already_member
+                ? "You're already in this shared group — same thread and pot."
+                : "Joined this shared group — same thread and pot for everyone with the link."
               : "Imported shared chat into your account. You can rename it from the chat list (⋯)."
           );
         } catch (err) {
@@ -2035,6 +2045,8 @@
         }
 
         chatHistory = [];
+        appliedGroupMessageIds = new Set();
+        groupExpectOwnUserRealtime = false;
         chatContainer.innerHTML = "";
         clearImagePreview();
         try {
@@ -2046,6 +2058,8 @@
           const data = await res.json();
           if (!res.ok) throw new Error(data.error || "Failed to load messages");
           for (const m of data.messages || []) {
+            if (m.id && appliedGroupMessageIds.has(m.id)) continue;
+            if (m.id) appliedGroupMessageIds.add(m.id);
             if (m.role === "user") {
               addMessage("user", m.content, m.image_url || undefined);
               chatHistory.push({ role: "user", content: m.content });
@@ -2846,6 +2860,7 @@
         if (!message) return;
         const model = selectedModel || modelList[0].value;
         addMessage("user", message, isImageModelSelected() ? uploadedImageUrl : undefined);
+        if (isGroupChat) groupExpectOwnUserRealtime = true;
         userInput.value = "";
         userInput.style.height = "64px";
         userInput.disabled = true;
@@ -2892,6 +2907,7 @@
           // Handle group lock (status 423)
           if (res.status === 423 || (data.locked && data.error)) {
             loadingDiv.remove();
+            groupExpectOwnUserRealtime = false;
             addSystemMessage(data.locked_by
               ? `Please wait: ${data.locked_by} is currently sending a message.`
               : data.error || "Please wait for the current message to be processed.");
@@ -2903,12 +2919,23 @@
 
           if (!res.ok) throw new Error(data.error || "Something went wrong");
           loadingDiv.remove();
-          addMessage("assistant", data.response);
+          groupExpectOwnUserRealtime = false;
+          const savedIds = Array.isArray(data.saved_message_ids) ? data.saved_message_ids : [];
+          const assistantRowId = savedIds[1];
+          const assistantAlreadyShown =
+            isGroupChat && assistantRowId && appliedGroupMessageIds.has(assistantRowId);
+          savedIds.forEach((id) => {
+            if (id) appliedGroupMessageIds.add(id);
+          });
+          if (!isGroupChat || !assistantAlreadyShown) {
+            addMessage("assistant", data.response);
+          }
           displayCreditUsage(data);
           chatHistory.push({ role: "user", content: message }, { role: "assistant", content: data.response });
           fetchConversations();
         } catch (err) {
           loadingDiv.remove();
+          groupExpectOwnUserRealtime = false;
           let errorMsg = err && err.message ? err.message : (err && err.error ? (typeof err.error === 'object' ? JSON.stringify(err.error, null, 2) : String(err.error)) : (typeof err === "object" ? JSON.stringify(err, null, 2) : String(err)));
           addMessage("assistant", "❌ " + errorMsg);
           
@@ -3158,6 +3185,7 @@
 
         currentGroupId = groupId;
         currentConversationId = groupId;
+        activeConversationId = groupId;
         isGroupChat = true;
 
         try {
@@ -3170,6 +3198,37 @@
           // Show group UI elements
           groupPotBar.style.display = 'flex';
           groupPotBalance.textContent = `${conv.group_pot_balance || 0} Echos`;
+
+          chatHistory = [];
+          appliedGroupMessageIds = new Set();
+          groupExpectOwnUserRealtime = false;
+          chatContainer.innerHTML = "";
+          if (loggedInUserId) {
+            try {
+              const res = await fetch(BACKEND_BASE + "/conversations/messages", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ user_id: loggedInUserId, conversation_id: groupId }),
+              });
+              const msgData = await res.json();
+              if (res.ok) {
+                for (const m of msgData.messages || []) {
+                  if (m.id && appliedGroupMessageIds.has(m.id)) continue;
+                  if (m.id) appliedGroupMessageIds.add(m.id);
+                  if (m.role === "user") {
+                    addMessage("user", m.content, m.image_url || undefined);
+                    chatHistory.push({ role: "user", content: m.content });
+                  } else if (m.role === "assistant") {
+                    addMessage("assistant", m.content);
+                    chatHistory.push({ role: "assistant", content: m.content });
+                  }
+                }
+                chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: "auto" });
+              }
+            } catch (e) {
+              console.error("Failed to load group messages:", e);
+            }
+          }
 
           // Subscribe to Realtime updates
           subscribeToGroupChat(groupId, {
@@ -3353,11 +3412,28 @@
         };
       });
 
-      // Helper to append message from Realtime
+      // Realtime INSERT on `messages` → show for everyone else in the group (deduped vs load + /chat).
       function appendMessageToChat(message) {
-        // This integrates with your existing message display logic
-        // Messages from other users will appear here
-        console.log('New message:', message);
+        if (!message || !message.role || !isGroupChat) return;
+        if (message.conversation_id && message.conversation_id !== activeConversationId) return;
+        const mid = message.id;
+        if (mid && appliedGroupMessageIds.has(mid)) return;
+
+        if (message.role === "user" && groupExpectOwnUserRealtime) {
+          if (mid) appliedGroupMessageIds.add(mid);
+          return;
+        }
+
+        if (mid) appliedGroupMessageIds.add(mid);
+        const text =
+          typeof message.content === "string" ? message.content : String(message.content ?? "");
+        if (message.role === "user") {
+          addMessage("user", text, message.image_url || undefined);
+          chatHistory.push({ role: "user", content: text });
+        } else if (message.role === "assistant") {
+          addMessage("assistant", text);
+          chatHistory.push({ role: "assistant", content: text });
+        }
       }
 
       // Load user's groups
