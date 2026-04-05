@@ -1881,7 +1881,7 @@
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(data.error || "Import failed");
-        return data.conversation_id;
+        return data;
       }
 
       async function tryConsumePendingShare() {
@@ -1894,12 +1894,16 @@
         if (!token) return;
         stripShareQueryFromUrl();
         try {
-          const newId = await importSharedConversation(token);
+          const imported = await importSharedConversation(token);
+          const newId = imported.conversation_id;
+          const importedIsGroup = !!imported.is_group;
           sessionStorage.removeItem(PENDING_SHARE_KEY);
           await fetchConversations();
-          await selectThread(newId, false);
+          await selectThread(newId, importedIsGroup, "0");
           addSystemMessage(
-            "Imported shared chat into your account. You can rename it from the chat list (⋯)."
+            importedIsGroup
+              ? "Imported shared group into your account. You start with an empty group pot — use Add to fund it. Rename from the list (⋯) if you like."
+              : "Imported shared chat into your account. You can rename it from the chat list (⋯)."
           );
         } catch (err) {
           sessionStorage.setItem(PENDING_SHARE_KEY, token);
