@@ -505,6 +505,14 @@
         background: rgba(72, 137, 205, 0.18);
         color: var(--accent);
       }
+      .thread-context-menu button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      .thread-context-menu button:disabled:hover {
+        background: transparent;
+        color: var(--text);
+      }
 
       .main-column {
         flex: 1;
@@ -2006,7 +2014,7 @@
               title: g.title,
               updated_at: g.updated_at,
               is_group: true,
-              group_pot_balance: g.group_pot_balance || 0
+              group_pot_balance: g.group_pot_balance || 0,
             }))
           ];
 
