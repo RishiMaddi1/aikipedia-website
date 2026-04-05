@@ -1,2 +1,28 @@
 # Backend worker source — keep local only (not published in repo)
 worker.js
+
+# Claude Code specific files
+.claude/
+memory/
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node modules
+node_modules/
+
+# Environment files
+.env
+.env.local
+
+# Build files
+dist/
+build/

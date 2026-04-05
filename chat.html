@@ -1435,6 +1435,7 @@
       <button id="apiBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary" style="padding: 1.2rem; gap: 0.88rem; margin-top: 0.8rem; align-items: center;">API</button>
       <button id="paymentsBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary" style="padding: 1.2rem; gap: 0.88rem; margin-top: 0.8rem; align-items: center;">Buy echos</button>
       <button id="homeBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary" style="padding: 1.2rem; gap: 0.88rem; margin-top: 0.8rem; align-items: center;">home</button>
+      <button id="createGroupBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary" style="padding: 1.2rem; gap: 0.88rem; margin-top: 0.8rem; align-items: center;">Create Group</button>
 
       <!-- Login/Register Buttons -->
       <div id="authButtons" style="width:100%; display:flex; flex-direction:column; gap:0.88rem; margin-top:2rem; align-items:center;">
@@ -1629,8 +1630,30 @@
         </div>
 
         <button id="registerCancelBtn" style="background:none;color:var(--text);border:none;cursor:pointer;font-size:0.9rem;opacity:0.7;margin-top:0.5rem;">Cancel</button>
-        
+
         <div id="registerError" style="color:var(--error);font-size:0.95rem;text-align:center;min-height:1.2rem;"></div>
+      </div>
+    </div>
+
+    <!-- Create Group Modal -->
+    <div id="createGroupModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);z-index:2500;align-items:center;justify-content:center;">
+      <div style="background:var(--bg-secondary);padding:2.5rem 3rem;border-radius:20px;min-width:380px;max-width:420px;display:flex;flex-direction:column;gap:1.5rem;align-items:center;box-shadow:0 10px 25px rgba(0,0,0,0.2);transform:translateY(-20px);transition:transform 0.3s ease;">
+        <div style="text-align:center;margin-bottom:1rem;">
+          <h2 style="color:var(--accent);font-size:2rem;margin-bottom:0.5rem;">Create Group</h2>
+          <p style="color:var(--text);opacity:0.8;font-size:0.95rem;">Start a group chat with AI</p>
+        </div>
+        <div style="width:100%;display:flex;flex-direction:column;gap:1.2rem;">
+          <div>
+            <input id="groupName" placeholder="Group name" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid var(--accent);width:100%;background:var(--bg-primary);color:var(--text);font-size:1rem;transition:border-color 0.3s ease;" />
+          </div>
+          <div>
+            <label style="color:var(--text);opacity:0.7;font-size:0.9rem;margin-bottom:0.5rem;display:block;">Max members (optional)</label>
+            <input id="groupMaxMembers" type="number" placeholder="50" min="2" max="100" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid var(--accent);width:100%;background:var(--bg-primary);color:var(--text);font-size:1rem;transition:border-color 0.3s ease;" />
+          </div>
+        </div>
+        <button id="createGroupSubmitBtn" style="background:var(--accent);color:#fff;font-weight:600;width:100%;padding:1rem 0;border-radius:12px;border:none;cursor:pointer;font-size:1rem;transition:all 0.3s ease;margin-top:0.5rem;">Create Group</button>
+        <button id="createGroupCancelBtn" style="background:none;color:var(--text);border:none;cursor:pointer;font-size:0.9rem;opacity:0.7;margin-top:0.5rem;">Cancel</button>
+        <div id="createGroupError" style="color:var(--error);font-size:0.95rem;text-align:center;min-height:1.2rem;"></div>
       </div>
     </div>
 
@@ -1741,6 +1764,10 @@
       const PENDING_SHARE_KEY = "aikipediaPendingShare";
 
       let chatHistory = [];
+      /** Row ids we've already rendered (group realtime + history load + /chat response). */
+      let appliedGroupMessageIds = new Set();
+      /** True after we optimistically show our user bubble in a group send; first user INSERT from Realtime is skipped. */
+      let groupExpectOwnUserRealtime = false;
       let activeConversationId = null;
       let loggedInUser = null;
       let loggedInUserId = null;
@@ -1881,7 +1908,7 @@
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(data.error || "Import failed");
-        return data.conversation_id;
+        return data;
       }
 
       async function tryConsumePendingShare() {
@@ -1894,12 +1921,22 @@
         if (!token) return;
         stripShareQueryFromUrl();
         try {
-          const newId = await importSharedConversation(token);
+          const imported = await importSharedConversation(token);
+          const newId = imported.conversation_id;
+          const importedIsGroup = !!imported.is_group;
+          const potStr =
+            imported.group_pot_balance !== undefined && imported.group_pot_balance !== null
+              ? String(imported.group_pot_balance)
+              : "0";
           sessionStorage.removeItem(PENDING_SHARE_KEY);
           await fetchConversations();
-          await selectThread(newId, false);
+          await selectThread(newId, importedIsGroup, importedIsGroup ? potStr : "0");
           addSystemMessage(
-            "Imported shared chat into your account. You can rename it from the chat list (⋯)."
+            importedIsGroup
+              ? imported.already_member
+                ? "You're already in this shared group — same thread and pot."
+                : "Joined this shared group — same thread and pot for everyone with the link."
+              : "Imported shared chat into your account. You can rename it from the chat list (⋯)."
           );
         } catch (err) {
           sessionStorage.setItem(PENDING_SHARE_KEY, token);
@@ -2031,6 +2068,8 @@
         }
 
         chatHistory = [];
+        appliedGroupMessageIds = new Set();
+        groupExpectOwnUserRealtime = false;
         chatContainer.innerHTML = "";
         clearImagePreview();
         try {
@@ -2041,9 +2080,38 @@
           });
           const data = await res.json();
           if (!res.ok) throw new Error(data.error || "Failed to load messages");
+
+          // Collect unique user_ids to fetch usernames
+          const userIds = new Set();
           for (const m of data.messages || []) {
+            if (m.user_id) userIds.add(m.user_id);
+          }
+
+          // Fetch usernames for all user_ids
+          const usernames = {};
+          if (userIds.size > 0) {
+            try {
+              const userIdsArray = Array.from(userIds);
+              const usersRes = await fetch(BACKEND_BASE + '/users/usernames', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_ids: userIdsArray })
+              });
+              const usersData = await usersRes.json();
+              if (usersData && usersData.usernames) {
+                Object.assign(usernames, usersData.usernames);
+              }
+            } catch (e) {
+              console.error('Failed to fetch usernames:', e);
+            }
+          }
+
+          for (const m of data.messages || []) {
+            if (m.id && appliedGroupMessageIds.has(m.id)) continue;
+            if (m.id) appliedGroupMessageIds.add(m.id);
             if (m.role === "user") {
-              addMessage("user", m.content, m.image_url || undefined);
+              const username = m.user_id ? usernames[m.user_id] || null : null;
+              addMessage("user", m.content, m.image_url || undefined, username);
               chatHistory.push({ role: "user", content: m.content });
             } else if (m.role === "assistant") {
               addMessage("assistant", m.content);
@@ -2099,7 +2167,87 @@
      document.getElementById("homeBtn").onclick = function() {
        window.location.href = "index.html";
      };
-      
+
+     document.getElementById("createGroupBtn").onclick = function() {
+       const user = localStorage.getItem('aikipediaUser');
+       if (!user) {
+         alert("Please login first");
+         document.getElementById("loginBtn").click();
+         return;
+       }
+       // Show create group modal
+       const createGroupModal = document.getElementById("createGroupModal");
+       createGroupModal.style.display = "flex";
+       document.getElementById("createGroupModal").querySelector("div").style.transform = "translateY(-20px)";
+       setTimeout(() => {
+         document.getElementById("createGroupModal").querySelector("div").style.transform = "translateY(0)";
+       }, 10);
+     };
+
+     document.getElementById("createGroupCancelBtn").onclick = () => {
+       const createGroupModal = document.getElementById("createGroupModal");
+       createGroupModal.querySelector("div").style.transform = "translateY(-20px)";
+       setTimeout(() => {
+         createGroupModal.style.display = "none";
+       }, 300);
+     };
+
+     document.getElementById("createGroupSubmitBtn").onclick = async () => {
+       const groupName = document.getElementById("groupName").value.trim();
+       const maxMembers = document.getElementById("groupMaxMembers").value;
+       const userId = localStorage.getItem('aikipediaUserId');
+
+       if (!groupName) {
+         document.getElementById("createGroupError").textContent = "Please enter a group name";
+         return;
+       }
+
+       document.getElementById("createGroupError").textContent = "";
+       document.getElementById("createGroupSubmitBtn").disabled = true;
+
+       try {
+         const res = await fetch("https://backend.aikipedia.workers.dev/groups/create", {
+           method: "POST",
+           headers: { "Content-Type": "application/json" },
+           body: JSON.stringify({
+             user_id: userId,
+             title: groupName,
+             max_members: maxMembers || 50
+           })
+         });
+
+         const data = await res.json();
+
+         if (!res.ok) {
+           throw new Error(data.error || "Failed to create group");
+         }
+
+         // Close modal and refresh conversations
+         const createGroupModal = document.getElementById("createGroupModal");
+         createGroupModal.querySelector("div").style.transform = "translateY(-20px)";
+         setTimeout(() => {
+           createGroupModal.style.display = "none";
+         }, 300);
+
+         // Clear form
+         document.getElementById("groupName").value = "";
+         document.getElementById("groupMaxMembers").value = "";
+
+         // Refresh conversations and select the new group
+         await fetchConversations();
+         if (data.conversation_id) {
+           await selectThread(data.conversation_id, true, "0");
+         }
+
+         addSystemMessage("Group '" + groupName + "' created successfully!");
+       } catch (error) {
+         console.error("Create group error:", error);
+         document.getElementById("createGroupError").textContent = error.message || "Failed to create group";
+       } finally {
+         document.getElementById("createGroupSubmitBtn").disabled = false;
+       }
+     };
+
       // Check if we have a stored session
       function checkStoredSession() {
         const storedUser = localStorage.getItem('aikipediaUser');
@@ -2841,7 +2989,8 @@
         const message = userInput.value.trim();
         if (!message) return;
         const model = selectedModel || modelList[0].value;
-        addMessage("user", message, isImageModelSelected() ? uploadedImageUrl : undefined);
+        addMessage("user", message, isImageModelSelected() ? uploadedImageUrl : undefined, isGroupChat ? loggedInUser : null);
+        if (isGroupChat) groupExpectOwnUserRealtime = true;
         userInput.value = "";
         userInput.style.height = "64px";
         userInput.disabled = true;
@@ -2888,6 +3037,7 @@
           // Handle group lock (status 423)
           if (res.status === 423 || (data.locked && data.error)) {
             loadingDiv.remove();
+            groupExpectOwnUserRealtime = false;
             addSystemMessage(data.locked_by
               ? `Please wait: ${data.locked_by} is currently sending a message.`
               : data.error || "Please wait for the current message to be processed.");
@@ -2899,12 +3049,23 @@
 
           if (!res.ok) throw new Error(data.error || "Something went wrong");
           loadingDiv.remove();
-          addMessage("assistant", data.response);
+          groupExpectOwnUserRealtime = false;
+          const savedIds = Array.isArray(data.saved_message_ids) ? data.saved_message_ids : [];
+          const assistantRowId = savedIds[1];
+          const assistantAlreadyShown =
+            isGroupChat && assistantRowId && appliedGroupMessageIds.has(assistantRowId);
+          savedIds.forEach((id) => {
+            if (id) appliedGroupMessageIds.add(id);
+          });
+          if (!isGroupChat || !assistantAlreadyShown) {
+            addMessage("assistant", data.response);
+          }
           displayCreditUsage(data);
           chatHistory.push({ role: "user", content: message }, { role: "assistant", content: data.response });
           fetchConversations();
         } catch (err) {
           loadingDiv.remove();
+          groupExpectOwnUserRealtime = false;
           let errorMsg = err && err.message ? err.message : (err && err.error ? (typeof err.error === 'object' ? JSON.stringify(err.error, null, 2) : String(err.error)) : (typeof err === "object" ? JSON.stringify(err, null, 2) : String(err)));
           addMessage("assistant", "❌ " + errorMsg);
           
@@ -2916,9 +3077,18 @@
       });
 
       // Add message to chat
-      function addMessage(role, text, imageUrl) {
+      function addMessage(role, text, imageUrl, username) {
         const messageDiv = document.createElement("div");
         messageDiv.className = `message ${role}`;
+
+        // Add small username for group chat user messages
+        if (role === "user" && username && isGroupChat) {
+          const usernameSpan = document.createElement("span");
+          usernameSpan.className = "message-username";
+          usernameSpan.textContent = username;
+          usernameSpan.style.cssText = "font-size: 0.75rem; color: #000; margin-bottom: 0.25rem; display: block;";
+          messageDiv.appendChild(usernameSpan);
+        }
 
         if (role === "user" && imageUrl) {
           const img = document.createElement("img");
@@ -3154,6 +3324,7 @@
 
         currentGroupId = groupId;
         currentConversationId = groupId;
+        activeConversationId = groupId;
         isGroupChat = true;
 
         try {
@@ -3166,6 +3337,63 @@
           // Show group UI elements
           groupPotBar.style.display = 'flex';
           groupPotBalance.textContent = `${conv.group_pot_balance || 0} Echos`;
+
+          chatHistory = [];
+          appliedGroupMessageIds = new Set();
+          groupExpectOwnUserRealtime = false;
+          chatContainer.innerHTML = "";
+          if (loggedInUserId) {
+            try {
+              const res = await fetch(BACKEND_BASE + "/conversations/messages", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ user_id: loggedInUserId, conversation_id: groupId }),
+              });
+              const msgData = await res.json();
+              if (res.ok) {
+                // Collect unique user_ids to fetch usernames
+                const userIds = new Set();
+                for (const m of msgData.messages || []) {
+                  if (m.user_id) userIds.add(m.user_id);
+                }
+
+                // Fetch usernames for all user_ids
+                const usernames = {};
+                if (userIds.size > 0) {
+                  try {
+                    const userIdsArray = Array.from(userIds);
+                    const usersRes = await fetch(BACKEND_BASE + '/users/usernames', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ user_ids: userIdsArray })
+                    });
+                    const usersData = await usersRes.json();
+                    if (usersData && usersData.usernames) {
+                      Object.assign(usernames, usersData.usernames);
+                    }
+                  } catch (e) {
+                    console.error('Failed to fetch usernames:', e);
+                  }
+                }
+
+                for (const m of msgData.messages || []) {
+                  if (m.id && appliedGroupMessageIds.has(m.id)) continue;
+                  if (m.id) appliedGroupMessageIds.add(m.id);
+                  if (m.role === "user") {
+                    const username = m.user_id ? usernames[m.user_id] || null : null;
+                    addMessage("user", m.content, m.image_url || undefined, username);
+                    chatHistory.push({ role: "user", content: m.content });
+                  } else if (m.role === "assistant") {
+                    addMessage("assistant", m.content);
+                    chatHistory.push({ role: "assistant", content: m.content });
+                  }
+                }
+                chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: "auto" });
+              }
+            } catch (e) {
+              console.error("Failed to load group messages:", e);
+            }
+          }
 
           // Subscribe to Realtime updates
           subscribeToGroupChat(groupId, {
@@ -3349,11 +3577,46 @@
         };
       });
 
-      // Helper to append message from Realtime
-      function appendMessageToChat(message) {
-        // This integrates with your existing message display logic
-        // Messages from other users will appear here
-        console.log('New message:', message);
+      // Realtime INSERT on `messages` → show for everyone else in the group (deduped vs load + /chat).
+      async function appendMessageToChat(message) {
+        if (!message || !message.role || !isGroupChat) return;
+        if (message.conversation_id && message.conversation_id !== activeConversationId) return;
+        const mid = message.id;
+        if (mid && appliedGroupMessageIds.has(mid)) return;
+
+        if (message.role === "user" && groupExpectOwnUserRealtime) {
+          if (mid) appliedGroupMessageIds.add(mid);
+          return;
+        }
+
+        if (mid) appliedGroupMessageIds.add(mid);
+        const text =
+          typeof message.content === "string" ? message.content : String(message.content ?? "");
+
+        if (message.role === "user") {
+          // Fetch username for user messages
+          let username = null;
+          if (message.user_id) {
+            try {
+              const userRes = await fetch(BACKEND_BASE + '/users/usernames', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_ids: [message.user_id] })
+              });
+              const userData = await userRes.json();
+              if (userData && userData.usernames && userData.usernames[message.user_id]) {
+                username = userData.usernames[message.user_id];
+              }
+            } catch (e) {
+              console.error('Failed to fetch username:', e);
+            }
+          }
+          addMessage("user", text, message.image_url || undefined, username);
+          chatHistory.push({ role: "user", content: text });
+        } else if (message.role === "assistant") {
+          addMessage("assistant", text);
+          chatHistory.push({ role: "assistant", content: text });
+        }
       }
 
       // Load user's groups
