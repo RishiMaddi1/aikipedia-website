@@ -15,7 +15,6 @@ CREATE TABLE IF NOT EXISTS public.messages (
   role text NOT NULL CHECK (role IN ('user', 'assistant')),
   content text NOT NULL,
   image_url text,
-  user_id uuid REFERENCES public.users (id) ON DELETE SET NULL,
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
