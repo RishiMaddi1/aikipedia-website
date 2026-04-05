@@ -173,8 +173,17 @@
     <div style="text-align:center;margin-bottom:2rem;padding:1rem 1.5rem;background:var(--bg-secondary);border:1.5px solid var(--accent);border-radius:12px;max-width:600px;margin-left:auto;margin-right:auto;">
       <div style="color:var(--accent);font-weight:700;font-size:1.1rem;margin-bottom:0.5rem;">⚠️ Important Payment Notice</div>
       <div style="color:var(--text);font-size:0.95rem;line-height:1.5;">
-        When making your payment, please ensure you enter your exact <strong>user_id</strong> in the payment form. 
+        When making your payment, please ensure you enter your exact <strong>user_id</strong> in the payment form.
         This is crucial for crediting your account correctly. Your user_id is displayed above.
+      </div>
+    </div>
+
+    <!-- GIFT CODE SECTION (only shown if logged in) -->
+    <div id="giftCodeSection" style="display:none;text-align:center;margin-bottom:2rem;">
+      <div style="color:var(--accent);font-weight:600;font-size:1rem;margin-bottom:1rem;">Gift Codes</div>
+      <div style="display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;">
+        <button id="buyGiftBtn" style="padding:0.6rem 1.2rem;background:var(--accent);color:#000;border:none;border-radius:10px;font-weight:600;cursor:pointer;font-size:0.95rem;box-shadow:0 2px 6px rgba(0,0,0,0.1);transition:all 0.2s;">Buy Gift Code</button>
+        <button id="redeemGiftBtn" style="padding:0.6rem 1.2rem;background:var(--accent);color:#000;border:none;border-radius:10px;font-weight:600;cursor:pointer;font-size:0.95rem;box-shadow:0 2px 6px rgba(0,0,0,0.1);transition:all 0.2s;">Redeem Code</button>
       </div>
     </div>
     <div class="grid">
@@ -365,7 +374,251 @@
       } else {
         creditsDisplay.style.display = "none";
       }
+
+      // Handle Razorpay embed buttons - intercept clicks to append user_id
+      const userId = localStorage.getItem('aikipediaUserId');
+      if (userId) {
+        document.querySelectorAll('.razorpay-embed-btn').forEach(container => {
+          const originalUrl = container.getAttribute('data-url');
+          if (originalUrl) {
+            const urlWithUserId = originalUrl + (originalUrl.includes('?') ? '&' : '?') + 'userid=' + userId;
+            container.setAttribute('data-url', urlWithUserId);
+
+            // Add click listener to container to intercept
+            container.addEventListener('click', (e) => {
+              // Let the default Razorpay behavior proceed with the modified URL
+              // The Razorpay embed script will use the updated data-url
+            });
+          }
+        });
+      }
     });
+  </script>
+
+  <!-- Buy Gift Code Modal -->
+  <div id="buyGiftModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);z-index:3000;align-items:center;justify-content:center;">
+    <div style="background:var(--bg-secondary);padding:2.5rem 3rem;border-radius:20px;min-width:380px;max-width:420px;display:flex;flex-direction:column;gap:1.5rem;align-items:center;box-shadow:0 10px 25px rgba(0,0,0,0.2);transform:translateY(-20px);transition:transform 0.3s ease;">
+      <div style="text-align:center;margin-bottom:1rem;">
+        <h2 style="color:var(--accent);font-size:2rem;margin-bottom:0.5rem;">🎁 Buy Gift Code</h2>
+        <p style="color:var(--text);opacity:0.8;font-size:0.95rem;">Share echos with friends!</p>
+      </div>
+      <div style="width:100%;display:flex;flex-direction:column;gap:1.2rem;">
+        <div>
+          <label style="color:var(--text);opacity:0.7;font-size:0.9rem;margin-bottom:0.5rem;display:block;">Amount (min: 5 echos)</label>
+          <input id="giftAmount" type="number" placeholder="Enter amount (min 5)" min="5" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid var(--accent);width:100%;background:var(--bg-primary);color:var(--text);font-size:1rem;" />
+        </div>
+        <div>
+          <label style="color:var(--text);opacity:0.7;font-size:0.9rem;margin-bottom:0.5rem;display:block;">Message (optional)</label>
+          <input id="giftMessage" type="text" placeholder="From: Your Name" maxlength="100" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid var(--accent);width:100%;background:var(--bg-primary);color:var(--text);font-size:1rem;" />
+        </div>
+        <div>
+          <label style="color:var(--text);opacity:0.7;font-size:0.9rem;margin-bottom:0.5rem;display:block;">Expires in (days, optional)</label>
+          <input id="giftExpiry" type="number" placeholder="30" min="1" max="365" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid var(--accent);width:100%;background:var(--bg-primary);color:var(--text);font-size:1rem;" />
+        </div>
+        <div id="userBalanceDisplay" style="color:var(--text);font-size:0.9rem;text-align:center;">Your balance: -- echos</div>
+      </div>
+      <button id="buyGiftSubmitBtn" style="background:var(--accent);color:#fff;font-weight:600;width:100%;padding:1rem 0;border-radius:12px;border:none;cursor:pointer;font-size:1rem;transition:all 0.3s ease;margin-top:0.5rem;">Buy Gift Code</button>
+      <button id="buyGiftCancelBtn" style="background:none;color:var(--text);border:none;cursor:pointer;font-size:0.9rem;opacity:0.7;margin-top:0.5rem;">Cancel</button>
+      <div id="buyGiftError" style="color:var(--error);font-size:0.95rem;text-align:center;min-height:1.2rem;"></div>
+      <div id="buyGiftSuccess" style="display:none;color:var(--success);font-size:0.95rem;text-align:center;min-height:1.2rem;padding:1rem;background:rgba(47,104,111,0.1);border-radius:8px;border:1px solid var(--success);"></div>
+    </div>
+  </div>
+
+  <!-- Redeem Gift Code Modal -->
+  <div id="redeemGiftModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);z-index:3000;align-items:center;justify-content:center;">
+    <div style="background:var(--bg-secondary);padding:2.5rem 3rem;border-radius:20px;min-width:380px;max-width:420px;display:flex;flex-direction:column;gap:1.5rem;align-items:center;box-shadow:0 10px 25px rgba(0,0,0,0.2);transform:translateY(-20px);transition:transform 0.3s ease;">
+      <div style="text-align:center;margin-bottom:1rem;">
+        <h2 style="color:var(--accent);font-size:2rem;margin-bottom:0.5rem;">📎 Redeem Gift Code</h2>
+        <p style="color:var(--text);opacity:0.8;font-size:0.95rem;">Enter your gift code to receive echos</p>
+      </div>
+      <div style="width:100%;display:flex;flex-direction:column;gap:1.2rem;">
+        <div>
+          <label style="color:var(--text);opacity:0.7;font-size:0.9rem;margin-bottom:0.5rem;display:block;">Gift Code</label>
+          <input id="redeemCodeInput" type="text" placeholder="GIFT-XXXXXXXXXXXXXXXXXXXXXXXX" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid var(--accent);width:100%;background:var(--bg-primary);color:var(--text);font-size:1rem;text-transform:uppercase;" />
+        </div>
+        <div id="codeDetails" style="display:none;padding:1rem;background:rgba(72,137,205,0.1);border-radius:8px;border:1px solid var(--accent);">
+          <div style="color:var(--accent);font-size:0.95rem;">Amount: <span id="codeAmount">--</span> echos</div>
+          <div style="color:var(--text);font-size:0.85rem;opacity:0.8;">From: <span id="codeFrom">--</span></div>
+        </div>
+      </div>
+      <button id="redeemSubmitBtn" style="background:var(--accent);color:#fff;font-weight:600;width:100%;padding:1rem 0;border-radius:12px;border:none;cursor:pointer;font-size:1rem;transition:all 0.3s ease;margin-top:0.5rem;">Redeem</button>
+      <button id="redeemCancelBtn" style="background:none;color:var(--text);border:none;cursor:pointer;font-size:0.9rem;opacity:0.7;margin-top:0.5rem;">Cancel</button>
+      <div id="redeemError" style="color:var(--error);font-size:0.95rem;text-align:center;min-height:1.2rem;"></div>
+      <div id="redeemSuccess" style="display:none;color:var(--success);font-size:0.95rem;text-align:center;min-height:1.2rem;padding:1rem;background:rgba(47,104,111,0.1);border-radius:8px;border:1px solid var(--success);"></div>
+    </div>
+  </div>
+
+  <script>
+    // Gift Code Functionality
+    const buyGiftBtn = document.getElementById('buyGiftBtn');
+    const redeemGiftBtn = document.getElementById('redeemGiftBtn');
+    const buyGiftModal = document.getElementById('buyGiftModal');
+    const redeemGiftModal = document.getElementById('redeemGiftModal');
+    const BACKEND_BASE = 'https://backend.aikipedia.workers.dev';
+
+    // Show gift code section only if logged in
+    if (loggedInUserId) {
+      document.getElementById('giftCodeSection').style.display = 'block';
+    }
+
+    // Buy Gift Code Modal
+    buyGiftBtn.onclick = function() {
+      if (!loggedInUserId) {
+        alert('Please login first');
+        return;
+      }
+      // Fetch and display current balance
+      fetch(`${BACKEND_BASE}/flask`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'get_credits', user_id: loggedInUserId })
+      })
+      .then(r => r.json())
+      .then(data => {
+        document.getElementById('userBalanceDisplay').textContent = `Your balance: ${data.money_left || 0} echos`;
+      });
+      buyGiftModal.style.display = 'flex';
+      setTimeout(() => {
+        buyGiftModal.querySelector('div').style.transform = 'translateY(0)';
+      }, 10);
+    };
+
+    document.getElementById('buyGiftCancelBtn').onclick = () => {
+      buyGiftModal.querySelector('div').style.transform = 'translateY(-20px)';
+      setTimeout(() => {
+        buyGiftModal.style.display = 'none';
+        document.getElementById('buyGiftError').textContent = '';
+        document.getElementById('buyGiftSuccess').style.display = 'none';
+        document.getElementById('giftAmount').value = '';
+        document.getElementById('giftMessage').value = '';
+        document.getElementById('giftExpiry').value = '';
+      }, 300);
+    };
+
+    document.getElementById('buyGiftSubmitBtn').onclick = async () => {
+      const amount = parseFloat(document.getElementById('giftAmount').value);
+      const message = document.getElementById('giftMessage').value.trim();
+      const expiryDays = document.getElementById('giftExpiry').value;
+
+      if (!amount || amount <= 0) {
+        document.getElementById('buyGiftError').textContent = 'Please enter a valid amount';
+        return;
+      }
+
+      document.getElementById('buyGiftError').textContent = '';
+      document.getElementById('buyGiftSubmitBtn').disabled = true;
+
+      try {
+        const res = await fetch(`${BACKEND_BASE}/gifts/create`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: loggedInUserId,
+            amount: amount,
+            message: message || null,
+            expires_in_days: expiryDays || null
+          })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || 'Failed to create gift code');
+        }
+
+        // Show success
+        const successDiv = document.getElementById('buyGiftSuccess');
+        successDiv.style.display = 'block';
+        successDiv.innerHTML = `
+          <div style="font-weight:600;margin-bottom:0.5rem;">✨ Gift Code Created!</div>
+          <div style="font-size:1.1rem;color:var(--accent);letter-spacing:1px;font-weight:700;margin:0.5rem 0;">${data.gift_code}</div>
+          <div style="font-size:0.85rem;opacity:0.8;">Share this code with anyone</div>
+          <button onclick="navigator.clipboard.writeText('${data.gift_code}');this.textContent='Copied!';setTimeout(()=>this.textContent='Copy Code',1500);" style="margin-top:0.5rem;padding:0.5rem 1rem;background:var(--accent);color:#000;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.9rem;">Copy Code</button>
+        `;
+      } catch (error) {
+        console.error('Buy gift error:', error);
+        document.getElementById('buyGiftError').textContent = error.message || 'Failed to create gift code';
+      } finally {
+        document.getElementById('buyGiftSubmitBtn').disabled = false;
+      }
+    };
+
+    // Redeem Gift Code Modal
+    redeemGiftBtn.onclick = function() {
+      if (!loggedInUserId) {
+        alert('Please login first');
+        return;
+      }
+      redeemGiftModal.style.display = 'flex';
+      setTimeout(() => {
+        redeemGiftModal.querySelector('div').style.transform = 'translateY(0)';
+      }, 10);
+    };
+
+    document.getElementById('redeemCancelBtn').onclick = () => {
+      redeemGiftModal.querySelector('div').style.transform = 'translateY(-20px)';
+      setTimeout(() => {
+        redeemGiftModal.style.display = 'none';
+        document.getElementById('redeemError').textContent = '';
+        document.getElementById('redeemSuccess').style.display = 'none';
+        document.getElementById('codeDetails').style.display = 'none';
+        document.getElementById('redeemCodeInput').value = '';
+      }, 300);
+    };
+
+    document.getElementById('redeemSubmitBtn').onclick = async () => {
+      const code = document.getElementById('redeemCodeInput').value.trim();
+      if (!code) {
+        document.getElementById('redeemError').textContent = 'Please enter a gift code';
+        return;
+      }
+
+      document.getElementById('redeemError').textContent = '';
+      document.getElementById('redeemSubmitBtn').disabled = true;
+
+      try {
+        const res = await fetch(`${BACKEND_BASE}/gifts/redeem`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: loggedInUserId,
+            code: code
+          })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || 'Failed to redeem gift code');
+        }
+
+        // Show success
+        const successDiv = document.getElementById('redeemSuccess');
+        successDiv.style.display = 'block';
+        successDiv.innerHTML = `
+          <div style="font-weight:600;">✅ ${data.message}</div>
+        `;
+
+        // Refresh credits display
+        fetchAndShowCredits();
+
+        // Close modal after 2 seconds
+        setTimeout(() => {
+          redeemGiftModal.querySelector('div').style.transform = 'translateY(-20px)';
+          setTimeout(() => {
+            redeemGiftModal.style.display = 'none';
+            document.getElementById('redeemSuccess').style.display = 'none';
+            document.getElementById('codeDetails').style.display = 'none';
+            document.getElementById('redeemCodeInput').value = '';
+          }, 300);
+        }, 2000);
+      } catch (error) {
+        console.error('Redeem error:', error);
+        document.getElementById('redeemError').textContent = error.message || 'Failed to redeem gift code';
+      } finally {
+        document.getElementById('redeemSubmitBtn').disabled = false;
+      }
+    };
   </script>
 </body>
 </html> 
