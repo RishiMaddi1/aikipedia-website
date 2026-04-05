@@ -374,6 +374,24 @@
       } else {
         creditsDisplay.style.display = "none";
       }
+
+      // Handle Razorpay embed buttons - intercept clicks to append user_id
+      const userId = localStorage.getItem('aikipediaUserId');
+      if (userId) {
+        document.querySelectorAll('.razorpay-embed-btn').forEach(container => {
+          const originalUrl = container.getAttribute('data-url');
+          if (originalUrl) {
+            const urlWithUserId = originalUrl + (originalUrl.includes('?') ? '&' : '?') + 'userid=' + userId;
+            container.setAttribute('data-url', urlWithUserId);
+
+            // Add click listener to container to intercept
+            container.addEventListener('click', (e) => {
+              // Let the default Razorpay behavior proceed with the modified URL
+              // The Razorpay embed script will use the updated data-url
+            });
+          }
+        });
+      }
     });
   </script>
 
