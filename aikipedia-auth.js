@@ -35,6 +35,15 @@
   document.getElementById("paymentsBtn").onclick = function() {
     window.location.href = "payments.html";
   };
+  document.getElementById("dashboardBtn").onclick = function() {
+    const user = localStorage.getItem('aikipediaUser');
+    if (!user) {
+      alert("Please login first");
+      document.getElementById("loginBtn").click();
+      return;
+    }
+    window.location.href = "dashboard.html";
+  };
   document.getElementById("chatBtn").onclick = function() {
     window.location.href = "chat.html";
   };
@@ -105,12 +114,12 @@
     const storedUser = localStorage.getItem('aikipediaUser');
     const storedUserId = localStorage.getItem('aikipediaUserId');
     if (storedUser && storedUserId) {
-      setLoggedInUser(storedUser, storedUserId);
+      setLoggedInUser(storedUser, storedUserId, { silent: true });
       return true;
     }
     return false;
   }
-  function setLoggedInUser(username, userId) {
+  function setLoggedInUser(username, userId, options) {
     loggedInUser = username;
     loggedInUserId = userId;
     localStorage.setItem('aikipediaUser', username);
@@ -119,6 +128,9 @@
     profileToggle.textContent = username.charAt(0).toUpperCase();
     authButtons.style.display = "none";
     if (logoutBtn) logoutBtn.style.display = "block";
+    if (!options || !options.silent) {
+      window.dispatchEvent(new CustomEvent("aikipedia-auth-change"));
+    }
   }
   function setLoggedOut() {
     loggedInUser = null;
@@ -129,6 +141,7 @@
     profileToggle.textContent = "G";
     authButtons.style.display = "flex";
     if (logoutBtn) logoutBtn.style.display = "none";
+    window.dispatchEvent(new CustomEvent("aikipedia-auth-change"));
   }
   // Password visibility toggle logic
   function setupPasswordToggles() {
