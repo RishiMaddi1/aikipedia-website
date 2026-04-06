@@ -180,6 +180,21 @@
       font-size: 0.9rem;
       margin-bottom: 1rem;
     }
+    .dash-guest-hint {
+      margin: 0.4rem 0 0;
+      font-size: 0.9rem;
+      line-height: 1.45;
+      color: #94a3b8;
+      max-width: 36rem;
+    }
+    .dash-guest-hint a {
+      color: var(--accent);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .dash-guest-hint a:hover {
+      text-decoration: underline;
+    }
     #createGroupForm {
       display: none;
       background: var(--bg-secondary);
@@ -295,6 +310,9 @@
       <div>
         <h1>Dashboard</h1>
         <p class="sub">Models, groups, wallet, and Echo balance</p>
+        <p id="dashGuestHint" class="dash-guest-hint hidden">
+          You’re not signed in. Open <a href="chat.html">Chat</a> and use <strong>Login</strong> to load your stats, charts, and wallet.
+        </p>
       </div>
       <div class="dash-user-row">
         <span id="username" style="font-weight:600;color:#e2e8f0;">—</span>
@@ -376,6 +394,20 @@
       Chart.defaults.borderColor = "rgba(72, 137, 205, 0.12)";
       Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
     }
+    function setDashboardGuestHint(visible) {
+      const el = document.getElementById("dashGuestHint");
+      if (el) el.classList.toggle("hidden", !visible);
+    }
+
+    function resetOverviewStatPlaceholders() {
+      ["total-messages", "total-conversations", "total-groups", "gift-created", "gift-redeemed", "total-purchased"].forEach(
+        (id) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = "—";
+        }
+      );
+    }
+
     async function refreshBalanceEchoes() {
       const userId = localStorage.getItem("aikipediaUserId");
       if (!userId) return;
@@ -395,9 +427,20 @@
       const userId = localStorage.getItem("aikipediaUserId");
       const username = localStorage.getItem("aikipediaUser");
       if (!userId) {
-        window.location.href = "chat.html";
+        currentUserId = null;
+        setDashboardGuestHint(true);
+        document.getElementById("username").textContent = "Guest";
+        document.getElementById("balance").textContent = "—";
+        resetOverviewStatPlaceholders();
+        const errEl = document.getElementById("dashLoadError");
+        if (errEl) {
+          errEl.classList.add("hidden");
+          errEl.textContent = "";
+        }
+        await loadOverview(null);
         return;
       }
+      setDashboardGuestHint(false);
       currentUserId = userId;
       document.getElementById("username").textContent = username || "User";
       await refreshBalanceEchoes();
@@ -421,7 +464,7 @@
       await loadOverview(sb);
     }
     async function loadOverview(sb) {
-      if (sb) {
+      if (currentUserId && sb) {
         const { data: analytics, error } = await sb
           .from("user_analytics")
           .select("*")
@@ -445,15 +488,18 @@
     async function loadSpendingChart() {
       applyChartTheme();
       let series = [];
-      try {
-        const res = await fetch(`${BACKEND_BASE}/dashboard/spending-series`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user_id: currentUserId }),
-        });
-        const data = await res.json();
-        if (res.ok && data.series) series = data.series;
-      } catch (_) {}
+      const isGuest = !currentUserId;
+      if (!isGuest) {
+        try {
+          const res = await fetch(`${BACKEND_BASE}/dashboard/spending-series`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user_id: currentUserId }),
+          });
+          const data = await res.json();
+          if (res.ok && data.series) series = data.series;
+        } catch (_) {}
+      }
       function formatHourBucketLabel(iso) {
         if (!iso || iso === "No data") return iso;
         try {
@@ -511,12 +557,14 @@
             legend: { labels: { color: "#a3b2d3" } },
             title: {
               display: true,
-              text: !hasHourlySeries
-                ? "Your Echo activity — could not load hourly data"
-                : allBucketsZero
-                  ? "No Echo activity in the last 24 hours (by hour, your local time)"
-                  : "Your Echo activity (last 24 hours, by hour — local time)",
-              color: !hasHourlySeries || allBucketsZero ? "#94a3b8" : "#e2e8f0",
+              text: isGuest
+                ? "Sign in to see your Echo activity (last 24 hours)"
+                : !hasHourlySeries
+                  ? "Your Echo activity — could not load hourly data"
+                  : allBucketsZero
+                    ? "No Echo activity in the last 24 hours (by hour, your local time)"
+                    : "Your Echo activity (last 24 hours, by hour — local time)",
+              color: isGuest || !hasHourlySeries || allBucketsZero ? "#94a3b8" : "#e2e8f0",
               font: { size: 14, weight: "600" },
             },
           },
@@ -544,15 +592,17 @@
     async function loadModels() {
       applyChartTheme();
       let models = [];
-      try {
-        const res = await fetch(`${BACKEND_BASE}/dashboard/model-usage`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user_id: currentUserId }),
-        });
-        const data = await res.json();
-        if (res.ok && Array.isArray(data.models)) models = data.models;
-      } catch (_) {}
+      if (currentUserId) {
+        try {
+          const res = await fetch(`${BACKEND_BASE}/dashboard/model-usage`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user_id: currentUserId }),
+          });
+          const data = await res.json();
+          if (res.ok && Array.isArray(data.models)) models = data.models;
+        } catch (_) {}
+      }
       const labels = models.map((m) => shortModelLabel(m.model));
       const costs = models.map((m) => Number(m.total_cost) || 0);
       const counts = models.map((m) => Number(m.message_count) || 0);
@@ -580,7 +630,9 @@
               legend: { labels: { color: "#a3b2d3" } },
               title: {
                 display: true,
-                text: "No assistant messages with a model in your chats yet (last 24 hours)",
+                text: !currentUserId
+                  ? "Sign in to see model usage (last 24 hours)"
+                  : "No assistant messages with a model in your chats yet (last 24 hours)",
                 color: "#94a3b8",
                 font: { size: 13, weight: "600" },
               },
@@ -641,11 +693,16 @@
       });
     }
     async function loadGroups(sb) {
+      const tbody = document.getElementById("groups-table");
+      if (!currentUserId || !sb) {
+        tbody.innerHTML =
+          '<tr><td colspan="6" class="loading-cell">Sign in to see your groups</td></tr>';
+        return;
+      }
       const { data: groups } = await sb
         .from("group_analytics")
         .select("*")
         .order("created_at", { ascending: false });
-      const tbody = document.getElementById("groups-table");
       if (groups && groups.length > 0) {
         tbody.innerHTML = groups
           .map(
@@ -666,6 +723,11 @@
     }
     async function loadTransactions() {
       const tbody = document.getElementById("transactions-table");
+      if (!currentUserId) {
+        tbody.innerHTML =
+          '<tr><td colspan="5" class="loading-cell">Sign in to see wallet activity</td></tr>';
+        return;
+      }
       let transactions = [];
       try {
         const res = await fetch(`${BACKEND_BASE}/dashboard/wallet-transactions`, {
@@ -735,7 +797,7 @@
       if (btn) btn.classList.add("active");
       const sb = typeof initSupabaseClient === "function" ? initSupabaseClient() : null;
       if (section === "models") loadModels();
-      if (section === "groups" && sb) loadGroups(sb);
+      if (section === "groups") loadGroups(sb);
       if (section === "transactions") loadTransactions();
     }
     window.showSection = showSection;
