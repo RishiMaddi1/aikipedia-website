@@ -1,983 +1,1996 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us</title>
-    <!-- Prism CSS for syntax highlighting -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Reference – Aikipedia</title>
+  <meta name="description"
+    content="Aikipedia API documentation. Integrate Claude, Gemini, DeepSeek & more into your app with a single endpoint. Your user_id is your API key.">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
 
-    <link href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700&display=swap" rel="stylesheet" />
-    <style>
-        /* Custom Scrollbar Styles (copied from index.html) */
-        ::-webkit-scrollbar {
-          width: 6px;
-          background-color: var(--border);
-        }
-        ::-webkit-scrollbar-thumb {
-          background-color: var(--accent);
-          border-radius: 6px;
-        }
-        ::-webkit-scrollbar-button {
-          background-color: var(--border);
-        }
-        ::-webkit-scrollbar-corner {
-          background-color: var(--bg-secondary);
-        }
-        :root {
-            --bg: #031626; 
-            --bg-secondary: #010512;
-            --text: #a3b2d3;
-            --accent: #4889cd;
-            --border: #000137;
-            --error: #FCADB0;
-            --success: #2F686F ;
-        }
+  <style>
+    /* ─── CSS Variables ─────────────────────────────── */
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #181a20;
-            color: var(--text);
-            padding: 20px;
-            line-height: 1.6;
-            min-height: 100vh;
-            width: 100vw;
-            overflow-x: hidden;
-            overflow-y: auto;
-        }
-        h1 {
-            color: var(--accent);
-        }
-        p {
-            margin-bottom: 1rem;
-        }
-        .api-wrapper {
-  margin-top: 1rem;
-}
+    :root {
+      --black: #0a0a0a;
+      --dark: #111111;
+      --card: #161616;
+      --border: #2a2a2a;
+      --gold: #c9a84c;
+      --gold-lt: #e8c97a;
+      --white: #f0f0f0;
+      --muted: #888;
+      --text: #ccc;
+      --code-bg: #0d0d0d;
+      /* auth compat */
+      --bg: #0a0a0a;
+      --bg-secondary: #161616;
+      --accent: #c9a84c;
+      --error: #ff6b6b;
+      --success: #10b981;
+    }
 
-.api-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
+    ::-webkit-scrollbar {
+      width: 5px;
+      background: #111;
+    }
 
-.tab-btn {
-  padding: 0.5rem 1rem;
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border);
-  color: var(--text);
-  cursor: pointer;
-  border-radius: 5px;
-  transition: background-color 0.3s, color 0.3s;
-}
+    ::-webkit-scrollbar-thumb {
+      background: #333;
+      border-radius: 4px;
+    }
 
-.tab-btn:hover,
-.tab-btn.active {
-  background-color: var(--accent);
-  color: #000;
-  font-weight: 600;
-}
+    html {
+      scroll-behavior: smooth;
+    }
 
-.code-box {
-  position: relative;
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 1rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-}
-
-.code-block {
-  display: none;
-  position: relative;
-}
-
-.code-block.active {
-  display: block;
-}
-
-.code-block pre {
-  background-color:black;
-  color: #a3d3e2;
-  font-family: 'Courier New', monospace;
-  font-size: 0.85rem;
-  overflow-x: auto;
-  padding: 1rem;
-  border-radius: 6px;
-}
-
-.copy-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: var(--accent);
-  color: #000;
-  border: none;
-  padding: 0.3rem 0.6rem;
-  font-size: 0.8rem;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.copy-btn:hover {
-  background-color: #66a8f1;
-}
-.api-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-.tab-btn {
-  padding: 0.5rem 1rem;
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border);
-  color: var(--text);
-  border-radius: 6px;
-  cursor: pointer;
-  transition: transform 0.25s ease, background-color 0.3s;
-}
-
-.tab-btn:hover {
-  background-color: var(--accent);
-  color: #000;
-  transform: translateY(-2px);
-}
-
-.tab-btn.active {
-  background-color: var(--accent);
-  color: #000;
-  font-weight: bold;
-}
-
-.code-box {
-  position: relative;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background-color:black;
-  box-shadow: 0 0 15px rgba(0,0,0,0.2);
-  overflow: hidden;
-}
-
-.code-block {
-  display: none;
-  animation: fadeIn 0.5s ease;
-}
-
-.code-block.active {
-  display: block;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.copy-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: var(--accent);
-  color: #000;
-  border: none;
-  padding: 0.3rem 0.6rem;
-  font-size: 0.8rem;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 2;
-  transition: background 0.3s;
-}
-
-.copy-btn:hover {
-  background: #66a8f1;
-}
-.copy-tooltip {
-    position: absolute;
-    top: -30px;
-    right: 10px;
-    background: var(--success);
-    color: #fff;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    opacity: 0;
-    pointer-events: none;
-    transform: scale(0.5);
-    animation: bounceFade 1.5s ease forwards;
-  }
-
-  @keyframes bounceFade {
-    0% { opacity: 0; transform: scale(0.5) translateY(-10px); }
-    20% { opacity: 1; transform: scale(1.1) translateY(0); }
-    40% { transform: scale(0.95); }
-    60% { transform: scale(1); }
-    100% { opacity: 0; transform: scale(1) translateY(-10px); }
-  }
-
-  /* Flip animation */
-  .code-box {
-    background-color: black;
-    perspective: 1000px;
-  }
-  .flip-container {
-    transition: transform 0.6s ease;
-    transform-style: preserve-3d;
-    position: relative;
-  }
-  .code-block {
-    backface-visibility: hidden;
-    transform: rotateY(180deg);
-    position: absolute;
-    width: 100%;
-  }
-  .code-block.active {
-    transform: rotateY(0deg);
-    position: relative;
-  }
-
-  /* Magnet effect */
-  .tab-btn {
-    transition: transform 0.2s ease-out;
-  }
-
-  /* Remove gradient wave effect and set solid background */
-  body::before {
-    display: none;
-  }
-
-  @media (max-width: 600px) {
     body {
-      padding: 8px;
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
     }
-    h1, h2 {
-      font-size: 1.2rem;
+
+    a {
+      text-decoration: none;
+      color: inherit;
     }
-    .api-tabs {
-      flex-wrap: wrap;
-      gap: 0.25rem;
+
+    /* ─── Shared Navbar (same as index.html) ─────────── */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2.5rem;
+      height: 56px;
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      gap: 1rem;
     }
-    .tab-btn {
-      padding: 0.3rem 0.6rem;
+
+    .nav-logo {
       font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--white);
+      white-space: nowrap;
+      flex-shrink: 0;
     }
-    .code-box {
-      padding: 0.3rem;
+
+    .nav-links {
+      display: flex;
+      gap: 1.8rem;
+      list-style: none;
+      align-items: center;
     }
+
+    .nav-links a,
+    .nav-links button {
+      font-size: 0.76rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.2s;
+      padding: 0;
+    }
+
+    .nav-links a:hover,
+    .nav-links button:hover {
+      color: var(--white);
+    }
+
+    .nav-links a.active-page {
+      color: var(--gold);
+    }
+
+    #dashboardNavItem,
+    #createGroupNavItem {
+      display: none;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    #authButtons {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .nav-auth-link {
+      font-size: 0.76rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.2s;
+    }
+
+    .nav-auth-link:hover {
+      color: var(--white);
+    }
+
+    .nav-auth-sep {
+      width: 1px;
+      height: 14px;
+      background: var(--border);
+    }
+
+    .nav-cta {
+      padding: 0.42rem 1.15rem;
+      background: var(--gold);
+      color: #000;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s, transform 0.15s;
+      white-space: nowrap;
+    }
+
+    .nav-cta:hover {
+      background: var(--gold-lt);
+      transform: translateY(-1px);
+    }
+
+    #profileToggle {
+      width: 34px;
+      height: 34px;
+      border-radius: 6px;
+      background: var(--gold);
+      color: #000;
+      font-size: 0.85rem;
+      font-weight: 800;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: default;
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
+
+    #profileDetails {
+      display: none;
+    }
+
+    #logoutBtn {
+      display: none;
+      padding: 0.42rem 1rem;
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    #logoutBtn:hover {
+      color: var(--white);
+      border-color: var(--white);
+    }
+
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      background: none;
+      border: none;
+    }
+
+    .nav-hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--white);
+    }
+
+    .nav-drawer {
+      display: none;
+      position: fixed;
+      top: 56px;
+      left: 0;
+      right: 0;
+      background: #111;
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      flex-direction: column;
+      gap: 0.6rem;
+      z-index: 999;
+    }
+
+    .nav-drawer.open {
+      display: flex;
+    }
+
+    .nav-drawer a,
+    .nav-drawer button {
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      text-align: left;
+      padding: 0.4rem 0;
+      transition: color 0.2s;
+    }
+
+    .nav-drawer a:hover,
+    .nav-drawer button:hover {
+      color: var(--white);
+    }
+
+    /* ─── Page Layout: Sidebar + Content ──────────────── */
+    .page-wrap {
+      display: flex;
+      padding-top: 56px;
+      min-height: 100vh;
+    }
+
+    /* Left sidebar (doc navigation) */
+    .doc-sidebar {
+      width: 240px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 56px;
+      height: calc(100vh - 56px);
+      overflow-y: auto;
+      border-right: 1px solid var(--border);
+      padding: 2rem 0;
+      background: var(--dark);
+    }
+
+    .doc-sidebar-group {
+      margin-bottom: 2rem;
+    }
+
+    .doc-sidebar-label {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      padding: 0 1.5rem;
+      margin-bottom: 0.6rem;
+      display: block;
+    }
+
+    .doc-sidebar-link {
+      display: block;
+      padding: 0.4rem 1.5rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      transition: color 0.15s, background 0.15s;
+      border-left: 2px solid transparent;
+    }
+
+    .doc-sidebar-link:hover {
+      color: var(--white);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .doc-sidebar-link.active {
+      color: var(--gold);
+      border-left-color: var(--gold);
+      background: rgba(201, 168, 76, 0.06);
+    }
+
+    /* Main content */
+    .doc-content {
+      flex: 1;
+      min-width: 0;
+      padding: 3.5rem 4rem 6rem;
+      max-width: 860px;
+    }
+
+    /* ─── Section styles ────────────────────────────── */
+    .doc-section {
+      margin-bottom: 5rem;
+      padding-top: 0.5rem;
+    }
+
+    .section-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .section-title {
+      font-size: 1.9rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 0;
+      line-height: 1.1;
+    }
+
+    .section-underline {
+      width: 40px;
+      height: 3px;
+      background: var(--gold);
+      margin: 0.9rem 0 1.6rem;
+    }
+
+    .doc-p {
+      font-size: 0.92rem;
+      color: var(--text);
+      line-height: 1.75;
+      margin-bottom: 1.1rem;
+    }
+
+    .doc-p strong {
+      color: var(--white);
+    }
+
+    .doc-p a {
+      color: var(--gold);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s;
+    }
+
+    .doc-p a:hover {
+      border-bottom-color: var(--gold);
+    }
+
+    /* ─── API Key Box ────────────────────────────────── */
+    .api-key-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1.4rem 1.6rem;
+      margin: 1.5rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .api-key-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+
+    #userIdBox {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--gold);
+    }
+
+    #userIdBox.hidden-key {
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    .api-key-actions {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+    }
+
+    .btn-sm {
+      padding: 0.35rem 0.9rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      font-family: inherit;
+      border: none;
+      transition: background 0.2s;
+    }
+
+    .btn-sm-gold {
+      background: var(--gold);
+      color: #000;
+    }
+
+    .btn-sm-gold:hover {
+      background: var(--gold-lt);
+    }
+
+    .btn-sm-outline {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    .btn-sm-outline:hover {
+      color: var(--white);
+      border-color: var(--white);
+    }
+
+    .login-prompt {
+      background: rgba(201, 168, 76, 0.07);
+      border: 1px solid rgba(201, 168, 76, 0.25);
+      padding: 1rem 1.4rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin: 1.5rem 0;
+    }
+
+    .login-prompt strong {
+      color: var(--gold);
+      cursor: pointer;
+    }
+
+    .login-prompt strong:hover {
+      text-decoration: underline;
+    }
+
+    /* Credits badge */
+    .credits-inline {
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 1rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--gold);
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .credits-inline:hover {
+      border-color: var(--gold);
+    }
+
+    .credits-inline img {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* ─── Models Table ───────────────────────────────── */
+    .models-table-wrap {
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    thead tr {
+      border-bottom: 1px solid var(--border);
+    }
+
+    thead th {
+      padding: 0.7rem 1rem;
+      text-align: left;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    tbody tr {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      transition: background 0.15s;
+    }
+
+    tbody tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    tbody td {
+      padding: 0.75rem 1rem;
+      color: var(--text);
+      vertical-align: middle;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .badge-yes {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+    }
+
+    .badge-no {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--muted);
+    }
+
+    .badge-text {
+      background: rgba(201, 168, 76, 0.1);
+      color: var(--gold);
+    }
+
+    .badge-vision {
+      background: rgba(72, 137, 205, 0.12);
+      color: #64b5f6;
+    }
+
+    /* ─── Code blocks ────────────────────────────────── */
+    .lang-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      background: #0d0d0d;
+    }
+
+    .lang-tab {
+      padding: 0.55rem 1.1rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+      transition: color 0.15s;
+    }
+
+    .lang-tab:hover {
+      color: var(--white);
+    }
+
+    .lang-tab.active {
+      color: var(--gold);
+      border-bottom-color: var(--gold);
+    }
+
+    .code-wrapper {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      margin: 1.5rem 0;
+      overflow: hidden;
+    }
+
+    .code-block {
+      display: none;
+      position: relative;
+    }
+
+    .code-block.active {
+      display: block;
+    }
+
     .code-block pre {
-      font-size: 0.7rem;
-      padding: 0.5rem;
+      margin: 0;
+      padding: 1.4rem 1.4rem 1.4rem 1.4rem;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      line-height: 1.65;
+      background: transparent !important;
     }
-  }
 
-    </style>
+    .copy-btn {
+      position: absolute;
+      top: 0.7rem;
+      right: 0.7rem;
+      padding: 0.28rem 0.7rem;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+      z-index: 2;
+    }
+
+    .copy-btn:hover {
+      color: var(--white);
+      border-color: var(--white);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .copy-btn.copied {
+      color: #10b981;
+      border-color: #10b981;
+    }
+
+    /* ─── Endpoint pill ──────────────────────────────── */
+    .endpoint-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.7rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 0.6rem 1rem;
+      margin: 1rem 0 1.5rem;
+    }
+
+    .method-badge {
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      padding: 0.2rem 0.55rem;
+      background: var(--gold);
+      color: #000;
+    }
+
+    .endpoint-url {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: var(--white);
+    }
+
+    /* ─── Param table ────────────────────────────────── */
+    .param-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0 2rem;
+      font-size: 0.82rem;
+    }
+
+    .param-table th {
+      text-align: left;
+      padding: 0.5rem 0.8rem;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .param-table td {
+      padding: 0.65rem 0.8rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .param-table td:first-child {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--white);
+      font-size: 0.78rem;
+    }
+
+    .req-badge {
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.1rem 0.4rem;
+      background: rgba(201, 168, 76, 0.15);
+      color: var(--gold);
+    }
+
+    .opt-badge {
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.1rem 0.4rem;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--muted);
+    }
+
+    /* ─── Info box ───────────────────────────────────── */
+    .info-box {
+      border-left: 3px solid var(--gold);
+      background: rgba(201, 168, 76, 0.06);
+      padding: 1rem 1.2rem;
+      margin: 1.3rem 0;
+      font-size: 0.85rem;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .info-box strong {
+      color: var(--white);
+    }
+
+    /* ─── Steps ──────────────────────────────────────── */
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin: 1.5rem 0;
+    }
+
+    .step {
+      display: flex;
+      gap: 1.2rem;
+      padding: 1.3rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .step:last-child {
+      border-bottom: none;
+    }
+
+    .step-num {
+      width: 28px;
+      height: 28px;
+      background: var(--gold);
+      color: #000;
+      font-size: 0.75rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    .step-body {
+      flex: 1;
+    }
+
+    .step-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.3rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .step-desc {
+      font-size: 0.83rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ─── Reset API key section ──────────────────────── */
+    .danger-zone {
+      border: 1px solid rgba(255, 80, 80, 0.2);
+      padding: 1.4rem 1.6rem;
+      margin-top: 1.5rem;
+    }
+
+    .danger-title {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #ff6b6b;
+      margin-bottom: 0.6rem;
+    }
+
+    .btn-danger {
+      padding: 0.4rem 1rem;
+      background: transparent;
+      color: #ff6b6b;
+      border: 1px solid rgba(255, 80, 80, 0.3);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s;
+      margin-top: 0.6rem;
+    }
+
+    .btn-danger:hover {
+      background: rgba(255, 80, 80, 0.1);
+    }
+
+    /* ─── Responsive ─────────────────────────────────── */
+    @media (max-width: 900px) {
+      .doc-sidebar {
+        display: none;
+      }
+
+      .doc-content {
+        padding: 2.5rem 1.5rem 4rem;
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 0 1.2rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      #authButtons {
+        display: none !important;
+      }
+
+      .nav-cta {
+        display: none;
+      }
+
+      .nav-hamburger {
+        display: flex;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .doc-content {
+        padding: 2rem 1rem 3rem;
+      }
+    }
+  </style>
 </head>
+
 <body>
-    <!-- YouTube Video Placeholder -->
-    <div id="videoSection" style="width:100%;max-width:800px;margin:2rem auto 2.5rem auto;text-align:center;">
-      <div style="background:#222;border-radius:12px;min-height:320px;display:flex;align-items:center;justify-content:center;color:#888;font-size:1.2rem;">
-        <iframe width="100%" height="320" src="https://www.youtube.com/embed/jBd0W2hCBT0" title="YouTube video" frameborder="0" allowfullscreen style="border-radius:12px;"></iframe>
+
+  <!-- ─── Auth stubs (required by aikipedia-auth.js) ── -->
+  <div id="profileDetails" style="display:none;"></div>
+  <div id="sidebarOverlay" style="display:none;position:fixed;inset:0;z-index:2999;"></div>
+  <aside id="sidebar" style="display:none;"></aside>
+
+  <!-- Auth Modal -->
+  <div id="authModal"
+    style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.75);z-index:3000;align-items:center;justify-content:center;padding:1rem;">
+    <div id="loginForm"
+      style="min-width:320px;max-width:400px;width:100%;padding:2.2rem 2.5rem;background:#161616;border:1px solid #2a2a2a;border-radius:4px;display:flex;flex-direction:column;gap:1.3rem;align-items:center;box-shadow:0 20px 60px rgba(0,0,0,0.7);">
+      <div style="text-align:center;">
+        <h2
+          style="color:var(--gold);font-size:1.7rem;font-weight:900;text-transform:uppercase;letter-spacing:-0.01em;margin-bottom:0.3rem;">
+          Welcome Back</h2>
+        <p style="color:#555;font-size:0.85rem;">Sign in to get your API key</p>
       </div>
+      <div style="width:100%;display:flex;flex-direction:column;gap:0.9rem;">
+        <input id="loginUsername" placeholder="Username"
+          style="padding:0.85rem 1rem;border-radius:3px;border:1px solid #2a2a2a;width:100%;background:#0a0a0a;color:#f0f0f0;font-size:0.9rem;outline:none;font-family:inherit;" />
+        <div style="position:relative;width:100%;display:flex;align-items:center;">
+          <input id="loginPassword" type="password" placeholder="Password"
+            style="padding:0.85rem 1rem;border-radius:3px;border:1px solid #2a2a2a;width:100%;background:#0a0a0a;color:#f0f0f0;font-size:0.9rem;outline:none;font-family:inherit;" />
+          <span class="toggle-password" data-target="loginPassword"
+            style="position:absolute;right:1rem;cursor:pointer;user-select:none;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <ellipse cx="12" cy="12" rx="9" ry="5.5" />
+              <circle cx="12" cy="12" r="2.5" />
+            </svg>
+          </span>
+        </div>
+      </div>
+      <button id="loginSubmitBtn"
+        style="background:var(--gold);color:#000;font-weight:700;width:100%;padding:0.85rem;border-radius:3px;border:none;cursor:pointer;font-size:0.82rem;letter-spacing:0.1em;text-transform:uppercase;font-family:inherit;">Sign
+        In</button>
+      <div style="display:flex;gap:0.5rem;align-items:center;">
+        <span style="color:#555;font-size:0.82rem;">New to Aikipedia?</span>
+        <button id="switchToRegisterBtn"
+          style="background:none;border:none;color:var(--gold);cursor:pointer;font-weight:700;font-size:0.82rem;font-family:inherit;">Create
+          Account</button>
+      </div>
+      <button id="loginCancelBtn"
+        style="background:none;color:#555;border:none;cursor:pointer;font-size:0.8rem;font-family:inherit;">Cancel</button>
+      <div id="loginError" style="color:#ff6b6b;font-size:0.85rem;text-align:center;min-height:1rem;"></div>
     </div>
-    
-    <button id="backToChatBtn" style="position:fixed;top:clamp(0.5rem, 2vw, 1rem);left:clamp(0.5rem, 2vw, 1rem);z-index:2101;background-color:var(--accent);color:#000;border:none;border-radius:50%;padding:clamp(0.3rem, 1vw, 0.5rem);cursor:pointer;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-        </svg>
+    <div id="registerForm"
+      style="display:none;min-width:320px;max-width:400px;width:100%;padding:2.2rem 2.5rem;background:#161616;border:1px solid #2a2a2a;border-radius:4px;flex-direction:column;gap:1.3rem;align-items:center;box-shadow:0 20px 60px rgba(0,0,0,0.7);">
+      <div style="text-align:center;">
+        <h2
+          style="color:var(--gold);font-size:1.7rem;font-weight:900;text-transform:uppercase;letter-spacing:-0.01em;margin-bottom:0.3rem;">
+          Create Account</h2>
+        <p style="color:#555;font-size:0.85rem;">Join Aikipedia to start building</p>
+      </div>
+      <div style="width:100%;display:flex;flex-direction:column;gap:0.9rem;">
+        <input id="registerUsername" placeholder="Choose Username"
+          style="padding:0.85rem 1rem;border-radius:3px;border:1px solid #2a2a2a;width:100%;background:#0a0a0a;color:#f0f0f0;font-size:0.9rem;outline:none;font-family:inherit;" />
+        <div style="position:relative;width:100%;display:flex;align-items:center;">
+          <input id="registerPassword" type="password" placeholder="Create Password"
+            style="padding:0.85rem 1rem;border-radius:3px;border:1px solid #2a2a2a;width:100%;background:#0a0a0a;color:#f0f0f0;font-size:0.9rem;outline:none;font-family:inherit;" />
+          <span class="toggle-password" data-target="registerPassword"
+            style="position:absolute;right:1rem;cursor:pointer;user-select:none;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <ellipse cx="12" cy="12" rx="9" ry="5.5" />
+              <circle cx="12" cy="12" r="2.5" />
+            </svg>
+          </span>
+        </div>
+        <div style="position:relative;width:100%;display:flex;align-items:center;">
+          <input id="registerConfirmPassword" type="password" placeholder="Confirm Password"
+            style="padding:0.85rem 1rem;border-radius:3px;border:1px solid #2a2a2a;width:100%;background:#0a0a0a;color:#f0f0f0;font-size:0.9rem;outline:none;font-family:inherit;" />
+          <span class="toggle-password" data-target="registerConfirmPassword"
+            style="position:absolute;right:1rem;cursor:pointer;user-select:none;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <ellipse cx="12" cy="12" rx="9" ry="5.5" />
+              <circle cx="12" cy="12" r="2.5" />
+            </svg>
+          </span>
+        </div>
+      </div>
+      <button id="registerSubmitBtn"
+        style="background:var(--gold);color:#000;font-weight:700;width:100%;padding:0.85rem;border-radius:3px;border:none;cursor:pointer;font-size:0.82rem;letter-spacing:0.1em;text-transform:uppercase;font-family:inherit;">Create
+        Account</button>
+      <div style="display:flex;gap:0.5rem;align-items:center;">
+        <span style="color:#555;font-size:0.82rem;">Already have an account?</span>
+        <button id="switchToLoginBtn"
+          style="background:none;border:none;color:var(--gold);cursor:pointer;font-weight:700;font-size:0.82rem;font-family:inherit;">Sign
+          In</button>
+      </div>
+      <button id="registerCancelBtn"
+        style="background:none;color:#555;border:none;cursor:pointer;font-size:0.8rem;font-family:inherit;">Cancel</button>
+      <div id="registerError" style="color:#ff6b6b;font-size:0.85rem;text-align:center;min-height:1rem;"></div>
+    </div>
+    <div id="createGroupForm"
+      style="display:none;min-width:320px;max-width:400px;width:100%;padding:2.2rem 2.5rem;background:#161616;border:1px solid #2a2a2a;border-radius:4px;flex-direction:column;gap:1.3rem;align-items:center;">
+      <div style="text-align:center;">
+        <h2 style="color:var(--gold);font-size:1.7rem;font-weight:900;text-transform:uppercase;margin-bottom:0.3rem;">
+          Create Group</h2>
+        <p style="color:#555;font-size:0.85rem;">Start a group chat with AI</p>
+      </div>
+      <div style="width:100%;display:flex;flex-direction:column;gap:0.9rem;">
+        <input id="groupName" placeholder="Group name"
+          style="padding:0.85rem 1rem;border-radius:3px;border:1px solid #2a2a2a;width:100%;background:#0a0a0a;color:#f0f0f0;font-size:0.9rem;outline:none;font-family:inherit;" />
+        <div>
+          <label style="color:#555;font-size:0.78rem;display:block;margin-bottom:0.4rem;">Max members (optional)</label>
+          <input id="groupMaxMembers" type="number" placeholder="50" min="2" max="100"
+            style="padding:0.85rem 1rem;border-radius:3px;border:1px solid #2a2a2a;width:100%;background:#0a0a0a;color:#f0f0f0;font-size:0.9rem;outline:none;font-family:inherit;" />
+        </div>
+      </div>
+      <button id="createGroupSubmitBtn"
+        style="background:var(--gold);color:#000;font-weight:700;width:100%;padding:0.85rem;border-radius:3px;border:none;cursor:pointer;font-size:0.82rem;letter-spacing:0.1em;text-transform:uppercase;font-family:inherit;">Create
+        Group</button>
+      <button id="createGroupCancelBtn"
+        style="background:none;color:#555;border:none;cursor:pointer;font-size:0.8rem;font-family:inherit;">Cancel</button>
+      <div id="createGroupError" style="color:#ff6b6b;font-size:0.85rem;text-align:center;min-height:1rem;"></div>
+    </div>
+  </div>
+
+  <!-- ─── Navbar ────────────────────────────────────── -->
+  <nav class="navbar">
+    <a href="index.html" class="nav-logo">Aikipedia.in</a>
+    <ul class="nav-links">
+      <li><a href="about_us.html" id="aboutUsBtn">About</a></li>
+      <li><a href="api.html" id="apiBtn" class="active-page">API</a></li>
+      <li><a href="payments.html" id="paymentsBtn">Pricing</a></li>
+      <li><a href="chat.html" id="chatBtn">Chat</a></li>
+      <li id="dashboardNavItem"><button id="dashboardBtn">Dashboard</button></li>
+      <li id="createGroupNavItem"><button id="createGroupBtn">New&nbsp;Group</button></li>
+    </ul>
+    <div class="nav-right">
+      <div id="authButtons">
+        <button class="nav-auth-link" id="loginBtn">Login</button>
+        <div class="nav-auth-sep"></div>
+        <button class="nav-auth-link" id="registerBtn">Register</button>
+      </div>
+      <button id="logoutBtn">Logout</button>
+      <a href="payments.html" class="nav-cta" id="navBuyBtn">Buy&nbsp;Echos</a>
+      <div id="profileToggle" title="" aria-label="Signed in"></div>
+    </div>
+    <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
     </button>
-    
-    <!-- Credits Display -->
-    <div id="creditsDisplay" style="display:none;position:fixed;top:clamp(0.5rem, 2vw, 1rem);right:clamp(0.5rem, 2vw, 1rem);z-index:2101;cursor:pointer;align-items:center;gap:0.7rem;padding:0.7rem 1.1rem;background:var(--accent);border-radius:12px;border:none;box-shadow:0 2px 8px rgba(0,0,0,0.08);font-size:1.08rem;font-weight:600;color:#000;transition:none;min-width:120px;flex-direction:row;">
-      <img src="echo.png" alt="Echos" style="width:28px;height:28px;vertical-align:middle;" />
-      <span id="creditsAmount" style="margin:0 0.5rem 0 0.2rem;">--</span>
-      <button id="reloadCreditsBtn" title="Reload credits" style="background:none;border:none;outline:none;cursor:pointer;padding:0;margin:0;display:inline-flex;align-items:center;">
-        <svg id="reloadCreditsIcon" width="22" height="22" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="color:var(--bg-secondary);transition:color 0.2s;"><path d="M17.65 6.35A8 8 0 1 0 18 10h-2a6 6 0 1 1-1.76-4.24l-2.79 2.79H18V2.5l-2.35 2.35z" fill="currentColor"/></svg>
-      </button>
-    </div>
-    <br>
+  </nav>
 
-    <!-- USER ID/API KEY SECTION -->
-    <div style="max-width:420px;margin:2.5rem auto 1.5rem auto;display:flex;justify-content:center;align-items:center;gap:0.7em;">
-      <div id="userIdBox" style="display:none;max-width:320px;padding:0.25em 0.8em;background:var(--bg-secondary);color:var(--accent);border:1.2px solid var(--accent);border-radius:2em;font-size:0.98em;font-family:monospace;font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,0.06);letter-spacing:0.01em;line-height:1.6;white-space:nowrap;text-align:center;"></div>
-      <button id="copyUserIdBtn" style="display:none;padding:0.25em 0.8em;background:var(--accent);color:#000;border:none;border-radius:2em;font-size:0.98em;font-weight:600;cursor:pointer;transition:background 0.2s;">Copy</button>
-    </div>
+  <!-- Mobile Drawer -->
+  <div class="nav-drawer" id="navDrawer">
+    <a href="about_us.html">About</a>
+    <a href="api.html">API</a>
+    <a href="payments.html">Pricing</a>
+    <a href="chat.html">Chat</a>
+    <a href="dashboard.html" id="drawerDashboardLink" style="display:none;">Dashboard</a>
+    <a href="payments.html">Buy Echos</a>
+    <button id="drawerLoginBtn" style="display:none;">Login</button>
+    <button id="drawerRegisterBtn" style="display:none;">Register</button>
+    <button id="drawerLogoutBtn" style="display:none;">Logout</button>
+  </div>
 
-    <!-- TOP TEXT -->
-    <div style="text-align:center;margin-bottom:1.5rem;font-size:1.08em;color:var(--accent);font-weight:600;">Login to recieve to your user id. Your user_id is your API key for this platform.</div>
+  <!-- ─── Page Layout ───────────────────────────────── -->
+  <div class="page-wrap">
 
-    <!-- Model Table Section -->
-    <h2 style="color: var(--accent); margin-top: 2.5rem;">Available Models</h2>
-    <div style="overflow-x:auto;margin-bottom:2.5rem;">
-      <table style="width:100%;max-width:900px;margin:auto;border-collapse:collapse;background:var(--bg-secondary);color:var(--text);border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
-        <thead style="background:var(--bg);">
-          <tr style="color:var(--accent);font-weight:700;">
-            <th style="padding:1em 0.5em;">Model Name</th>
-            <th>Type</th>
-            <th>Description</th>
-            <th>Supports Image?</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td style="padding-left:0.5em;">Qwen</td>
-            <td style="padding-left:0.5em;">Text</td>
-            <td style="padding-left:0.5em;">Advanced coding, math, and reasoning</td>
-            <td style="padding-left:0.5em;">No</td>
-          </tr>
-          <tr>
-            <td style="padding-left:0.5em;">Gemini Flash</td>
-            <td style="padding-left:0.5em;">Text & Vision</td>
-            <td style="padding-left:0.5em;">Logic, reasoning, general tasks, images</td>
-            <td style="padding-left:0.5em;">Yes</td>
-          </tr>
-          <tr>
-            <td style="padding-left:0.5em;">Codestral</td>
-            <td style="padding-left:0.5em;">Text</td>
-            <td style="padding-left:0.5em;">High-performance code generation</td>
-            <td style="padding-left:0.5em;">No</td>
-          </tr>
-          <tr>
-            <td style="padding-left:0.5em;">DeepSeek V3</td>
-            <td style="padding-left:0.5em;">Text</td>
-            <td style="padding-left:0.5em;">General-purpose, reasoning, conversation</td>
-            <td style="padding-left:0.5em;">No</td>
-          </tr>
-          <tr>
-            <td style="padding-left:0.5em;">Claude 3 Haiku</td>
-            <td style="padding-left:0.5em;">Text & Vision</td>
-            <td style="padding-left:0.5em;">Fast, affordable, supports image input</td>
-            <td style="padding-left:0.5em;">Yes</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- TEXT MODELS SECTION -->
-    <h2 style="color: var(--accent); margin-top: 2.5rem;">Text Model API Usage</h2>
-    <p>Text models are ideal for chat, code, math, and reasoning tasks. <b>They do not accept images.</b> Use these models for pure text-based interactions.</p>
-    
-    <div class="api-wrapper">
-      <div class="api-tabs">
-        <button class="tab-btn active" data-lang="curl-text">cURL</button>
-        <button class="tab-btn" data-lang="python-text">Python</button>
-        <button class="tab-btn" data-lang="javascript-text">JavaScript</button>
-        <button class="tab-btn" data-lang="nodejs-text">Node.js</button>
-        <button class="tab-btn" data-lang="go-text">Go</button>
-        <button class="tab-btn" data-lang="java-text">Java</button>
-        <button class="tab-btn" data-lang="php-text">PHP</button>
-        <button class="tab-btn" data-lang="ruby-text">Ruby</button>
-        <button class="tab-btn" data-lang="csharp-text">C#</button>
+    <!-- Left Doc Sidebar -->
+    <nav class="doc-sidebar">
+      <div class="doc-sidebar-group">
+        <span class="doc-sidebar-label">Getting Started</span>
+        <a class="doc-sidebar-link active" href="#quickstart">Quickstart</a>
+        <a class="doc-sidebar-link" href="#authentication">Authentication</a>
+        <a class="doc-sidebar-link" href="#credits">Credits & Billing</a>
       </div>
-      <div class="code-box">
-        <div class="flip-container">
-          <div class="code-block active" id="curl-text">
-            <button class="copy-btn">📋</button>
-            <div style="color:#94a3b8;font-size:0.95em;margin-bottom:0.5em;"># systemPrompt is required. Leave it blank ("") for default, or fill in your own.</div>
-            <pre><code class="language-bash">curl -X POST \
-  https://backend.aikipedia.workers.dev/chat \
+      <div class="doc-sidebar-group">
+        <span class="doc-sidebar-label">Endpoints</span>
+        <a class="doc-sidebar-link" href="#endpoint-chat">POST /chat</a>
+      </div>
+      <div class="doc-sidebar-group">
+        <span class="doc-sidebar-label">Models</span>
+        <a class="doc-sidebar-link" href="#models-table">All Models</a>
+        <a class="doc-sidebar-link" href="#text-models">Text Models</a>
+        <a class="doc-sidebar-link" href="#vision-models">Vision Models</a>
+      </div>
+      <div class="doc-sidebar-group">
+        <span class="doc-sidebar-label">Account</span>
+        <a class="doc-sidebar-link" href="#api-key">Your API Key</a>
+        <a class="doc-sidebar-link" href="#reset-key">Reset Key</a>
+      </div>
+    </nav>
+
+    <!-- Main content -->
+    <main class="doc-content">
+
+      <!-- ── Hero heading ── -->
+      <div style="margin-bottom:3.5rem;">
+        <span class="section-label">Documentation</span>
+        <h1 class="section-title">API Reference</h1>
+        <div class="section-underline"></div>
+        <p class="doc-p">
+          One endpoint. Five frontier models. Billed in ₹.
+          Aikipedia gives you direct access to <strong>Claude, Gemini, DeepSeek, Mistral, and Qwen</strong>
+          through a single simple REST API — no dollar conversion, no subscriptions, no surprises.
+        </p>
+        <p class="doc-p">Your <strong>user_id</strong> is your API key. Log in to see it below.</p>
+
+        <!-- Credits pill (shown when logged in) -->
+        <div class="credits-inline" id="creditsDisplay" onclick="window.location.href='payments.html'"
+          title="Click to top up">
+          <img src="echo.png" alt="Echos" />
+          <span id="creditsAmount">--</span>&nbsp;Echos
+          <button id="reloadCreditsBtn" title="Refresh balance"
+            style="background:none;border:none;cursor:pointer;padding:0;color:var(--gold);display:inline-flex;align-items:center;"
+            onclick="event.stopPropagation()">
+            <svg id="reloadCreditsIcon" width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M17.65 6.35A8 8 0 1 0 18 10h-2a6 6 0 1 1-1.76-4.24l-2.79 2.79H18V2.5l-2.35 2.35z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── API Key ── -->
+      <section class="doc-section" id="api-key">
+        <span class="section-label">Account</span>
+        <h2 class="section-title">Your API Key</h2>
+        <div class="section-underline"></div>
+        <p class="doc-p">Your <code
+            style="font-family:JetBrains Mono,monospace;color:var(--gold);font-size:0.8rem;">user_id</code> doubles as
+          your API key. It is generated when you create your account.</p>
+
+        <!-- Logged in state -->
+        <div id="api-key-logged-in" style="display:none;">
+          <div class="api-key-box">
+            <div>
+              <div class="api-key-label">Your API Key (user_id)</div>
+              <div id="userIdBox">—</div>
+            </div>
+            <div class="api-key-actions">
+              <button class="btn-sm btn-sm-outline" id="toggleKeyBtn">Show</button>
+              <button class="btn-sm btn-sm-gold" id="copyUserIdBtn">Copy</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Logged out state -->
+        <div id="api-key-logged-out" class="login-prompt">
+          You need to be signed in to view your API key.
+          <strong id="promptLoginLink">Login</strong> or <strong id="promptRegisterLink">Register</strong> to get yours.
+        </div>
+      </section>
+      <!-- ── Quickstart ── -->
+      <section class="doc-section" id="quickstart">
+        <span class="section-label">Getting Started</span>
+        <h2 class="section-title">Quickstart</h2>
+        <div class="section-underline"></div>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">Create an account</div>
+              <div class="step-desc">Register at <strong onclick="document.getElementById('registerBtn').click()"
+                  style="color:var(--gold);cursor:pointer;">aikipedia.in</strong> — it takes 30 seconds. No credit card
+                needed.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Buy Echos (credits)</div>
+              <div class="step-desc">Top up with UPI or RuPay from ₹49. Credits last up to a year — no monthly lock-in.
+              </div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="step-title">Copy your API key</div>
+              <div class="step-desc">Log in and scroll to <a href="#api-key">Your API Key</a> below. Your <code
+                  style="font-family:JetBrains Mono,monospace;color:var(--gold);font-size:0.8rem;">user_id</code> is
+                your API key.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <div class="step-title">Make your first request</div>
+              <div class="step-desc">POST to <code
+                  style="font-family:JetBrains Mono,monospace;color:var(--gold);font-size:0.8rem;">https://backend.aikipedia.workers.dev/chat</code>
+                and ship something great.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Authentication ── -->
+      <section class="doc-section" id="authentication">
+        <span class="section-label">Auth</span>
+        <h2 class="section-title">Authentication</h2>
+        <div class="section-underline"></div>
+        <p class="doc-p">
+          Aikipedia does not use bearer tokens or separate API keys. Instead, your <strong>user_id</strong>
+          (shown after login) acts as your API key. Pass it in the JSON body as <code
+            style="font-family:JetBrains Mono,monospace;color:var(--gold);font-size:0.8rem;">user_id</code> on every
+          request.
+        </p>
+        <div class="info-box">
+          <strong>Keep your user_id private.</strong> Anyone with your user_id can consume your credits. You can reset
+          it at any time from the <a href="#reset-key" style="color:var(--gold);">Reset Key</a> section.
+        </div>
+      </section>
+
+      <!-- ── Credits ── -->
+      <section class="doc-section" id="credits">
+        <span class="section-label">Billing</span>
+        <h2 class="section-title">Credits & Billing</h2>
+        <div class="section-underline"></div>
+        <p class="doc-p">
+          Aikipedia uses a credit system called <strong>Echos</strong>. Each API call deducts a small amount based on
+          the model and token count. There are no subscriptions — credits are valid for up to <strong>one year</strong>
+          from purchase.
+        </p>
+        <p class="doc-p">Top up via <strong>UPI, RuPay,</strong> or Visa cards starting at <strong>₹49</strong> — paid
+          directly in rupees, zero forex charges.</p>
+        <div class="info-box">
+          Watch your balance on this page. Click the Echos badge at the top of this page to go to the payments page.
+        </div>
+      </section>
+
+      <!-- ── Endpoint ── -->
+      <section class="doc-section" id="endpoint-chat">
+        <span class="section-label">Endpoints</span>
+        <h2 class="section-title">POST /chat</h2>
+        <div class="section-underline"></div>
+        <p class="doc-p">The single endpoint for all chat and vision requests.</p>
+
+        <div class="endpoint-pill">
+          <span class="method-badge">POST</span>
+          <span class="endpoint-url">https://backend.aikipedia.workers.dev/chat</span>
+        </div>
+
+        <h3
+          style="font-size:0.72rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin-bottom:0.8rem;">
+          Request Body</h3>
+        <table class="param-table">
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Type</th>
+              <th style="width:60px;">Required</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>user_id</td>
+              <td style="color:var(--muted);">string</td>
+              <td><span class="req-badge">Req</span></td>
+              <td>Your API key (your user_id after login)</td>
+            </tr>
+            <tr>
+              <td>message</td>
+              <td style="color:var(--muted);">string</td>
+              <td><span class="req-badge">Req</span></td>
+              <td>The user message to send to the model</td>
+            </tr>
+            <tr>
+              <td>model</td>
+              <td style="color:var(--muted);">string</td>
+              <td><span class="req-badge">Req</span></td>
+              <td>Model identifier (see table below)</td>
+            </tr>
+            <tr>
+              <td>history</td>
+              <td style="color:var(--muted);">array</td>
+              <td><span class="req-badge">Req</span></td>
+              <td>Conversation history. Pass <code
+                  style="font-family:JetBrains Mono,monospace;color:var(--muted);font-size:0.77rem;">[]</code> for
+                single-turn</td>
+            </tr>
+            <tr>
+              <td>systemPrompt</td>
+              <td style="color:var(--muted);">string</td>
+              <td><span class="req-badge">Req</span></td>
+              <td>System instructions. Pass <code
+                  style="font-family:JetBrains Mono,monospace;color:var(--muted);font-size:0.77rem;">""</code> for
+                default behavior</td>
+            </tr>
+            <tr>
+              <td>image_url</td>
+              <td style="color:var(--muted);">string</td>
+              <td><span class="opt-badge">Opt</span></td>
+              <td>Public image URL. Only for vision-capable models (Gemini Flash, Claude 3 Haiku)</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ── All Models ── -->
+      <section class="doc-section" id="models-table">
+        <span class="section-label">Models</span>
+        <h2 class="section-title">All Models</h2>
+        <div class="section-underline"></div>
+        <div class="models-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>ID (use in API)</th>
+                <th>Type</th>
+                <th>Vision</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong style="color:var(--white);">Claude 3 Haiku</strong><br><span
+                    style="color:var(--muted);font-size:0.76rem;">Anthropic</span></td>
+                <td><code
+                    style="font-family:JetBrains Mono,monospace;font-size:0.76rem;color:var(--gold);">anthropic/claude-3-haiku</code>
+                </td>
+                <td><span class="badge badge-text">Text</span></td>
+                <td><span class="badge badge-yes">Yes</span></td>
+              </tr>
+              <tr>
+                <td><strong style="color:var(--white);">Gemini 2.5 Flash</strong><br><span
+                    style="color:var(--muted);font-size:0.76rem;">Google</span></td>
+                <td><code
+                    style="font-family:JetBrains Mono,monospace;font-size:0.76rem;color:var(--gold);">google/gemini-2.5-flash</code>
+                </td>
+                <td><span class="badge badge-vision">Vision</span></td>
+                <td><span class="badge badge-yes">Yes</span></td>
+              </tr>
+              <tr>
+                <td><strong style="color:var(--white);">DeepSeek V3</strong><br><span
+                    style="color:var(--muted);font-size:0.76rem;">DeepSeek</span></td>
+                <td><code
+                    style="font-family:JetBrains Mono,monospace;font-size:0.76rem;color:var(--gold);">deepseek/deepseek-chat-v3-0324</code>
+                </td>
+                <td><span class="badge badge-text">Text</span></td>
+                <td><span class="badge badge-no">No</span></td>
+              </tr>
+              <tr>
+                <td><strong style="color:var(--white);">Codestral</strong><br><span
+                    style="color:var(--muted);font-size:0.76rem;">Mistral</span></td>
+                <td><code
+                    style="font-family:JetBrains Mono,monospace;font-size:0.76rem;color:var(--gold);">mistralai/codestral-2501</code>
+                </td>
+                <td><span class="badge badge-text">Text</span></td>
+                <td><span class="badge badge-no">No</span></td>
+              </tr>
+              <tr>
+                <td><strong style="color:var(--white);">Qwen 2.5 Coder</strong><br><span
+                    style="color:var(--muted);font-size:0.76rem;">Alibaba</span></td>
+                <td><code
+                    style="font-family:JetBrains Mono,monospace;font-size:0.76rem;color:var(--gold);">qwen/qwen-2.5-coder-32b-instruct</code>
+                </td>
+                <td><span class="badge badge-text">Text</span></td>
+                <td><span class="badge badge-no">No</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ── Text Models ── -->
+      <section class="doc-section" id="text-models">
+        <span class="section-label">Examples</span>
+        <h2 class="section-title">Text Models</h2>
+        <div class="section-underline"></div>
+        <p class="doc-p">
+          Use text models for code generation, reasoning, writing, and conversation.
+          <strong>image_url is not supported</strong> for these models.
+        </p>
+
+        <div class="code-wrapper">
+          <div class="lang-tabs" id="text-tabs">
+            <button class="lang-tab active" data-target="text-curl">cURL</button>
+            <button class="lang-tab" data-target="text-python">Python</button>
+            <button class="lang-tab" data-target="text-js">JavaScript</button>
+            <button class="lang-tab" data-target="text-node">Node.js</button>
+            <button class="lang-tab" data-target="text-go">Go</button>
+            <button class="lang-tab" data-target="text-java">Java</button>
+            <button class="lang-tab" data-target="text-php">PHP</button>
+            <button class="lang-tab" data-target="text-ruby">Ruby</button>
+            <button class="lang-tab" data-target="text-cs">C#</button>
+          </div>
+          <div class="code-block active" id="text-curl">
+            <button class="copy-btn">Copy</button>
+            <pre><code class="language-bash">curl -X POST https://backend.aikipedia.workers.dev/chat \
   -H 'Content-Type: application/json' \
   -d '{
-    "user_id": "your_user_id",
-    "message": "your_message",
+    "user_id": "YOUR_USER_ID",
+    "message": "Explain bubble sort in Python",
     "model": "qwen/qwen-2.5-coder-32b-instruct",
     "history": [],
     "systemPrompt": ""
-}'</code></pre>
+  }'</code></pre>
           </div>
-        </div>
-        <div class="code-block" id="python-text">
-        <div class="flip-container">
-      <button class="copy-btn">📋</button>
-      <pre><code class="language-python">import requests
+          <div class="code-block" id="text-python">
+            <button class="copy-btn">Copy</button>
+            <pre><code class="language-python">import requests
 
 response = requests.post(
-  "https://backend.aikipedia.workers.dev/chat",
-  json={
-    "user_id": "your_user_id",
-    "message": "your_message",
-    "model": "qwen/qwen-2.5-coder-32b-instruct",
-    "history": [],
-    "systemPrompt": "" # systemPrompt is required; leave blank for default or fill in your own
-  }
+    "https://backend.aikipedia.workers.dev/chat",
+    json={
+        "user_id": "YOUR_USER_ID",
+        "message": "Explain bubble sort in Python",
+        "model": "qwen/qwen-2.5-coder-32b-instruct",
+        "history": [],
+        "systemPrompt": ""   # Required; leave blank for default
+    }
 )
 print(response.json())</code></pre>
-    </div>
-    </div>
-
-    <div class="code-block" id="javascript-text">
-        <div class="flip-container">
-      <button class="copy-btn">📋</button>
-      <pre><code class="language-javascript">fetch("https://backend.aikipedia.workers.dev/chat", {
+          </div>
+          <div class="code-block" id="text-js">
+            <button class="copy-btn">Copy</button>
+            <pre><code class="language-javascript">const res = await fetch("https://backend.aikipedia.workers.dev/chat", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
-    user_id: "your_user_id",
-    message: "your_message",
+    user_id: "YOUR_USER_ID",
+    message: "Explain bubble sort in Python",
     model: "qwen/qwen-2.5-coder-32b-instruct",
     history: [],
     systemPrompt: ""
   })
-})
-.then(res => res.json())
-.then(console.log);</code></pre>
-    </div>
-    </div>
+});
+const data = await res.json();
+console.log(data);</code></pre>
+          </div>
+          <div class="code-block" id="text-node">
+            <button class="copy-btn">Copy</button>
+            <pre><code class="language-javascript">const axios = require("axios");
 
-    <div class="code-block" id="nodejs-text">
-        <div class="flip-container">
-      <button class="copy-btn">📋</button>
-      <pre><code class="language-javascript">const axios = require("axios");
-
-axios.post("https://backend.aikipedia.workers.dev/chat", {
-  user_id: "your_user_id",
-  message: "your_message",
-  model: "qwen/qwen-2.5-coder-32b-instruct",
-  history: [],
-  systemPrompt: ""
-}).then(res => console.log(res.data));</code></pre>
-    </div>
-    </div>
-
-    <div class="code-block" id="go-text">
-        <div class="flip-container">
-      <button class="copy-btn">📋</button>
-      <pre><code class="language-go">package main
+const { data } = await axios.post(
+  "https://backend.aikipedia.workers.dev/chat",
+  {
+    user_id: "YOUR_USER_ID",
+    message: "Explain bubble sort in Python",
+    model: "qwen/qwen-2.5-coder-32b-instruct",
+    history: [],
+    systemPrompt: ""
+  }
+);
+console.log(data);</code></pre>
+          </div>
+          <div class="code-block" id="text-go">
+            <button class="copy-btn">Copy</button>
+            <pre><code class="language-go">package main
 
 import (
   "bytes"
   "encoding/json"
-  "net/http"
   "fmt"
+  "net/http"
 )
 
 func main() {
-  payload := map[string]interface{}{
-    "user_id": "your_user_id",
-    "message": "your_message",
-    "model": "qwen/qwen-2.5-coder-32b-instruct",
-    "history": []string{},
-    "systemPrompt": ""
-  }
-  jsonData, _ := json.Marshal(payload)
-  resp, _ := http.Post("https://backend.aikipedia.workers.dev/chat", "application/json", bytes.NewBuffer(jsonData))
+  body, _ := json.Marshal(map[string]interface{}{
+    "user_id":      "YOUR_USER_ID",
+    "message":      "Explain bubble sort in Python",
+    "model":        "qwen/qwen-2.5-coder-32b-instruct",
+    "history":      []string{},
+    "systemPrompt": "",
+  })
+  resp, _ := http.Post(
+    "https://backend.aikipedia.workers.dev/chat",
+    "application/json",
+    bytes.NewBuffer(body),
+  )
   fmt.Println(resp.Status)
 }</code></pre>
-    </div>
-    </div>
+          </div>
+          <div class="code-block" id="text-java">
+            <button class="copy-btn">Copy</button>
+            <pre><code class="language-java">HttpClient client = HttpClient.newHttpClient();
+String body = """
+  {"user_id":"YOUR_USER_ID","message":"Explain bubble sort",
+   "model":"qwen/qwen-2.5-coder-32b-instruct",
+   "history":[],"systemPrompt":""}
+  """;
 
-    <div class="code-block" id="java-text">
-        <div class="flip-container">
-      <button class="copy-btn">📋</button>
-      <pre><code class="language-java">HttpClient client = HttpClient.newHttpClient();
-HttpRequest request = HttpRequest.newBuilder()
+HttpRequest req = HttpRequest.newBuilder()
   .uri(URI.create("https://backend.aikipedia.workers.dev/chat"))
   .header("Content-Type", "application/json")
-  .POST(HttpRequest.BodyPublishers.ofString("{\"user_id\":\"your_user_id\",\"message\":\"your_message\",\"model\":\"qwen/qwen-2.5-coder-32b-instruct\",\"history\":[],\"systemPrompt\":\"\"}"))
+  .POST(HttpRequest.BodyPublishers.ofString(body))
   .build();
 
-HttpResponse&lt;String&gt; response = client.send(request, HttpResponse.BodyHandlers.ofString());
-System.out.println(response.body());</code></pre>
-    </div>
-    </div> 
-
-    <div class="code-block" id="php-text">
-        <div class="flip-container">
-      <button class="copy-btn">📋</button>
-      <pre><code class="language-php">&lt;?php
+HttpResponse&lt;String&gt; res = client.send(req, HttpResponse.BodyHandlers.ofString());
+System.out.println(res.body());</code></pre>
+          </div>
+          <div class="code-block" id="text-php">
+            <button class="copy-btn">Copy</button>
+            <pre><code class="language-php">&lt;?php
 $payload = json_encode([
-  "user_id" => "your_user_id",
-  "message" => "your_message",
-  "model" => "qwen/qwen-2.5-coder-32b-instruct",
-  "history" => [],
+  "user_id"      => "YOUR_USER_ID",
+  "message"      => "Explain bubble sort in Python",
+  "model"        => "qwen/qwen-2.5-coder-32b-instruct",
+  "history"      => [],
   "systemPrompt" => ""
 ]);
-
-$options = [
-  'http' => [
-    'header'  => "Content-type: application/json\r\n",
-    'method'  => 'POST',
-    'content' => $payload,
-  ],
-];
-
-$context  = stream_context_create($options);
-$result = file_get_contents("https://backend.aikipedia.workers.dev/chat", false, $context);
-echo $result;
-?&gt;</code></pre>
-    </div>
-</div>
-    <div class="code-block" id="ruby-text">
-        <div class="flip-container">
-      <button class="copy-btn">📋</button>
-      <pre><code class="language-ruby">require 'net/http'
+$ctx = stream_context_create([
+  "http" => [
+    "method"  => "POST",
+    "header"  => "Content-Type: application/json\r\n",
+    "content" => $payload,
+  ]
+]);
+echo file_get_contents("https://backend.aikipedia.workers.dev/chat", false, $ctx);</code></pre>
+          </div>
+          <div class="code-block" id="text-ruby">
+            <button class="copy-btn">Copy</button>
+            <pre><code class="language-ruby">require 'net/http'
 require 'json'
 
 uri = URI('https://backend.aikipedia.workers.dev/chat')
-res = Net::HTTP.post(uri, {
-  user_id: "your_user_id",
-  message: "your_message",
+Net::HTTP.post(uri, {
+  user_id: "YOUR_USER_ID",
+  message: "Explain bubble sort in Python",
   model: "qwen/qwen-2.5-coder-32b-instruct",
   history: [],
   systemPrompt: ""
-}.to_json, "Content-Type" => "application/json")
-
-puts res.body</code></pre>
-    </div>
-    </div>
-
-    <div class="code-block" id="csharp-text">
-        <div class="flip-container">
-      <button class="copy-btn">📋</button>
-      <pre><code class="language-csharp">using System.Net.Http;
+}.to_json, "Content-Type" => "application/json").tap { |r| puts r.body }</code></pre>
+          </div>
+          <div class="code-block" id="text-cs">
+            <button class="copy-btn">Copy</button>
+            <pre><code class="language-csharp">using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 
 var client = new HttpClient();
-var content = new StringContent(JsonSerializer.Serialize(new {
-  user_id = "your_user_id",
-  message = "your_message",
-  model = "qwen/qwen-2.5-coder-32b-instruct",
-  history = new string[] {},
+var payload = JsonSerializer.Serialize(new {
+  user_id      = "YOUR_USER_ID",
+  message      = "Explain bubble sort in Python",
+  model        = "qwen/qwen-2.5-coder-32b-instruct",
+  history      = Array.Empty&lt;object&gt;(),
   systemPrompt = ""
-}), Encoding.UTF8, "application/json");
-
-var response = await client.PostAsync("https://backend.aikipedia.workers.dev/chat", content);
-string responseBody = await response.Content.ReadAsStringAsync();
-Console.WriteLine(responseBody);</code></pre>
-    </div>
-    </div>
-  </div>
-</div>
-
-    <!-- VISION MODELS SECTION -->
-    <h2 style="color: var(--accent); margin-top: 2.5rem;">Vision Model API Usage</h2>
-    <p>Vision models support both text and image input. Use these models to send images along with your message. <b>Only Gemini Flash and Claude 3 Haiku currently support images.</b></p>
-    
-    <div class="api-wrapper">
-      <div class="api-tabs">
-        <button class="tab-btn active" data-lang="curl-vision">cURL</button>
-        <button class="tab-btn" data-lang="python-vision">Python</button>
-        <button class="tab-btn" data-lang="javascript-vision">JavaScript</button>
-        <button class="tab-btn" data-lang="nodejs-vision">Node.js</button>
-        <button class="tab-btn" data-lang="go-vision">Go</button>
-        <button class="tab-btn" data-lang="java-vision">Java</button>
-        <button class="tab-btn" data-lang="php-vision">PHP</button>
-        <button class="tab-btn" data-lang="ruby-vision">Ruby</button>
-        <button class="tab-btn" data-lang="csharp-vision">C#</button>
-      </div>
-      <div class="code-box">
-        <div class="flip-container">
-          <div class="code-block active" id="curl-vision">
-            <button class="copy-btn">📋</button>
-            <div style="color:#94a3b8;font-size:0.95em;margin-bottom:0.5em;"># systemPrompt is required. Leave it blank ("") for default, or fill in your own.</div>
-            <pre><code class="language-bash">curl -X POST \
-  https://backend.aikipedia.workers.dev/chat \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "user_id": "your_user_id",
-    "message": "Describe this image",
-    "model": "google/gemini-2.5-flash",
-    "image_url": "https://your-uploaded-image-url",
-    "history": [],
-    "systemPrompt": ""
-}'</code></pre>
+});
+var res = await client.PostAsync(
+  "https://backend.aikipedia.workers.dev/chat",
+  new StringContent(payload, Encoding.UTF8, "application/json")
+);
+Console.WriteLine(await res.Content.ReadAsStringAsync());</code></pre>
           </div>
         </div>
-        <div class="code-block" id="python-vision">
-        <div class="flip-container">
-      <button class="copy-btn">📋</button>
-      <pre><code class="language-python">import requests
+      </section>
+
+      <!-- ── Vision Models ── -->
+      <section class="doc-section" id="vision-models">
+        <span class="section-label">Examples</span>
+        <h2 class="section-title">Vision Models</h2>
+        <div class="section-underline"></div>
+        <p class="doc-p">
+          Send images alongside text using <code
+            style="font-family:JetBrains Mono,monospace;color:var(--gold);font-size:0.8rem;">image_url</code>.
+          Only <strong>Gemini 2.5 Flash</strong> and <strong>Claude 3 Haiku</strong> support vision.
+          The image must be a publicly accessible URL.
+        </p>
+
+        <div class="code-wrapper">
+          <div class="lang-tabs" id="vision-tabs">
+            <button class="lang-tab active" data-target="vis-curl">cURL</button>
+            <button class="lang-tab" data-target="vis-python">Python</button>
+            <button class="lang-tab" data-target="vis-js">JavaScript</button>
+            <button class="lang-tab" data-target="vis-node">Node.js</button>
+            <button class="lang-tab" data-target="vis-go">Go</button>
+            <button class="lang-tab" data-target="vis-java">Java</button>
+            <button class="lang-tab" data-target="vis-php">PHP</button>
+            <button class="lang-tab" data-target="vis-ruby">Ruby</button>
+            <button class="lang-tab" data-target="vis-cs">C#</button>
+          </div>
+          <div class="code-block active" id="vis-curl">
+            <button class="copy-btn">Copy</button>
+            <pre><code class="language-bash">curl -X POST https://backend.aikipedia.workers.dev/chat \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "user_id": "YOUR_USER_ID",
+    "message": "What is in this image?",
+    "model": "google/gemini-2.5-flash",
+    "image_url": "https://your-public-image-url.com/photo.jpg",
+    "history": [],
+    "systemPrompt": ""
+  }'</code></pre>
+          </div>
+          <div class="code-block" id="vis-python">
+            <button class="copy-btn">Copy</button>
+            <pre><code class="language-python">import requests
 
 response = requests.post(
-  "https://backend.aikipedia.workers.dev/chat",
-  json={
-    "user_id": "your_user_id",
-    "message": "Describe this image",
-    "model": "google/gemini-2.5-flash",
-    "image_url": "https://your-uploaded-image-url",
-    "history": [],
-    "systemPrompt": "" # systemPrompt is required; leave blank for default or fill in your own
-  }
+    "https://backend.aikipedia.workers.dev/chat",
+    json={
+        "user_id":      "YOUR_USER_ID",
+        "message":      "What is in this image?",
+        "model":        "google/gemini-2.5-flash",
+        "image_url":    "https://your-public-image-url.com/photo.jpg",
+        "history":      [],
+        "systemPrompt": ""
+    }
 )
 print(response.json())</code></pre>
-    </div>
-    </div>
-
-    <div class="code-block" id="javascript-vision">
-        <div class="flip-container">
-      <button class="copy-btn">📋</button>
-      <pre><code class="language-javascript">fetch("https://backend.aikipedia.workers.dev/chat", {
+          </div>
+          <div class="code-block" id="vis-js">
+            <button class="copy-btn">Copy</button>
+            <pre><code class="language-javascript">const res = await fetch("https://backend.aikipedia.workers.dev/chat", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
-    user_id: "your_user_id",
-    message: "Describe this image",
-    model: "google/gemini-2.5-flash",
-    image_url: "https://your-uploaded-image-url",
-    history: [],
+    user_id:      "YOUR_USER_ID",
+    message:      "What is in this image?",
+    model:        "google/gemini-2.5-flash",
+    image_url:    "https://your-public-image-url.com/photo.jpg",
+    history:      [],
     systemPrompt: ""
   })
-})
-.then(res => res.json())
-.then(console.log);</code></pre>
-    </div>
-    </div>
+});
+console.log(await res.json());</code></pre>
+          </div>
+          <div class="code-block" id="vis-node">
+            <button class="copy-btn">Copy</button>
+            <pre><code class="language-javascript">const axios = require("axios");
 
-    <div class="code-block" id="nodejs-vision">
-        <div class="flip-container">
-      <button class="copy-btn">📋</button>
-      <pre><code class="language-javascript">const axios = require("axios");
-
-axios.post("https://backend.aikipedia.workers.dev/chat", {
-  user_id: "your_user_id",
-  message: "Describe this image",
-  model: "google/gemini-2.5-flash",
-  image_url: "https://your-uploaded-image-url",
-  history: [],
-  systemPrompt: ""
-}).then(res => console.log(res.data));</code></pre>
-    </div>
-    </div>
-
-    <div class="code-block" id="go-vision">
-        <div class="flip-container">
-      <button class="copy-btn">📋</button>
-      <pre><code class="language-go">package main
+const { data } = await axios.post(
+  "https://backend.aikipedia.workers.dev/chat",
+  {
+    user_id:      "YOUR_USER_ID",
+    message:      "What is in this image?",
+    model:        "google/gemini-2.5-flash",
+    image_url:    "https://your-public-image-url.com/photo.jpg",
+    history:      [],
+    systemPrompt: ""
+  }
+);
+console.log(data);</code></pre>
+          </div>
+          <div class="code-block" id="vis-go">
+            <button class="copy-btn">Copy</button>
+            <pre><code class="language-go">package main
 
 import (
   "bytes"
   "encoding/json"
-  "net/http"
   "fmt"
+  "net/http"
 )
 
 func main() {
-  payload := map[string]interface{}{
-    "user_id": "your_user_id",
-    "message": "Describe this image",
-    "model": "google/gemini-2.5-flash",
-    "image_url": "https://your-uploaded-image-url",
-    "history": []string{},
-    "systemPrompt": ""
-  }
-  jsonData, _ := json.Marshal(payload)
-  resp, _ := http.Post("https://backend.aikipedia.workers.dev/chat", "application/json", bytes.NewBuffer(jsonData))
+  body, _ := json.Marshal(map[string]interface{}{
+    "user_id":      "YOUR_USER_ID",
+    "message":      "What is in this image?",
+    "model":        "google/gemini-2.5-flash",
+    "image_url":    "https://your-public-image-url.com/photo.jpg",
+    "history":      []string{},
+    "systemPrompt": "",
+  })
+  resp, _ := http.Post(
+    "https://backend.aikipedia.workers.dev/chat",
+    "application/json",
+    bytes.NewBuffer(body),
+  )
   fmt.Println(resp.Status)
 }</code></pre>
-    </div>
-    </div>
-
-    <div class="code-block" id="java-vision">
-        <div class="flip-container">
-      <button class="copy-btn">📋</button>
-      <pre><code class="language-java">HttpClient client = HttpClient.newHttpClient();
-HttpRequest request = HttpRequest.newBuilder()
+          </div>
+          <div class="code-block" id="vis-java">
+            <button class="copy-btn">Copy</button>
+            <pre><code class="language-java">String body = """
+  {"user_id":"YOUR_USER_ID","message":"What is in this image?",
+   "model":"google/gemini-2.5-flash",
+   "image_url":"https://your-public-image-url.com/photo.jpg",
+   "history":[],"systemPrompt":""}
+  """;
+HttpRequest req = HttpRequest.newBuilder()
   .uri(URI.create("https://backend.aikipedia.workers.dev/chat"))
-  .header("Content-Type", "application/json")
-  .POST(HttpRequest.BodyPublishers.ofString("{\"user_id\":\"your_user_id\",\"message\":\"Describe this image\",\"model\":\"google/gemini-2.5-flash\",\"image_url\":\"https://your-uploaded-image-url\",\"history\":[],\"systemPrompt\":\"\"}"))
+  .header("Content-Type","application/json")
+  .POST(HttpRequest.BodyPublishers.ofString(body))
   .build();
-
-HttpResponse&lt;String&gt; response = client.send(request, HttpResponse.BodyHandlers.ofString());
-System.out.println(response.body());</code></pre>
-    </div>
-    </div> 
-
-    <div class="code-block" id="php-vision">
-        <div class="flip-container">
-      <button class="copy-btn">📋</button>
-      <pre><code class="language-php">&lt;?php
+System.out.println(HttpClient.newHttpClient()
+  .send(req, HttpResponse.BodyHandlers.ofString()).body());</code></pre>
+          </div>
+          <div class="code-block" id="vis-php">
+            <button class="copy-btn">Copy</button>
+            <pre><code class="language-php">&lt;?php
 $payload = json_encode([
-  "user_id" => "your_user_id",
-  "message" => "Describe this image",
-  "model" => "google/gemini-2.5-flash",
-  "image_url" => "https://your-uploaded-image-url",
-  "history" => [],
+  "user_id"      => "YOUR_USER_ID",
+  "message"      => "What is in this image?",
+  "model"        => "google/gemini-2.5-flash",
+  "image_url"    => "https://your-public-image-url.com/photo.jpg",
+  "history"      => [],
   "systemPrompt" => ""
 ]);
-
-$options = [
-  'http' => [
-    'header'  => "Content-type: application/json\r\n",
-    'method'  => 'POST',
-    'content' => $payload,
-  ],
-];
-
-$context  = stream_context_create($options);
-$result = file_get_contents("https://backend.aikipedia.workers.dev/chat", false, $context);
-echo $result;
-?&gt;</code></pre>
-    </div>
-</div>
-    <div class="code-block" id="ruby-vision">
-        <div class="flip-container">
-      <button class="copy-btn">📋</button>
-      <pre><code class="language-ruby">require 'net/http'
-require 'json'
-
+$ctx = stream_context_create([
+  "http" => ["method"=>"POST","header"=>"Content-Type: application/json\r\n","content"=>$payload]
+]);
+echo file_get_contents("https://backend.aikipedia.workers.dev/chat", false, $ctx);</code></pre>
+          </div>
+          <div class="code-block" id="vis-ruby">
+            <button class="copy-btn">Copy</button>
+            <pre><code class="language-ruby">require 'net/http'; require 'json'
 uri = URI('https://backend.aikipedia.workers.dev/chat')
 res = Net::HTTP.post(uri, {
-  user_id: "your_user_id",
-  message: "Describe this image",
+  user_id: "YOUR_USER_ID", message: "What is in this image?",
   model: "google/gemini-2.5-flash",
-  image_url: "https://your-uploaded-image-url",
-  history: [],
-  systemPrompt: ""
+  image_url: "https://your-public-image-url.com/photo.jpg",
+  history: [], systemPrompt: ""
 }.to_json, "Content-Type" => "application/json")
-
 puts res.body</code></pre>
-    </div>
-    </div>
-
-    <div class="code-block" id="csharp-vision">
-        <div class="flip-container">
-      <button class="copy-btn">📋</button>
-      <pre><code class="language-csharp">using System.Net.Http;
-using System.Text;
-using System.Text.Json;
-
-var client = new HttpClient();
-var content = new StringContent(JsonSerializer.Serialize(new {
-  user_id = "your_user_id",
-  message = "Describe this image",
-  model = "google/gemini-2.5-flash",
-  image_url = "https://your-uploaded-image-url",
-  history = new string[] {},
+          </div>
+          <div class="code-block" id="vis-cs">
+            <button class="copy-btn">Copy</button>
+            <pre><code class="language-csharp">var payload = JsonSerializer.Serialize(new {
+  user_id      = "YOUR_USER_ID",
+  message      = "What is in this image?",
+  model        = "google/gemini-2.5-flash",
+  image_url    = "https://your-public-image-url.com/photo.jpg",
+  history      = Array.Empty&lt;object&gt;(),
   systemPrompt = ""
-}), Encoding.UTF8, "application/json");
+});
+var res = await new HttpClient().PostAsync(
+  "https://backend.aikipedia.workers.dev/chat",
+  new StringContent(payload, Encoding.UTF8, "application/json")
+);
+Console.WriteLine(await res.Content.ReadAsStringAsync());</code></pre>
+          </div>
+        </div>
+      </section>
 
-var response = await client.PostAsync("https://backend.aikipedia.workers.dev/chat", content);
-string responseBody = await response.Content.ReadAsStringAsync();
-Console.WriteLine(responseBody);</code></pre>
-    </div>
-    </div>
+      <!-- ── Reset Key ── -->
+      <section class="doc-section" id="reset-key">
+        <span class="section-label">Security</span>
+        <h2 class="section-title">Reset Key</h2>
+        <div class="section-underline"></div>
+        <p class="doc-p">
+          If you believe your API key has been compromised, reset it below. Your old key will be immediately
+          invalidated.
+          All applications using the old key will need to be updated.
+        </p>
+
+        <div class="danger-zone" id="reset-key-section" style="display:none;">
+          <div class="danger-title">⚠ Danger Zone</div>
+          <p style="font-size:0.83rem;color:var(--muted);">This will permanently invalidate your current API key and
+            generate a new one.</p>
+          <button class="btn-danger" id="resetUserIdBtn">Reset my API key</button>
+          <div id="resetUserIdMsg" style="margin-top:0.8rem;font-size:0.82rem;color:#10b981;"></div>
+        </div>
+
+        <div id="reset-key-locked" class="login-prompt">
+          <strong id="promptLoginLink2">Login</strong> to manage your API key.
+        </div>
+      </section>
+
+    </main>
   </div>
-</div>
 
-    <!-- API KEY OPTIONS BELOW VISION MODELS -->
-    <div style="max-width:420px;margin:3rem auto 1.5rem auto;">
-      <button id="showApiKeyOptionsBtn" style="padding:0.6em 1.2em;background:var(--accent);color:#000;border:none;border-radius:8px;cursor:pointer;font-weight:600;">Show API Key Options</button>
-      <div id="apiKeyOptions" style="display:none;flex-direction:column;align-items:center;gap:0.5em;margin-top:0.7em;">
-        <button id="resetUserIdBtn" style="margin:0.5em 0;padding:0.7em 1.2em;background:var(--accent);color:#000;border:none;border-radius:8px;cursor:pointer;font-weight:600;">Reset my API key (user_id)</button>
-        <div id="resetUserIdMsg" style="margin-top:1em;color:var(--accent);font-weight:600;"></div>
-      </div>
-    </div>
+  <!-- ─── Footer ───────────────────────────────────── -->
+  <footer
+    style="background:var(--dark);border-top:1px solid var(--border);padding:1.8rem 2.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+    <span style="font-size:0.7rem;color:#444;letter-spacing:0.05em;">© 2024 Aikipedia.in</span>
+    <ul style="display:flex;gap:2rem;list-style:none;">
+      <li><a href="index.html"
+          style="font-size:0.7rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:#555;transition:color 0.2s;"
+          onmouseover="this.style.color='#f0f0f0'" onmouseout="this.style.color='#555'">Home</a></li>
+      <li><a href="payments.html"
+          style="font-size:0.7rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:#555;transition:color 0.2s;"
+          onmouseover="this.style.color='#f0f0f0'" onmouseout="this.style.color='#555'">Pricing</a></li>
+      <li><a href="about_us.html"
+          style="font-size:0.7rem;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:#555;transition:color 0.2s;"
+          onmouseover="this.style.color='#f0f0f0'" onmouseout="this.style.color='#555'">About</a></li>
+    </ul>
+  </footer>
+
+  <!-- ─── Scripts ───────────────────────────────────── -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-php.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-ruby.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+  <script src="background-particles.js"></script>
+  <script src="cursor-trail.js"></script>
+  <script src="aikipedia-auth.js"></script>
 
   <script>
-      document.getElementById("backToChatBtn").onclick = function() {
-        window.location.href = "index.html";
-      };
-      
-  // Tab switching logic
+    // ── Tab switching ─────────────────────────────────────
+    function setupTabs(tabsId) {
+      const container = document.getElementById(tabsId);
+      if (!container) return;
+      container.querySelectorAll('.lang-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          container.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          const target = tab.dataset.target;
+          // find parent code-wrapper
+          const wrapper = container.closest('.code-wrapper');
+          wrapper.querySelectorAll('.code-block').forEach(b => b.classList.remove('active'));
+          const block = document.getElementById(target);
+          if (block) block.classList.add('active');
+        });
+      });
+    }
+    setupTabs('text-tabs');
+    setupTabs('vision-tabs');
 
-
-  // Copy button logic
-  document.querySelectorAll('.copy-btn').forEach(button => {
-    button.addEventListener('click', () => {
-      const code = button.nextElementSibling.innerText;
-      navigator.clipboard.writeText(code).then(() => {
-        button.textContent = '✅';
-        setTimeout(() => (button.textContent = '📋'), 1500);
+    // ── Copy buttons ──────────────────────────────────────
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const code = btn.closest('.code-block').querySelector('code');
+        if (!code) return;
+        navigator.clipboard.writeText(code.innerText).then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = 'Copy';
+            btn.classList.remove('copied');
+          }, 1800);
+        });
       });
     });
-  });
 
-  document.querySelectorAll('.copy-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const code = btn.nextElementSibling.innerText;
-      navigator.clipboard.writeText(code);
-
-      const tooltip = document.createElement('div');
-      tooltip.className = 'copy-tooltip';
-      tooltip.innerText = 'Copied!';
-      btn.parentElement.appendChild(tooltip);
-
-      setTimeout(() => {
-        tooltip.remove();
-      }, 1500);
-    });
-  });
-
-  // Tab switching with flip animation
-  const tabs = document.querySelectorAll('.tab-btn');
-  const blocks = document.querySelectorAll('.code-block');
-
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-
-      const lang = tab.dataset.lang;
-
-      blocks.forEach(block => {
-        block.classList.remove('active');
-        if (block.id.startsWith(lang.split('-')[0])) { // Match prefix for text models
-          block.classList.add('active');
-        }
+    // ── Active sidebar link on scroll ────────────────────
+    const sections = document.querySelectorAll('.doc-section[id]');
+    const sidebarLinks = document.querySelectorAll('.doc-sidebar-link');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 100) current = s.id;
       });
-    });
-  });
+      sidebarLinks.forEach(l => {
+        l.classList.remove('active');
+        if (l.getAttribute('href') === '#' + current) l.classList.add('active');
+      });
+    }, { passive: true });
 
-  // Magnet hover effect
-  const tabBtns = document.querySelectorAll('.tab-btn');
-  document.addEventListener('mousemove', e => {
-    tabBtns.forEach(btn => {
-      const rect = btn.getBoundingClientRect();
-      const dx = e.clientX - (rect.left + rect.width / 2);
-      const dy = e.clientY - (rect.top + rect.height / 2);
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 100) {
-        btn.style.transform = `translate(${dx * 0.1}px, ${dy * 0.1}px)`;
+    // ── Auth state sync ───────────────────────────────────
+    function syncNav() {
+      const user = localStorage.getItem('aikipediaUser');
+      const toggle = document.getElementById('profileToggle');
+      const logout = document.getElementById('logoutBtn');
+      const auth = document.getElementById('authButtons');
+      const dashLi = document.getElementById('dashboardNavItem');
+      const grpLi = document.getElementById('createGroupNavItem');
+      const drawerDash = document.getElementById('drawerDashboardLink');
+      const drawerLogin = document.getElementById('drawerLoginBtn');
+      const drawerReg = document.getElementById('drawerRegisterBtn');
+      const drawerLogout = document.getElementById('drawerLogoutBtn');
+
+      if (user) {
+        toggle.textContent = user.charAt(0).toUpperCase();
+        toggle.title = 'Signed in as ' + user;
+        toggle.style.display = 'flex';
+        auth.style.display = 'none';
+        logout.style.display = 'flex';
+        if (dashLi) dashLi.style.display = 'list-item';
+        if (grpLi) grpLi.style.display = 'list-item';
+        if (drawerDash) drawerDash.style.display = 'block';
+        if (drawerLogin) drawerLogin.style.display = 'none';
+        if (drawerReg) drawerReg.style.display = 'none';
+        if (drawerLogout) drawerLogout.style.display = 'block';
       } else {
-        btn.style.transform = '';
+        toggle.style.display = 'none';
+        auth.style.display = 'flex';
+        logout.style.display = 'none';
+        if (dashLi) dashLi.style.display = 'none';
+        if (grpLi) grpLi.style.display = 'none';
+        if (drawerDash) drawerDash.style.display = 'none';
+        if (drawerLogin) drawerLogin.style.display = 'block';
+        if (drawerReg) drawerReg.style.display = 'block';
+        if (drawerLogout) drawerLogout.style.display = 'none';
       }
+    }
+    window.addEventListener('DOMContentLoaded', syncNav);
+    window.addEventListener('aikipedia-auth-change', syncNav);
+
+    // Mobile drawer
+    const hamburger = document.getElementById('navHamburger');
+    const drawer = document.getElementById('navDrawer');
+    hamburger.addEventListener('click', () => drawer.classList.toggle('open'));
+    document.addEventListener('click', e => {
+      if (!drawer.contains(e.target) && !hamburger.contains(e.target)) drawer.classList.remove('open');
     });
-  });
-  
-    </script>
-  
-<!-- Prism JS for syntax highlighting -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-php.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-ruby.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+    document.getElementById('drawerLoginBtn').onclick = () => document.getElementById('loginBtn').click();
+    document.getElementById('drawerRegisterBtn').onclick = () => document.getElementById('registerBtn').click();
+    document.getElementById('drawerLogoutBtn').onclick = () => document.getElementById('logoutBtn').click();
 
-<!-- Background particles effect -->
-<script src="background-particles.js"></script>
-<!-- Cursor trail effect -->
-<script src="cursor-trail.js"></script>
-
-<script>
-  // Show user_id if logged in (same as index.html localStorage keys)
-  window.addEventListener('DOMContentLoaded', function() {
-    const user = localStorage.getItem('aikipediaUser');
-    const userId = localStorage.getItem('aikipediaUserId');
-    const userIdBox = document.getElementById('userIdBox');
-    const copyUserIdBtn = document.getElementById('copyUserIdBtn');
-    if (user && userId) {
-      userIdBox.style.display = 'block';
-      userIdBox.innerHTML = `user_id: <span style='color:var(--accent);'>${userId}</span>`;
-      copyUserIdBtn.style.display = 'inline-block';
-      copyUserIdBtn.onclick = function() {
-        navigator.clipboard.writeText(userId);
-        copyUserIdBtn.textContent = 'Copied!';
-        setTimeout(() => { copyUserIdBtn.textContent = 'Copy'; }, 1200);
-      };
-    } else {
-      userIdBox.style.display = 'none';
-      copyUserIdBtn.style.display = 'none';
-    }
-    
-    // Credits Display Logic
-    showCreditsDisplayIfLoggedIn();
-  });
-
-  // Credits Display Logic
-  const creditsDisplay = document.getElementById("creditsDisplay");
-  const creditsAmount = document.getElementById("creditsAmount");
-  const reloadCreditsBtn = document.getElementById("reloadCreditsBtn");
-  let creditsLoading = false;
-  let reloadCooldown = false;
-  
-  async function fetchAndShowCredits() {
-    const userId = localStorage.getItem('aikipediaUserId');
-    if (!userId) {
-      creditsDisplay.style.display = "none";
-      return;
-    }
-    creditsLoading = true;
-    creditsAmount.textContent = "...";
-    try {
-      const res = await fetch("https://backend.aikipedia.workers.dev/flask", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "get_credits", user_id: userId })
-      });
-      const data = await res.json();
-      if (!res.ok || data.error) throw new Error(data.error || "Failed to fetch credits");
-      creditsAmount.textContent = data.money_left !== undefined ? parseFloat(data.money_left).toFixed(2) : "0.00";
-    } catch (e) {
-      creditsAmount.textContent = "--";
-    } finally {
-      creditsLoading = false;
-    }
-  }
-  
-  // Reload button handler with 1-minute cooldown
-  reloadCreditsBtn.onclick = (e) => {
-    e.stopPropagation();
-    if (reloadCooldown || creditsLoading) return;
-    fetchAndShowCredits();
-    reloadCreditsBtn.disabled = true;
-    reloadCooldown = true;
-    setTimeout(() => {
-      reloadCreditsBtn.disabled = false;
-      reloadCooldown = false;
-    }, 60000); // 60 seconds
-  };
-  
-  // Click credits area to go to payments
-  creditsDisplay.onclick = (e) => {
-    window.location.href = "payments.html";
-  };
-  
-  // Show/hide credits display on login/logout
-  function showCreditsDisplayIfLoggedIn() {
-    const userId = localStorage.getItem('aikipediaUserId');
-    if (userId) {
-      creditsDisplay.style.display = "flex";
-      fetchAndShowCredits();
-    } else {
-      creditsDisplay.style.display = "none";
-    }
-  }
-
-  // Toggle API Key Options
-  document.getElementById('showApiKeyOptionsBtn').onclick = function() {
-    const options = document.getElementById('apiKeyOptions');
-    if (options.style.display === 'none' || options.style.display === '') {
-      options.style.display = 'flex';
-      this.textContent = 'Hide API Key Options';
-    } else {
-      options.style.display = 'none';
-      this.textContent = 'Show API Key Options';
-    }
-  };
-</script>
-
-<script>
-  document.getElementById('resetUserIdBtn').onclick = async function() {
-    const userId = localStorage.getItem('aikipediaUserId');
-    if (!userId) return alert("You must be logged in.");
-    if (!confirm("Are you sure? This will invalidate your old API key.")) return;
-    const res = await fetch('https://backend.aikipedia.workers.dev/reset-user-id', {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user_id: userId })
-    });
-    const data = await res.json();
-    if (data.new_user_id) {
-      localStorage.setItem('aikipediaUserId', data.new_user_id);
-      document.getElementById('resetUserIdMsg').textContent = "Your new API key (user_id) is: " + data.new_user_id;
-      // Update the userIdBox display immediately:
+    // ── API Key display ───────────────────────────────────
+    let keyVisible = false;
+    function updateApiKeySection() {
+      const user = localStorage.getItem('aikipediaUser');
+      const userId = localStorage.getItem('aikipediaUserId');
+      const loggedInEl = document.getElementById('api-key-logged-in');
+      const loggedOutEl = document.getElementById('api-key-logged-out');
+      const resetSection = document.getElementById('reset-key-section');
+      const resetLocked = document.getElementById('reset-key-locked');
       const userIdBox = document.getElementById('userIdBox');
-      if (userIdBox) {
-        userIdBox.style.display = 'block';
-        userIdBox.innerHTML = `user_id: <span style='color:var(--accent);'>${data.new_user_id}</span>`;
-      }
-    } else {
-      document.getElementById('resetUserIdMsg').textContent = "Failed to reset user_id: " + (data.error || "Unknown error");
-    }
-  };
-</script>
 
+      if (user && userId) {
+        loggedInEl.style.display = 'block';
+        loggedOutEl.style.display = 'none';
+        resetSection.style.display = 'block';
+        resetLocked.style.display = 'none';
+        // Show masked by default
+        userIdBox.textContent = keyVisible ? userId : '••••••••••••••••••••••••';
+        userIdBox.className = keyVisible ? '' : 'hidden-key';
+      } else {
+        loggedInEl.style.display = 'none';
+        loggedOutEl.style.display = 'block';
+        resetSection.style.display = 'none';
+        resetLocked.style.display = 'block';
+      }
+    }
+    window.addEventListener('DOMContentLoaded', updateApiKeySection);
+    window.addEventListener('aikipedia-auth-change', updateApiKeySection);
+
+    document.getElementById('toggleKeyBtn').onclick = () => {
+      keyVisible = !keyVisible;
+      document.getElementById('toggleKeyBtn').textContent = keyVisible ? 'Hide' : 'Show';
+      updateApiKeySection();
+    };
+
+    document.getElementById('copyUserIdBtn').onclick = () => {
+      const userId = localStorage.getItem('aikipediaUserId');
+      if (!userId) return;
+      navigator.clipboard.writeText(userId).then(() => {
+        const btn = document.getElementById('copyUserIdBtn');
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = 'Copy', 1500);
+      });
+    };
+
+    document.getElementById('promptLoginLink').onclick = () => document.getElementById('loginBtn').click();
+    document.getElementById('promptRegisterLink').onclick = () => document.getElementById('registerBtn').click();
+    document.getElementById('promptLoginLink2').onclick = () => document.getElementById('loginBtn').click();
+
+    // ── Credits ──────────────────────────────────────────
+    const creditsDisplay = document.getElementById('creditsDisplay');
+    const creditsAmount = document.getElementById('creditsAmount');
+    let creditsCooldown = false;
+
+    async function fetchCredits() {
+      const userId = localStorage.getItem('aikipediaUserId');
+      if (!userId) { creditsDisplay.style.display = 'none'; return; }
+      creditsDisplay.style.display = 'flex';
+      creditsAmount.textContent = '...';
+      try {
+        const res = await fetch('https://backend.aikipedia.workers.dev/flask', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'get_credits', user_id: userId })
+        });
+        const data = await res.json();
+        creditsAmount.textContent = data.money_left !== undefined
+          ? parseFloat(data.money_left).toFixed(2) : '--';
+      } catch { creditsAmount.textContent = '--'; }
+    }
+
+    document.getElementById('reloadCreditsBtn').onclick = e => {
+      e.stopPropagation();
+      if (creditsCooldown) return;
+      fetchCredits();
+      creditsCooldown = true;
+      setTimeout(() => creditsCooldown = false, 60000);
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const userId = localStorage.getItem('aikipediaUserId');
+      if (userId) fetchCredits();
+    });
+    window.addEventListener('aikipedia-auth-change', () => {
+      const userId = localStorage.getItem('aikipediaUserId');
+      if (userId) fetchCredits(); else creditsDisplay.style.display = 'none';
+    });
+
+    // ── Reset API key ─────────────────────────────────────
+    document.getElementById('resetUserIdBtn').onclick = async () => {
+      const userId = localStorage.getItem('aikipediaUserId');
+      if (!userId) return alert('You must be logged in.');
+      if (!confirm('Are you sure? This will invalidate your current API key.')) return;
+      try {
+        const res = await fetch('https://backend.aikipedia.workers.dev/reset-user-id', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: userId })
+        });
+        const data = await res.json();
+        if (data.new_user_id) {
+          localStorage.setItem('aikipediaUserId', data.new_user_id);
+          document.getElementById('resetUserIdMsg').textContent = '✓ New API key generated. Update your apps.';
+          updateApiKeySection();
+        } else {
+          document.getElementById('resetUserIdMsg').textContent = 'Error: ' + (data.error || 'Unknown');
+          document.getElementById('resetUserIdMsg').style.color = '#ff6b6b';
+        }
+      } catch { document.getElementById('resetUserIdMsg').textContent = 'Request failed.'; }
+    };
+  </script>
 </body>
+
 </html>
