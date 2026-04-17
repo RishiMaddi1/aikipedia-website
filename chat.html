@@ -16,13 +16,13 @@
 
     <style>
       :root {
-        --bg: #031626; 
-        --bg-secondary: #010512;
-        --text: #a3b2d3;
-        --accent: #4889cd;
-        --border: #000137;
-        --error: #FCADB0;
-        --success: #2F686F;
+        --bg: #0a0a0a; 
+        --bg-secondary: #161616;
+        --text: #ccc;
+        --accent: #c9a84c;
+        --border: #2a2a2a;
+        --error: #ff6b6b;
+        --success: #10b981;
       }
 
       #authModal .toggle-password {
@@ -63,7 +63,7 @@
       }
       body {
         font-family: "Inter", "Montserrat", sans-serif;
-        background-color: #181a20;
+        background-color: #0a0a0a;
         color: var(--text);
         min-height: 100vh;
         width: 100vw;
@@ -348,7 +348,7 @@
       }
       .thread-rail-collapse-btn:hover {
         border-color: var(--accent);
-        background: rgba(72, 137, 205, 0.12);
+        background: rgba(201, 168, 76, 0.12);
       }
       .thread-rail-expand-btn {
         display: none;
@@ -373,7 +373,7 @@
         line-height: 1.2;
       }
       .thread-rail-expand-btn:hover {
-        background: rgba(72, 137, 205, 0.2);
+        background: rgba(201, 168, 76, 0.2);
       }
       .thread-rail-expand-btn.visible {
         display: flex;
@@ -448,19 +448,19 @@
       .thread-item-menu-btn:focus-visible {
         opacity: 1;
         border-color: var(--border);
-        background: rgba(72, 137, 205, 0.12);
+        background: rgba(201, 168, 76, 0.12);
       }
       .thread-item:hover {
         border-color: var(--border);
-        background: rgba(72, 137, 205, 0.08);
+        background: rgba(201, 168, 76, 0.08);
       }
       .thread-item.active {
         border-color: var(--accent);
-        background: rgba(72, 137, 205, 0.12);
+        background: rgba(201, 168, 76, 0.12);
       }
       .thread-item .thread-item-title {
         font-weight: 600;
-        color: #e2e8f0;
+        color: #f0f0f0;
         font-size: 0.88rem;
       }
       .thread-item .thread-item-meta {
@@ -502,7 +502,7 @@
         font-size: 0.88rem;
       }
       .thread-context-menu button:hover {
-        background: rgba(72, 137, 205, 0.18);
+        background: rgba(201, 168, 76, 0.18);
         color: var(--accent);
       }
       .thread-context-menu button:disabled {
@@ -574,7 +574,7 @@
         background: var(--accent);
         color: #000;
         border-radius: 1.152em 1.152em 0.448em 1.152em;
-        box-shadow: 0 1.28px 10.24px 0 rgba(72,137,205,0.13);
+        box-shadow: 0 1.28px 10.24px 0 rgba(201,168,76,0.13);
         padding: 0.768rem 1.152rem;
         font-size: clamp(0.91rem, 1.92vw, 1.08rem); /* +20% */
         line-height: 1.8;
@@ -599,7 +599,7 @@
       }
       .system-message {
         align-self: center;
-        background: #23272f;
+        background: #1a1a1a;
         color: var(--text);
         padding: 0.704rem 1.024rem;
         border-radius: 0.768em;
@@ -653,7 +653,7 @@
       }
       .input-area {
         width: 100%;
-        background: #23272f;
+        background: #1a1a1a;
         border-radius: 1.232em;
         box-shadow: 0 2.24px 18.72px 0 rgba(0,0,0,0.18);
         border: none;
@@ -693,18 +693,18 @@
         cursor: pointer;
         margin-left: 0.64rem;
         transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-        box-shadow: 0 0.8px 6.4px 0 rgba(72,137,205,0.13);
+        box-shadow: 0 0.8px 6.4px 0 rgba(201,168,76,0.13);
         font-weight: 600;
         align-self: center;
       }
       .input-area button:disabled {
-        background: #c5d8ee;
+        background: #444444;
         cursor: not-allowed;
       }
       .input-area button:hover:not(:disabled) {
         background: #000;
         color: var(--accent);
-        box-shadow: 0 1.6px 9.6px 0 rgba(72,137,205,0.13);
+        box-shadow: 0 1.6px 9.6px 0 rgba(201,168,76,0.13);
       }
 
       @media (max-width: 900px) {
@@ -763,7 +763,7 @@
 
       .loading {
         align-self: flex-start;
-        background: #181a20;
+        background: #0a0a0a;
         padding: 0.96rem;
         border-radius: 8px;
         font-family: monospace;
@@ -800,7 +800,7 @@
         position: absolute;
         left: 50%;
         top: 10%;
-        background: #181a20 ;
+        background: #0a0a0a ;
         opacity: 0.7;
         width: 3.2px;
         height: 28.8px;
@@ -830,7 +830,7 @@
         font-weight: 900;
         color: var(--accent);
         letter-spacing: 0.04em;
-        text-shadow: 0 1.6px 12.8px rgba(72,137,205,0.10);
+        text-shadow: 0 1.6px 12.8px rgba(201,168,76,0.10);
         margin: 0 auto;
         line-height: 1.1;
       }
@@ -846,14 +846,14 @@
         padding: 0.72rem 1.68rem;
         font-size: clamp(0.88rem, 1.6vw, 1.04rem);
         font-weight: 700;
-        box-shadow: 0 1.6px 9.6px 0 rgba(72,137,205,0.13);
+        box-shadow: 0 1.6px 9.6px 0 rgba(201,168,76,0.13);
         cursor: pointer;
         transition: background 0.2s, color 0.2s, box-shadow 0.2s;
       }
       .clear-chat-btn:hover {
         background: #000;
         color: var(--accent);
-        box-shadow: 0 3.2px 12.8px 0 rgba(72,137,205,0.18);
+        box-shadow: 0 3.2px 12.8px 0 rgba(201,168,76,0.18);
       }
 
       .usage-stats {
@@ -907,12 +907,12 @@
         padding: 0.76em 1.76em 0.76em 0.88em;
         border-radius: 10.4px;
         border: 1px solid var(--border);
-        background: linear-gradient(120deg, var(--bg-secondary) 90%, #0a1a2f 100%);
+        background: linear-gradient(120deg, var(--bg-secondary) 90%, #1a1500 100%);
         color: var(--text);
         font-size: 0.904rem;
         font-weight: 500;
         margin-top: 0.24em;
-        box-shadow: 0 1.2px 6.4px 0 rgba(0,0,0,0.10), 0 0 0 1.2px rgba(72,137,205,0.04) inset;
+        box-shadow: 0 1.2px 6.4px 0 rgba(0,0,0,0.10), 0 0 0 1.2px rgba(201,168,76,0.04) inset;
         transition: border 0.2s, box-shadow 0.2s, background 0.2s;
         outline: none;
         appearance: none;
@@ -927,12 +927,12 @@
       }
       .model-dropdown:focus {
         border: 1.2px solid var(--accent);
-        box-shadow: 0 0 0 2px rgba(72,137,205,0.18), 0 1.2px 6.4px 0 rgba(0,0,0,0.10);
-        background: linear-gradient(120deg, var(--bg) 90%, #0a1a2f 100%);
+        box-shadow: 0 0 0 2px rgba(201,168,76,0.18), 0 1.2px 6.4px 0 rgba(0,0,0,0.10);
+        background: linear-gradient(120deg, var(--bg) 90%, #1a1500 100%);
       }
       .model-dropdown:hover {
         border: 1.2px solid var(--accent);
-        background: linear-gradient(120deg, var(--bg-secondary) 80%, #18345a 100%);
+        background: linear-gradient(120deg, var(--bg-secondary) 80%, #1a1500 100%);
       }
       .model-dropdown option {
         background: var(--bg-secondary);
@@ -975,7 +975,7 @@
       .fancy-dropdown:hover {
         border-color: var(--accent);
         transform: translateY(-1.6px);
-        box-shadow: 0 3.2px 9.6px rgba(72,137,205,0.15);
+        box-shadow: 0 3.2px 9.6px rgba(201,168,76,0.15);
       }
 
       .fancy-dropdown-selected {
@@ -1431,6 +1431,54 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <style>
+    /* ─── Navbar ─── */
+    .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 3500; display: flex; align-items: center; justify-content: space-between; padding: 0 2.5rem; height: 56px; background: rgba(10,10,10,0.95); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); gap: 1rem; }
+    .nav-logo { font-size: 0.9rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #f0f0f0; white-space: nowrap; flex-shrink: 0; text-decoration: none; }
+    .nav-links { display: flex; gap: 1.8rem; list-style: none; align-items: center; margin: 0; padding: 0; }
+    .nav-links a, .nav-links button { font-size: 0.76rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #888; background: none; border: none; cursor: pointer; font-family: inherit; transition: color 0.2s; padding: 0; text-decoration: none; }
+    .nav-links a:hover, .nav-links button:hover { color: #f0f0f0; }
+    .nav-links a.active-page { color: var(--accent); }
+    .nav-right { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; }
+    .nav-auth-link { font-size: 0.76rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #888; background: none; border: none; cursor: pointer; font-family: inherit; transition: color 0.2s; }
+    .nav-auth-link:hover { color: #f0f0f0; }
+    .nav-auth-sep { width: 1px; height: 14px; background: var(--border); }
+    .nav-cta { padding: 0.42rem 1.15rem; background: var(--accent); color: #000; font-size: 0.76rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border: none; cursor: pointer; font-family: inherit; transition: background 0.2s, transform 0.15s; white-space: nowrap; text-decoration: none; }
+    .nav-cta:hover { filter: brightness(1.15); transform: translateY(-1px); }
+    .nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
+    .nav-hamburger span { display: block; width: 22px; height: 2px; background: #f0f0f0; transition: all 0.3s; }
+    .nav-drawer { display: none; position: fixed; top: 56px; left: 0; right: 0; background: #111; border-bottom: 1px solid var(--border); padding: 1rem 1.5rem; flex-direction: column; gap: 0.6rem; z-index: 3499; }
+    .nav-drawer.open { display: flex; }
+    .nav-drawer a, .nav-drawer button { font-size: 0.85rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #888; background: none; border: none; cursor: pointer; font-family: inherit; text-align: left; padding: 0.4rem 0; transition: color 0.2s; text-decoration: none; }
+    .nav-drawer a:hover, .nav-drawer button:hover { color: #f0f0f0; }
+    /* ─── Chat layout overrides ─── */
+    .sidebar, #sidebarOverlay, body > .profile { display: none !important; }
+    html, body { overflow: hidden !important; height: 100% !important; }
+    .main { padding-top: 56px !important; height: 100vh !important; overflow: hidden !important; }
+    .main-column { min-height: 0 !important; height: calc(100vh - 56px) !important; flex: 1 !important; justify-content: flex-end !important; }
+    .header { display: none !important; }
+    .thread-rail { padding-top: 1rem !important; height: calc(100vh - 56px) !important; max-height: calc(100vh - 56px) !important; }
+    .thread-rail-expand-btn { top: 72px !important; left: 8px !important; transform: none !important; border-radius: 4px !important; min-height: 32px !important; width: 32px !important; height: 32px !important; font-size: 1.3rem !important; background: var(--bg-secondary) !important; color: var(--accent) !important; border: 1px solid var(--border) !important; box-shadow: none !important; }
+    .chat-shell { height: 100% !important; max-height: 100% !important; }
+    .clear-chat-btn { position: fixed !important; top: 72px !important; right: 1.5rem !important; z-index: 900 !important; width: auto !important; }
+    #modelSelectorCompact { position: fixed !important; top: 124px !important; right: 1.5rem !important; }
+    /* Navbar profile toggle */
+    .navbar #profileToggle { width: 34px; height: 34px; border-radius: 6px; background: var(--accent); color: #000; font-size: 0.85rem; font-weight: 800; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; text-transform: uppercase; position: static; box-shadow: none; margin: 0; }
+    /* Navbar auth buttons */
+    .navbar #authButtons { display: flex; align-items: center; gap: 0.6rem; width: auto; flex-direction: row; margin: 0; }
+    .navbar #logoutBtn { display: none; padding: 0.42rem 1rem; background: transparent; color: #888; font-size: 0.76rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid var(--border); cursor: pointer; font-family: inherit; border-radius: 0; width: auto; box-shadow: none; margin: 0; }
+    .navbar #logoutBtn:hover { color: #f0f0f0; border-color: #f0f0f0; }
+    @media (max-width: 768px) {
+      .navbar { padding: 0 1.2rem; }
+      .nav-links { display: none; }
+      .navbar #authButtons { display: none !important; }
+      .navbar #logoutBtn { display: none !important; }
+      .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+      .clear-chat-btn { top: 68px !important; right: 0.8rem !important; padding: 0.5rem 0.8rem !important; font-size: 0.75rem !important; }
+      #modelSelectorCompact { top: 110px !important; right: 0.8rem !important; }
+    }
+  </style>
   </head>
   <body>
     <div id="sidebarOverlay"></div>
@@ -1455,6 +1503,40 @@
      
       </div>
     </aside>
+
+    <!-- ─── Navbar ─── -->
+    <nav class="navbar">
+      <a href="index.html" class="nav-logo">Aikipedia.in</a>
+      <ul class="nav-links">
+        <li><a href="about_us.html">About</a></li>
+        <li><a href="api.html">API</a></li>
+        <li><a href="payments.html">Pricing</a></li>
+        <li><a href="chat.html" class="active-page">Chat</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+      </ul>
+      <div class="nav-right">
+        <div id="navAuthButtons" style="display:flex;align-items:center;gap:0.6rem;">
+          <button class="nav-auth-link" id="navLoginBtn">Login</button>
+          <div class="nav-auth-sep"></div>
+          <button class="nav-auth-link" id="navRegisterBtn">Register</button>
+        </div>
+        <button id="navLogoutBtn" style="display:none;padding:0.42rem 1rem;background:transparent;color:#888;font-size:0.76rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border:1px solid var(--border);cursor:pointer;font-family:inherit;">Logout</button>
+        <a href="payments.html" class="nav-cta">Buy&nbsp;Echos</a>
+        <div id="navProfileAvatar" style="width:34px;height:34px;border-radius:6px;background:var(--accent);color:#000;font-size:0.85rem;font-weight:800;display:flex;align-items:center;justify-content:center;text-transform:uppercase;cursor:pointer;">G</div>
+      </div>
+      <button class="nav-hamburger" id="navHamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+    </nav>
+    <div class="nav-drawer" id="navDrawer">
+      <a href="about_us.html">About</a>
+      <a href="api.html">API</a>
+      <a href="payments.html">Pricing</a>
+      <a href="chat.html">Chat</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="payments.html">Buy Echos</a>
+      <button id="drawerLoginBtn">Login</button>
+      <button id="drawerRegisterBtn">Register</button>
+      <button id="drawerLogoutBtn" style="display:none;">Logout</button>
+    </div>
 
     <main class="main">
       <button type="button" id="threadRailExpand" class="thread-rail-expand-btn" aria-label="Show chat list" title="Show chats">&#8250;</button>
@@ -1492,7 +1574,7 @@
           </button>
         </div>
         <!-- Group Pot Display (shown for group chats) -->
-        <div id="groupPotBar" style="display:none;margin-top:0.8rem;align-items:center;gap:0.7rem;padding:0.6rem 1rem;background:rgba(72,137,205,0.1);border-radius:10px;border:1px solid rgba(72,137,205,0.2);">
+        <div id="groupPotBar" style="display:none;margin-top:0.8rem;align-items:center;gap:0.7rem;padding:0.6rem 1rem;background:rgba(201,168,76,0.1);border-radius:10px;border:1px solid rgba(201,168,76,0.2);">
           <span style="font-size:0.9rem;color:var(--text);">Group Pot:</span>
           <span id="groupPotBalance" style="font-weight:600;color:var(--accent);">--</span>
           <button id="addToPotBtn" type="button" style="padding:0.3rem 0.8rem;background:var(--accent);color:#000;border:none;border-radius:6px;font-size:0.85rem;font-weight:600;cursor:pointer;transition:background 0.2s;">Add</button>
@@ -1550,7 +1632,7 @@
         </div>
         <div class="input-wrapper">
           <!-- Lock Status Banner -->
-          <div id="lockStatusBanner" style="display:none;background:rgba(72,137,205,0.15);border:1px solid var(--accent);border-radius:8px;padding:0.6rem 1rem;margin-bottom:0.8rem;align-items:center;justify-content:space-between;gap:1rem;">
+          <div id="lockStatusBanner" style="display:none;background:rgba(201,168,76,0.15);border:1px solid var(--accent);border-radius:8px;padding:0.6rem 1rem;margin-bottom:0.8rem;align-items:center;justify-content:space-between;gap:1rem;">
             <span style="color:var(--accent);font-size:0.9rem;">
               <span id="lockStatusText">Waiting for AI to respond...</span>
             </span>
@@ -3800,5 +3882,61 @@
     <!-- Cursor trail effect -->
     <script src="cursor-trail.js"></script>
     <script src="supabase-client.js"></script>
+    <script>
+    // ─── Navbar sync ─────────────────────────────────────
+    (function() {
+      // Mobile hamburger
+      var hamburger = document.getElementById('navHamburger');
+      var drawer = document.getElementById('navDrawer');
+      if (hamburger && drawer) {
+        hamburger.addEventListener('click', function() { drawer.classList.toggle('open'); });
+        document.addEventListener('click', function(e) {
+          if (!drawer.contains(e.target) && !hamburger.contains(e.target)) drawer.classList.remove('open');
+        });
+      }
+      // Wire drawer buttons to existing auth buttons
+      function wireBtn(drawerId, mainId) {
+        var d = document.getElementById(drawerId);
+        var m = document.getElementById(mainId);
+        if (d && m) d.onclick = function() { if (drawer) drawer.classList.remove('open'); m.click(); };
+      }
+      wireBtn('drawerLoginBtn', 'loginBtn');
+      wireBtn('drawerRegisterBtn', 'registerBtn');
+      wireBtn('drawerLogoutBtn', 'logoutBtn');
+      // Wire navbar auth buttons to existing sidebar auth buttons
+      wireBtn('navLoginBtn', 'loginBtn');
+      wireBtn('navRegisterBtn', 'registerBtn');
+      var navLogout = document.getElementById('navLogoutBtn');
+      var mainLogout = document.getElementById('logoutBtn');
+      if (navLogout && mainLogout) navLogout.onclick = function() { mainLogout.click(); };
+      // Sync navbar + drawer auth state with localStorage
+      function syncNavAuth() {
+        var user = localStorage.getItem('aikipediaUser');
+        var navAuth = document.getElementById('navAuthButtons');
+        var navLogout = document.getElementById('navLogoutBtn');
+        var navAvatar = document.getElementById('navProfileAvatar');
+        var dLogin = document.getElementById('drawerLoginBtn');
+        var dReg = document.getElementById('drawerRegisterBtn');
+        var dLogout = document.getElementById('drawerLogoutBtn');
+        if (user) {
+          if (navAuth) navAuth.style.display = 'none';
+          if (navLogout) navLogout.style.display = 'block';
+          if (navAvatar) navAvatar.textContent = user.charAt(0).toUpperCase();
+          if (dLogin) dLogin.style.display = 'none';
+          if (dReg) dReg.style.display = 'none';
+          if (dLogout) dLogout.style.display = 'block';
+        } else {
+          if (navAuth) navAuth.style.display = 'flex';
+          if (navLogout) navLogout.style.display = 'none';
+          if (navAvatar) navAvatar.textContent = 'G';
+          if (dLogin) dLogin.style.display = 'block';
+          if (dReg) dReg.style.display = 'block';
+          if (dLogout) dLogout.style.display = 'none';
+        }
+      }
+      syncNavAuth();
+      setInterval(syncNavAuth, 800);
+    })();
+    </script>
   </body>
 </html>
