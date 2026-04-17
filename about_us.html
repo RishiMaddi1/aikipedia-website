@@ -1,604 +1,879 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us - AI Services Hub India</title>
-    <link href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css?family=Roboto:700" rel="stylesheet" />
-    
-    <style>
-        :root {
-            --bg: #181a20; 
-            --bg-secondary: #010512;
-            --text: #a3b2d3;
-            --accent: #4889cd;
-            --border: #000137;
-            --error: #FCADB0;
-            --success: #2F686F;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About – Aikipedia</title>
+  <meta name="description" content="Learn about Aikipedia — India's most affordable AI platform. Built by developers, for developers. Pay in ₹, no subscriptions.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
-        body {
-            margin: 0;
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            overflow-x: hidden;
-            perspective: 1000px;
-        }
+  <style>
+    /* ─── Reset & Base ─────────────────────────────── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-        .main-content {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-            position: relative;
-            z-index: 1;
-        }
+    :root {
+      --bg: #0a0a0a;
+      --bg-secondary: #161616;
+      --text: #ccc;
+      --accent: #c9a84c;
+      --border: #2a2a2a;
+      --error: #ff6b6b;
+      --success: #10b981;
+      --black:   #0a0a0a;
+      --dark:    #111111;
+      --card:    #161616;
+      --gold:    #c9a84c;
+      --gold-lt: #e8c97a;
+      --white:   #f0f0f0;
+      --muted:   #888;
+    }
 
-        /* Enhanced Header Animation */
-        .header-container {
-            text-align: center;
-            margin-bottom: 3rem;
-            transform-style: preserve-3d;
-            perspective: 1000px;
-        }
+    ::-webkit-scrollbar { width: 5px; background: #111; }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
 
-        #container {
-            color: var(--text);
-            text-transform: uppercase;
-            font-size: clamp(28px, 5vw, 36px);
-            font-weight: bold;
-            padding-top: 80px;
-            width: 100%;
-            bottom: 45%;
-            display: block;
-            animation: float 6s ease-in-out infinite;
-            line-height: 1.5;
-        }
+    html { scroll-behavior: smooth; }
 
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
-        }
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
 
-        #flip {
-            height: 50px;
-            overflow: hidden;
-            display: inline-block;
-            vertical-align: middle;
-            margin-bottom: 8px;
-        }
+    a { text-decoration: none; color: inherit; }
 
-        #flip > div > div {
-            color: #fff;
-            padding: 0px 12px;
-            height: 45px;
-            margin-bottom: 45px;
-            display: inline-block;
-            border-radius: 6px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            min-width: 120px;
-            text-align: center;
-        }
+    /* ─── Navbar ────────────────────────────────────── */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2.5rem;
+      height: 56px;
+      background: rgba(10,10,10,0.95);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      gap: 1rem;
+    }
 
-        #flip div:first-child {
-            animation: show 5s linear infinite;
-        }
+    .nav-logo {
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--white);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
 
-        #flip div div {
-            background: var(--success);
-        }
-        #flip div:first-child div {
-            background: var(--accent);
-        }
-        #flip div:last-child div {
-            background: var(--error);
-        }
+    .nav-links {
+      display: flex;
+      gap: 1.8rem;
+      list-style: none;
+      align-items: center;
+    }
 
-        @keyframes show {
-            0% {margin-top:-270px;}
-            5% {margin-top:-180px;}
-            33% {margin-top:-180px;}
-            38% {margin-top:-90px;}
-            66% {margin-top:-90px;}
-            71% {margin-top:0px;}
-            99.99% {margin-top:0px;}
-            100% {margin-top:-270px;}
-        }
+    .nav-links a,
+    .nav-links button {
+      font-size: 0.76rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.2s;
+      padding: 0;
+    }
+    .nav-links a:hover,
+    .nav-links button:hover { color: var(--white); }
 
-        /* Enhanced Section Styles with improved animations */
-        .sections-container {
-            display: flex;
-            flex-direction: column;
-            gap: 2.5rem;
-        }
+    .nav-links a.active-page { color: var(--gold); }
 
-        h1, h2 {
-            color: var(--accent);
-            margin-top: 0;
-            position: relative;
-        }
+    #dashboardNavItem,
+    #createGroupNavItem { display: none; }
 
-        h1::after, h2::after {
-            content: '';
-            display: block;
-            width: 60px;
-            height: 4px;
-            background: var(--accent);
-            margin-top: 10px;
-            border-radius: 2px;
-            transition: width 0.3s ease;
-        }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-shrink: 0;
+    }
 
-        .section:hover h1::after,
-        .section:hover h2::after {
-            width: 100px;
-        }
+    #authButtons {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
 
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-        }
+    .nav-auth-link {
+      font-size: 0.76rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.2s;
+    }
+    .nav-auth-link:hover { color: var(--white); }
 
-        h2 {
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-        }
+    .nav-auth-sep {
+      width: 1px;
+      height: 14px;
+      background: var(--border);
+    }
 
-        p {
-            margin-bottom: 0;
-            font-size: 1.1rem;
-            line-height: 1.8;
-            transition: transform 0.3s ease;
-        }
+    .nav-cta {
+      padding: 0.42rem 1.15rem;
+      background: var(--gold);
+      color: #000;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s, transform 0.15s;
+      white-space: nowrap;
+    }
+    .nav-cta:hover { background: var(--gold-lt); transform: translateY(-1px); }
 
-        .section {
-            background: var(--bg-secondary);
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--border);
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            transform: translateY(0) scale(1);
-            text-align: center;
-        }
+    #profileToggle {
+      width: 34px;
+      height: 34px;
+      border-radius: 6px;
+      background: var(--gold);
+      color: #000;
+      font-size: 0.85rem;
+      font-weight: 800;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: default;
+      flex-shrink: 0;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      position: relative;
+    }
 
-        /* Hover effect with subtle rise and zoom */
-        .section:hover {
-            transform: translateY(-10px) scale(1.01);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-            border-color: var(--accent);
-            z-index: 2;
-        }
+    #profileDetails { display: none; }
 
-        /* Pulse border animation for all sections */
-        .section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: 10px;
-            padding: 2px;
-            background: linear-gradient(45deg, var(--accent), transparent, var(--accent));
-            background-size: 200% 200%;
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask-composite: exclude;
-            animation: gradientBorder 4s ease infinite;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
+    #logoutBtn {
+      display: none;
+      padding: 0.42rem 1rem;
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    #logoutBtn:hover { color: var(--white); border-color: var(--white); }
 
-        .section:hover::before {
-            opacity: 1;
-        }
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      background: none;
+      border: none;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--white);
+      transition: all 0.3s;
+    }
 
-        /* Alternating headings position */
-        .section {
-            text-align: center;
-        }
+    .nav-drawer {
+      display: none;
+      position: fixed;
+      top: 56px; left: 0; right: 0;
+      background: #111;
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      flex-direction: column;
+      gap: 0.6rem;
+      z-index: 999;
+    }
+    .nav-drawer.open { display: flex; }
+    .nav-drawer a,
+    .nav-drawer button {
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      text-align: left;
+      padding: 0.4rem 0;
+      transition: color 0.2s;
+    }
+    .nav-drawer a:hover,
+    .nav-drawer button:hover { color: var(--white); }
 
-        .section h1::after,
-        .section h2::after {
-            margin: 10px auto 0;
-        }
+    /* ─── Section Commons ───────────────────────────── */
+    .section-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
 
-        @keyframes gradientBorder {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+    .section-title {
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 0;
+      line-height: 1.1;
+    }
 
-        .highlight {
-            color: var(--accent);
-            font-weight: 500;
-        }
-        
-        /* Team members section styling */
-        .team-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1rem;
-            justify-items: center;
-            align-items: center;
-        }
-        
-        .team-member {
-            background: rgba(0, 1, 37, 0.4);
-            border-radius: 10px;
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(72, 137, 205, 0.2);
-            transform: scale(1);
-            max-width: 400px;
-            width: 100%;
-        }
-        
-        .team-member:hover {
-            transform: translateY(-5px) scale(1.015);
-            border-color: var(--accent);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-        
-        .member-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--accent), var(--success));
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .member-avatar::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            transform: scale(0);
-            transition: transform 0.5s ease;
-        }
-        
-        .team-member:hover .member-avatar::after {
-            transform: scale(1);
-        }
-        
-        .member-name {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: white;
-            margin-bottom: 0.5rem;
-        }
-        
-        .member-role {
-            color: var(--accent);
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-            font-weight: 500;
-        }
-        
-        .member-bio {
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-        
-        .social-links {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .social-link {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: rgba(72, 137, 205, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-        
-        .social-link:hover {
-            background: var(--accent);
-            transform: scale(1.1);
-        }
-        
-        .social-link svg {
-            width: 16px;
-            height: 16px;
-            fill: white;
-        }
+    .section-underline {
+      width: 48px; height: 3px;
+      background: var(--gold);
+      margin: 1rem 0 0;
+    }
 
-        /* Enhanced Back Button */
-        #backToChatBtn {
-            position: fixed;
-            top: clamp(1rem, 3vw, 2rem);
-            left: clamp(1rem, 3vw, 2rem);
-            z-index: 2101;
-            background-color: var(--accent);
-            color: #fff;
-            border: none;
-            border-radius: 50%;
-            width: clamp(40px, 5vw, 50px);
-            height: clamp(40px, 5vw, 50px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
+    /* ─── Page Hero ─────────────────────────────────── */
+    .page-hero {
+      padding: 8rem 2rem 3.5rem;
+      text-align: center;
+      background: var(--black);
+      position: relative;
+      overflow: hidden;
+    }
 
-        #backToChatBtn:hover {
-            transform: scale(1.1) rotate(-10deg);
-            background-color: #fff;
-            color: var(--accent);
-        }
+    .page-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
 
-        /* Enhanced Gradient Background */
-        .background-gradient {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at top right, rgba(1, 5, 18, 0.8) 0%, var(--bg) 100%);
-            z-index: 0;
-            animation: gradientShift 15s ease-in-out infinite;
-        }
+    .page-hero-inner { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; }
 
-        @keyframes gradientShift {
-            0% { background-position: 0% 0%; }
-            50% { background-position: 100% 100%; }
-            100% { background-position: 0% 0%; }
-        }
+    .page-hero .section-underline { margin: 1rem auto 1.5rem; }
 
-        /* Particle effect */
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: 0;
-        }
+    .page-hero-sub {
+      font-size: clamp(0.88rem, 2vw, 1.02rem);
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.75;
+    }
+    .page-hero-sub strong { color: var(--white); }
 
-        .particle {
-            position: absolute;
-            width: 5px;
-            height: 5px;
-            background-color: var(--accent);
-            border-radius: 50%;
-            opacity: 0.3;
-            animation: particleFloat 15s infinite linear;
-        }
+    /* ─── About Content ────────────────────────────── */
+    .about-section {
+      padding: 4rem 2rem;
+      border-top: 1px solid var(--border);
+    }
+    .about-section:nth-child(even) { background: var(--dark); }
+    .about-section:nth-child(odd) { background: var(--black); }
 
-        @keyframes particleFloat {
-            0% {
-                transform: translateY(0) translateX(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 0.3;
-            }
-            90% {
-                opacity: 0.3;
-            }
-            100% {
-                transform: translateY(-100vh) translateX(100px);
-                opacity: 0;
-            }
-        }
+    .about-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
 
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            #container {
-                font-size: 24px;
-                padding-top: 80px;
-            }
-            
-            .section {
-                padding: 1.5rem;
-                text-align: center;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-            
-            h2 {
-                font-size: 1.5rem;
-            }
-            
-            .team-section {
-                grid-template-columns: 1fr;
-            }
-        }
+    .about-section .section-title {
+      font-size: clamp(1.4rem, 2.5vw, 1.9rem);
+    }
 
-        .header-bar {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            position: fixed;
-            top: clamp(1rem, 3vw, 2rem);
-            left: clamp(1rem, 3vw, 2rem);
-            z-index: 2102;
-        }
+    .about-section .section-underline {
+      margin: 0.8rem 0 1.5rem;
+    }
 
-        .site-title {
-            font-family: 'Inter', sans-serif;
-            font-size: 3rem;
-            font-weight: 700;
-            color: var(--accent);
-            letter-spacing: 1px;
-            line-height: 1;
-            user-select: none;
-        }
+    .about-text {
+      font-size: 0.92rem;
+      color: var(--text);
+      line-height: 1.8;
+      margin-bottom: 1rem;
+    }
+    .about-text strong { color: var(--white); }
+    .about-text em { color: var(--gold); font-style: italic; }
 
-        @media (max-width: 768px) {
-            .site-title {
-                font-size: 1.6rem;
-            }
-            .header-bar {
-                gap: 1rem;
-            }
-        }
+    /* ─── Feature List ─────────────────────────────── */
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin: 1rem 0;
+    }
 
-        /* Remove the old fixed position for the back button */
-        #backToChatBtn {
-            position: static;
-            margin: 0;
-        }
-    </style>
+    .feature-item {
+      display: flex;
+      gap: 1.2rem;
+      padding: 1.3rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .feature-item:last-child { border-bottom: none; }
+
+    .feature-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--gold);
+      border-radius: 50%;
+      margin-top: 0.45rem;
+      flex-shrink: 0;
+    }
+
+    .feature-body { flex: 1; }
+
+    .feature-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.3rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .feature-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ─── Founder Card ─────────────────────────────── */
+    .founder-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 2.5rem 2rem;
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+      margin-top: 2rem;
+      transition: background 0.25s;
+    }
+    .founder-card:hover { background: #1c1c1c; }
+
+    .founder-avatar {
+      width: 90px;
+      height: 90px;
+      background: var(--gold);
+      color: #000;
+      font-size: 1.8rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
+
+    .founder-info { flex: 1; }
+
+    .founder-name {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 0.2rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .founder-role {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.8rem;
+    }
+
+    .founder-bio {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 0.6rem;
+      margin-top: 1rem;
+    }
+
+    .social-link {
+      width: 32px;
+      height: 32px;
+      background: rgba(201,168,76,0.1);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .social-link:hover {
+      background: var(--gold);
+      border-color: var(--gold);
+    }
+    .social-link svg {
+      width: 14px;
+      height: 14px;
+      fill: var(--white);
+      transition: fill 0.2s;
+    }
+    .social-link:hover svg { fill: #000; }
+
+    /* ─── CTA Strip ─────────────────────────────────── */
+    .cta-strip {
+      background: var(--gold);
+      padding: 1.1rem 2rem;
+      text-align: center;
+    }
+    .cta-strip p {
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: #000;
+    }
+
+    /* ─── Footer ────────────────────────────────────── */
+    footer {
+      background: var(--dark);
+      border-top: 1px solid var(--border);
+      padding: 1.8rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-left { font-size: 0.7rem; color: #444; letter-spacing: 0.05em; }
+    .footer-links { display: flex; gap: 2rem; list-style: none; }
+    .footer-links a {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: #555;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--white); }
+
+    /* ─── Auth Modal ───────────────────────────────── */
+    #authModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.75);
+      z-index: 3000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    #loginForm, #registerForm, #createGroupForm {
+      background: #161616 !important;
+      border: 1px solid #2a2a2a !important;
+      border-radius: 4px !important;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7) !important;
+    }
+
+    /* ─── Responsive ────────────────────────────────── */
+    @media (max-width: 768px) {
+      .navbar { padding: 0 1.2rem; }
+      .nav-links { display: none; }
+      #authButtons { display: none !important; }
+      #logoutBtn.showing { display: none !important; }
+      .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+      #profileToggle.showing { display: flex !important; }
+
+      .founder-card {
+        flex-direction: column;
+        text-align: center;
+      }
+      .social-links { justify-content: center; }
+    }
+
+    @media (max-width: 480px) {
+      footer { flex-direction: column; text-align: center; }
+      .footer-links { justify-content: center; }
+    }
+  </style>
 </head>
 <body>
-    <div class="background-gradient"></div>
 
-    <div class="header-bar">
-        <button id="backToChatBtn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
-                <line x1="19" y1="12" x2="5" y2="12"></line>
-                <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
-        </button>
-        <span class="site-title">Aikipedia</span>
+  <!-- ─── Auth stubs ────────────────────────────────── -->
+  <div id="profileDetails" style="display:none;"></div>
+  <div id="sidebarOverlay" style="display:none;position:fixed;inset:0;z-index:2999;"></div>
+  <aside id="sidebar" style="display:none;"></aside>
+
+  <!-- Auth Modal -->
+  <div id="authModal">
+    <div id="loginForm" style="min-width:320px;max-width:400px;width:100%;padding:2.2rem 2.5rem;display:flex;flex-direction:column;gap:1.3rem;align-items:center;">
+      <div style="text-align:center;">
+        <h2 style="color:var(--gold);font-size:1.7rem;font-weight:900;text-transform:uppercase;letter-spacing:-0.01em;margin-bottom:0.3rem;">Welcome Back</h2>
+        <p style="color:#555;font-size:0.85rem;">Sign in to continue</p>
+      </div>
+      <div style="width:100%;display:flex;flex-direction:column;gap:0.9rem;">
+        <input id="loginUsername" placeholder="Username" style="padding:0.85rem 1rem;border-radius:3px;border:1px solid #2a2a2a;width:100%;background:#0a0a0a;color:#f0f0f0;font-size:0.9rem;outline:none;font-family:inherit;" />
+        <div style="position:relative;width:100%;display:flex;align-items:center;">
+          <input id="loginPassword" type="password" placeholder="Password" style="padding:0.85rem 1rem;border-radius:3px;border:1px solid #2a2a2a;width:100%;background:#0a0a0a;color:#f0f0f0;font-size:0.9rem;outline:none;font-family:inherit;" />
+          <span class="toggle-password" data-target="loginPassword" style="position:absolute;right:1rem;cursor:pointer;user-select:none;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="9" ry="5.5"/><circle cx="12" cy="12" r="2.5"/></svg>
+          </span>
+        </div>
+      </div>
+      <button id="loginSubmitBtn" style="background:var(--gold);color:#000;font-weight:700;width:100%;padding:0.85rem 0;border-radius:3px;border:none;cursor:pointer;font-size:0.82rem;letter-spacing:0.1em;text-transform:uppercase;font-family:inherit;">Sign In</button>
+      <div style="display:flex;gap:0.5rem;align-items:center;">
+        <span style="color:#555;font-size:0.82rem;">New to Aikipedia?</span>
+        <button id="switchToRegisterBtn" style="background:none;border:none;color:var(--gold);cursor:pointer;font-weight:700;font-size:0.82rem;font-family:inherit;">Create Account</button>
+      </div>
+      <button id="loginCancelBtn" style="background:none;color:#555;border:none;cursor:pointer;font-size:0.8rem;font-family:inherit;">Cancel</button>
+      <div id="loginError" style="color:#ff6b6b;font-size:0.85rem;text-align:center;min-height:1rem;"></div>
     </div>
 
-    <div class="main-content">
-        <div class="header-container">
-            <div id="container">
-                Make 
-                <div id="flip">
-                  <div><div>Coding</div></div>
-                  <div><div>API Calls</div></div>
-                  <div><div>Spending</div></div>
-                </div>
-                AweSoMe!
-            </div>
+    <div id="registerForm" style="display:none;min-width:320px;max-width:400px;width:100%;padding:2.2rem 2.5rem;flex-direction:column;gap:1.3rem;align-items:center;">
+      <div style="text-align:center;">
+        <h2 style="color:var(--gold);font-size:1.7rem;font-weight:900;text-transform:uppercase;letter-spacing:-0.01em;margin-bottom:0.3rem;">Create Account</h2>
+        <p style="color:#555;font-size:0.85rem;">Join Aikipedia to start building</p>
+      </div>
+      <div style="width:100%;display:flex;flex-direction:column;gap:0.9rem;">
+        <input id="registerUsername" placeholder="Choose Username" style="padding:0.85rem 1rem;border-radius:3px;border:1px solid #2a2a2a;width:100%;background:#0a0a0a;color:#f0f0f0;font-size:0.9rem;outline:none;font-family:inherit;" />
+        <div style="position:relative;width:100%;display:flex;align-items:center;">
+          <input id="registerPassword" type="password" placeholder="Create Password" style="padding:0.85rem 1rem;border-radius:3px;border:1px solid #2a2a2a;width:100%;background:#0a0a0a;color:#f0f0f0;font-size:0.9rem;outline:none;font-family:inherit;" />
+          <span class="toggle-password" data-target="registerPassword" style="position:absolute;right:1rem;cursor:pointer;user-select:none;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="9" ry="5.5"/><circle cx="12" cy="12" r="2.5"/></svg>
+          </span>
         </div>
-        <div class="section">
-            <h2>About Me</h2>
-            <p>Hey there! 👋 I'm Rishi, and I build stuff that actually works! This platform is my latest creation - when I realized how expensive AI services were for Indian developers, I decided to create something better - a flexible, affordable solution that actually makes sense for our market. I handle everything from the frontend magic to the backend infrastructure, and yes, I'm pretty proud of how it turned out! 🚀 Building things like this is what I do for fun (and yes, I know that sounds a bit nerdy, but hey, it's awesome!).</p>
-            
-            <div class="team-section">
-                <div class="team-member">
-                    <div class="member-avatar">
-                        <span>RD</span>
-                    </div>
-                    <div class="member-name">Maddi Rishi Daneshwar</div>
-                    <div class="member-role">Founder & Lead Developer</div>
-                    <div class="member-bio">
-                        Full-stack developer with industrial experience in AI integration and cloud architecture. Passionate about making cutting-edge technology accessible to all.
-                    </div>
-                    <div class="social-links">
-                        <a href="https://www.linkedin.com/in/rishi-maddi" class="social-link" target="_blank">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-                        </a>
-                        <a href="https://github.com/RishiMaddi1" class="social-link" target="_blank">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                        </a>
-                        <a href="https://www.instagram.com/rishi__maddi?igsh=OHVrank0eGRjd3ph" class="social-link" target="_blank">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-                        </a>
-                        <a href="mailto:maddi.rishi2468@gmail.com" class="social-link" target="_blank" title="Email">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 2v.01L12 13 4 6.01V6h16zM4 20v-9.99l8 6.99 8-6.99V20H4z"/></svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
+        <div style="position:relative;width:100%;display:flex;align-items:center;">
+          <input id="registerConfirmPassword" type="password" placeholder="Confirm Password" style="padding:0.85rem 1rem;border-radius:3px;border:1px solid #2a2a2a;width:100%;background:#0a0a0a;color:#f0f0f0;font-size:0.9rem;outline:none;font-family:inherit;" />
+          <span class="toggle-password" data-target="registerConfirmPassword" style="position:absolute;right:1rem;cursor:pointer;user-select:none;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="9" ry="5.5"/><circle cx="12" cy="12" r="2.5"/></svg>
+          </span>
         </div>
-        <br><br>
-        <div class="sections-container">
-            <div class="section">
-                <h1>🧠 About Aikipedia</h1>
-                <p><strong>Aikipedia is on a mission to make the world's most advanced AI tools accessible, affordable, and available to everyone.</strong><br>
-                We believe AI should be a tool for <strong>empowerment, not a luxury behind paywalls or international cards</strong>.<br><br>
-                Whether you're a student exploring creativity, a developer building smarter tools, or just curious about the power of conversational AI — Aikipedia gives you <strong>instant access to the latest AI models at transparent, pay-as-you-go pricing</strong>.<br><br>
-                <span style="color:var(--accent)"><em>Built with a modern, scalable architecture leveraging Cloudflare Workers, Supabase Edge Functions, and robust cloud infrastructure for reliability and speed.</em></span>
-                </p>
-            </div>
-
-            <div class="section">
-                <h2>🌟 What Makes Aikipedia Unique?</h2>
-                <ul style="text-align:left; max-width:700px; margin:0 auto;">
-                    <li><strong>Access the Best AI Models:</strong> From natural conversations to powerful coding assistants and research bots, we bring you <strong>state-of-the-art AI tools</strong> under one roof, delivered via globally distributed edge functions for low-latency access.</li>
-                    <br>
-                    <li><strong>No Subscriptions, No Hassles:</strong> Say goodbye to expensive monthly fees. Just <strong>buy credits once, and use them anytime</strong>. No commitments, no auto-renewals.</li>
-                    <br>
-                    <li><strong>Pay in Indian Rupees via UPI:</strong> We've made AI truly accessible in India — <strong>pay securely using UPI apps like GPay, PhonePe, or Paytm</strong>, starting from as low as ₹49.</li>
-                    <br>
-                    <li><strong>Realtime Usage, Realtime Value:</strong> Credits (Echos) are added <strong>instantly after payment</strong>, letting you use the platform without delays or waiting for manual approvals. Our backend leverages serverless functions and scalable databases for seamless experience.</li>
-                    <br>
-                    <li><strong>For Users and Developers Alike:</strong> Use our sleek chat interface or integrate AI models into your apps through <strong>API keys linked to your account</strong>. Track usage, manage costs, and stay in control, all powered by a secure, cloud-native stack.</li>
-                    <br>
-                </ul>
-            </div>
-
-            <div class="section">
-                <h2>🤖 Why We Built This</h2>
-                <p>Today, some of the world's most powerful AI is locked behind high prices or inaccessible platforms. We built Aikipedia to change that — to give <strong>individuals, students, creators, and small teams</strong> the same superpowers that big companies enjoy.<br><br>
-                AI should be a utility — <strong>affordable, on-demand, and universal</strong>.<br><br>
-                <span style="color:var(--accent)"><em>Every feature is engineered for scale and reliability, using edge-first technologies and modern cloud best practices.</em></span>
-                </p>
-            </div>
-
-            <div class="section">
-                <h2>🚀 Join the Aikipedia Community</h2>
-                <p>We're just getting started. With every update, we're adding <strong>more models, better features, and smarter tools</strong> — while keeping things simple and affordable.<br><br>
-                Whether you're here to explore or build, Aikipedia is your gateway to the future of AI.<br><br>
-                <span style="color:var(--accent)"><em>Built by a developer passionate about scalable systems, edge computing, and democratizing AI for all.</em></span>
-                </p>
-            </div>
-        </div>
+      </div>
+      <button id="registerSubmitBtn" style="background:var(--gold);color:#000;font-weight:700;width:100%;padding:0.85rem 0;border-radius:3px;border:none;cursor:pointer;font-size:0.82rem;letter-spacing:0.1em;text-transform:uppercase;font-family:inherit;">Create Account</button>
+      <div style="display:flex;gap:0.5rem;align-items:center;">
+        <span style="color:#555;font-size:0.82rem;">Already have an account?</span>
+        <button id="switchToLoginBtn" style="background:none;border:none;color:var(--gold);cursor:pointer;font-weight:700;font-size:0.82rem;font-family:inherit;">Sign In</button>
+      </div>
+      <button id="registerCancelBtn" style="background:none;color:#555;border:none;cursor:pointer;font-size:0.8rem;font-family:inherit;">Cancel</button>
+      <div id="registerError" style="color:#ff6b6b;font-size:0.85rem;text-align:center;min-height:1rem;"></div>
     </div>
 
-    <script>
-        // Back button functionality
-        document.getElementById("backToChatBtn").onclick = function() {
-            window.location.href = "index.html";
-        };
+    <div id="createGroupForm" style="display:none;min-width:320px;max-width:400px;width:100%;padding:2.2rem 2.5rem;flex-direction:column;gap:1.3rem;align-items:center;">
+      <div style="text-align:center;">
+        <h2 style="color:var(--gold);font-size:1.7rem;font-weight:900;text-transform:uppercase;margin-bottom:0.3rem;">Create Group</h2>
+        <p style="color:#555;font-size:0.85rem;">Start a group chat with AI</p>
+      </div>
+      <div style="width:100%;display:flex;flex-direction:column;gap:0.9rem;">
+        <input id="groupName" placeholder="Group name" style="padding:0.85rem 1rem;border-radius:3px;border:1px solid #2a2a2a;width:100%;background:#0a0a0a;color:#f0f0f0;font-size:0.9rem;outline:none;font-family:inherit;" />
+        <div>
+          <label style="color:#555;font-size:0.78rem;display:block;margin-bottom:0.4rem;">Max members (optional)</label>
+          <input id="groupMaxMembers" type="number" placeholder="50" min="2" max="100" style="padding:0.85rem 1rem;border-radius:3px;border:1px solid #2a2a2a;width:100%;background:#0a0a0a;color:#f0f0f0;font-size:0.9rem;outline:none;font-family:inherit;" />
+        </div>
+      </div>
+      <button id="createGroupSubmitBtn" style="background:var(--gold);color:#000;font-weight:700;width:100%;padding:0.85rem 0;border-radius:3px;border:none;cursor:pointer;font-size:0.82rem;letter-spacing:0.1em;text-transform:uppercase;font-family:inherit;">Create Group</button>
+      <button id="createGroupCancelBtn" style="background:none;color:#555;border:none;cursor:pointer;font-size:0.8rem;font-family:inherit;">Cancel</button>
+      <div id="createGroupError" style="color:#ff6b6b;font-size:0.85rem;text-align:center;min-height:1rem;"></div>
+    </div>
+  </div>
 
-        // Initialize on page load
-        window.onload = function() {
-            // Add entrance animation with staggered delay
-            const sections = document.querySelectorAll('.section');
-            sections.forEach((section, index) => {
-                // Set initial state for entrance animation
-                section.style.opacity = '0';
-                section.style.transform = 'translateY(30px)';
-                
-                setTimeout(() => {
-                    section.style.transition = 'all 0.8s ease-out';
-                    section.style.opacity = '1';
-                    section.style.transform = 'translateY(0)';
-                }, 100 + (index * 200));
-            });
-        };
-    </script>
-    <!-- Background particles effect -->
-    <script src="background-particles.js"></script>
-    <!-- Cursor trail effect -->
-    <script src="cursor-trail.js"></script>
+  <!-- ─── Navbar ────────────────────────────────────── -->
+  <nav class="navbar" id="mainNav">
+    <a href="index.html" class="nav-logo">Aikipedia.in</a>
+    <ul class="nav-links">
+      <li><a href="about_us.html" id="aboutUsBtn" class="active-page">About</a></li>
+      <li><a href="api.html" id="apiBtn">API</a></li>
+      <li><a href="payments.html" id="paymentsBtn">Pricing</a></li>
+      <li><a href="chat.html" id="chatBtn">Chat</a></li>
+      <li id="dashboardNavItem"><button id="dashboardBtn">Dashboard</button></li>
+      <li id="createGroupNavItem"><button id="createGroupBtn">New&nbsp;Group</button></li>
+    </ul>
+    <div class="nav-right">
+      <div id="authButtons">
+        <button class="nav-auth-link" id="loginBtn">Login</button>
+        <div class="nav-auth-sep"></div>
+        <button class="nav-auth-link" id="registerBtn">Register</button>
+      </div>
+      <button id="logoutBtn">Logout</button>
+      <a href="payments.html" class="nav-cta" id="navBuyBtn">Buy&nbsp;Echos</a>
+      <div id="profileToggle" title="" aria-label="Signed in"></div>
+    </div>
+    <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile Drawer -->
+  <div class="nav-drawer" id="navDrawer">
+    <a href="about_us.html">About</a>
+    <a href="api.html">API</a>
+    <a href="payments.html">Pricing</a>
+    <a href="chat.html">Chat</a>
+    <a href="dashboard.html" id="drawerDashboardLink" style="display:none;">Dashboard</a>
+    <a href="payments.html">Buy Echos</a>
+    <button id="drawerLoginBtn" style="display:none;">Login</button>
+    <button id="drawerRegisterBtn" style="display:none;">Register</button>
+    <button id="drawerLogoutBtn" style="display:none;">Logout</button>
+  </div>
+
+  <!-- ─── Page Hero ────────────────────────────────── -->
+  <section class="page-hero">
+    <div class="page-hero-inner">
+      <span class="section-label">Who We Are</span>
+      <h1 class="section-title">About Aikipedia</h1>
+      <div class="section-underline"></div>
+      <p class="page-hero-sub">
+        <strong>Making the world's most advanced AI accessible, affordable, and available to everyone.</strong>
+        Built in India. Billed in ₹. No paywalls. No gatekeeping.
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── Founder Section ──────────────────────────── -->
+  <section class="about-section" style="background:var(--dark);">
+    <div class="about-inner">
+      <span class="section-label">The Founder</span>
+      <h2 class="section-title">About Me</h2>
+      <div class="section-underline"></div>
+      <p class="about-text">
+        Hey there! 👋 I'm Rishi, and I build stuff that actually works. When I realized how expensive AI services were for Indian developers, I decided to create something better — a flexible, affordable solution that actually makes sense for our market. I handle everything from the frontend magic to the backend infrastructure, and yes, I'm pretty proud of how it turned out! 🚀
+      </p>
+
+      <div class="founder-card">
+        <div class="founder-avatar">RD</div>
+        <div class="founder-info">
+          <div class="founder-name">Maddi Rishi Daneshwar</div>
+          <div class="founder-role">Founder & Lead Developer</div>
+          <div class="founder-bio">Full-stack developer with industrial experience in AI integration and cloud architecture. Passionate about making cutting-edge technology accessible to all.</div>
+          <div class="social-links">
+            <a href="https://www.linkedin.com/in/rishi-maddi" class="social-link" target="_blank" title="LinkedIn">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+            </a>
+            <a href="https://github.com/RishiMaddi1" class="social-link" target="_blank" title="GitHub">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            </a>
+            <a href="https://www.instagram.com/rishi__maddi?igsh=OHVrank0eGRjd3ph" class="social-link" target="_blank" title="Instagram">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            </a>
+            <a href="mailto:maddi.rishi2468@gmail.com" class="social-link" target="_blank" title="Email">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 2v.01L12 13 4 6.01V6h16zM4 20v-9.99l8 6.99 8-6.99V20H4z"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── About Aikipedia ──────────────────────────── -->
+  <section class="about-section" style="background:var(--black);">
+    <div class="about-inner">
+      <span class="section-label">Our Mission</span>
+      <h2 class="section-title">About Aikipedia</h2>
+      <div class="section-underline"></div>
+      <p class="about-text">
+        <strong>Aikipedia is on a mission to make the world's most advanced AI tools accessible, affordable, and available to everyone.</strong>
+        We believe AI should be a tool for <strong>empowerment, not a luxury behind paywalls or international cards</strong>.
+      </p>
+      <p class="about-text">
+        Whether you're a student exploring creativity, a developer building smarter tools, or just curious about the power of conversational AI — Aikipedia gives you <strong>instant access to the latest AI models at transparent, pay-as-you-go pricing</strong>.
+      </p>
+      <p class="about-text">
+        <em>Built with a modern, scalable architecture leveraging Cloudflare Workers, Supabase Edge Functions, and robust cloud infrastructure for reliability and speed.</em>
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── What Makes Us Unique ─────────────────────── -->
+  <section class="about-section" style="background:var(--dark);">
+    <div class="about-inner">
+      <span class="section-label">Features</span>
+      <h2 class="section-title">What Makes Aikipedia Unique?</h2>
+      <div class="section-underline"></div>
+
+      <ul class="feature-list">
+        <li class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-body">
+            <div class="feature-title">Access the Best AI Models</div>
+            <div class="feature-desc">From natural conversations to powerful coding assistants and research bots, we bring you state-of-the-art AI tools under one roof, delivered via globally distributed edge functions for low-latency access.</div>
+          </div>
+        </li>
+        <li class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-body">
+            <div class="feature-title">No Subscriptions, No Hassles</div>
+            <div class="feature-desc">Say goodbye to expensive monthly fees. Just buy credits once, and use them anytime. No commitments, no auto-renewals.</div>
+          </div>
+        </li>
+        <li class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-body">
+            <div class="feature-title">Pay in Indian Rupees via UPI</div>
+            <div class="feature-desc">We've made AI truly accessible in India — pay securely using UPI apps like GPay, PhonePe, or Paytm, starting from as low as ₹49.</div>
+          </div>
+        </li>
+        <li class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-body">
+            <div class="feature-title">Realtime Usage, Realtime Value</div>
+            <div class="feature-desc">Credits (Echos) are added instantly after payment, letting you use the platform without delays or waiting for manual approvals. Our backend leverages serverless functions and scalable databases for a seamless experience.</div>
+          </div>
+        </li>
+        <li class="feature-item">
+          <div class="feature-dot"></div>
+          <div class="feature-body">
+            <div class="feature-title">For Users and Developers Alike</div>
+            <div class="feature-desc">Use our sleek chat interface or integrate AI models into your apps through API keys linked to your account. Track usage, manage costs, and stay in control.</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ─── Why We Built This ────────────────────────── -->
+  <section class="about-section" style="background:var(--black);">
+    <div class="about-inner">
+      <span class="section-label">Our Why</span>
+      <h2 class="section-title">Why We Built This</h2>
+      <div class="section-underline"></div>
+      <p class="about-text">
+        Today, some of the world's most powerful AI is locked behind high prices or inaccessible platforms. We built Aikipedia to change that — to give <strong>individuals, students, creators, and small teams</strong> the same superpowers that big companies enjoy.
+      </p>
+      <p class="about-text">
+        AI should be a utility — <strong>affordable, on-demand, and universal</strong>.
+      </p>
+      <p class="about-text">
+        <em>Every feature is engineered for scale and reliability, using edge-first technologies and modern cloud best practices.</em>
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── Community ────────────────────────────────── -->
+  <section class="about-section" style="background:var(--dark);">
+    <div class="about-inner">
+      <span class="section-label">Join Us</span>
+      <h2 class="section-title">Join the Aikipedia Community</h2>
+      <div class="section-underline"></div>
+      <p class="about-text">
+        We're just getting started. With every update, we're adding <strong>more models, better features, and smarter tools</strong> — while keeping things simple and affordable.
+      </p>
+      <p class="about-text">
+        Whether you're here to explore or build, Aikipedia is your gateway to the future of AI.
+      </p>
+      <p class="about-text">
+        <em>Built by a developer passionate about scalable systems, edge computing, and democratizing AI for all.</em>
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── CTA Strip ─────────────────────────────────── -->
+  <div class="cta-strip">
+    <p>Proudly Made in India. Built for Indian Developers, Students &amp; Innovators.</p>
+  </div>
+
+  <!-- ─── Footer ───────────────────────────────────── -->
+  <footer>
+    <span class="footer-left">© 2024 Aikipedia.in</span>
+    <ul class="footer-links">
+      <li><a href="api.html">Documentation</a></li>
+      <li><a href="about_us.html">About</a></li>
+      <li><a href="payments.html">Pricing</a></li>
+    </ul>
+  </footer>
+
+  <!-- ─── Scripts ───────────────────────────────────── -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="background-particles.js"></script>
+  <script src="cursor-trail.js"></script>
+  <script src="aikipedia-auth.js"></script>
+
+  <script>
+  // ── Sync navbar auth state ──────────────────────────────────────────
+  function syncNavbarAuthState() {
+    const user   = localStorage.getItem('aikipediaUser');
+    const toggle = document.getElementById('profileToggle');
+    const logout = document.getElementById('logoutBtn');
+    const auth   = document.getElementById('authButtons');
+    const dashLi = document.getElementById('dashboardNavItem');
+    const grpLi  = document.getElementById('createGroupNavItem');
+    const drawerDash   = document.getElementById('drawerDashboardLink');
+    const drawerLogin  = document.getElementById('drawerLoginBtn');
+    const drawerReg    = document.getElementById('drawerRegisterBtn');
+    const drawerLogout = document.getElementById('drawerLogoutBtn');
+
+    if (user) {
+      toggle.textContent = user.charAt(0).toUpperCase();
+      toggle.title = 'Signed in as ' + user;
+      toggle.style.display = 'flex';
+      toggle.classList.add('showing');
+      auth.style.display = 'none';
+      logout.style.display = 'flex';
+      logout.classList.add('showing');
+      if (dashLi) dashLi.style.display = 'list-item';
+      if (grpLi)  grpLi.style.display  = 'list-item';
+      if (drawerDash)   drawerDash.style.display = 'block';
+      if (drawerLogin)  drawerLogin.style.display = 'none';
+      if (drawerReg)    drawerReg.style.display   = 'none';
+      if (drawerLogout) drawerLogout.style.display = 'block';
+    } else {
+      toggle.style.display = 'none';
+      toggle.classList.remove('showing');
+      auth.style.display = 'flex';
+      logout.style.display = 'none';
+      logout.classList.remove('showing');
+      if (dashLi) dashLi.style.display = 'none';
+      if (grpLi)  grpLi.style.display  = 'none';
+      if (drawerDash)   drawerDash.style.display = 'none';
+      if (drawerLogin)  drawerLogin.style.display = 'block';
+      if (drawerReg)    drawerReg.style.display   = 'block';
+      if (drawerLogout) drawerLogout.style.display = 'none';
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', syncNavbarAuthState);
+  window.addEventListener('aikipedia-auth-change', syncNavbarAuthState);
+
+  // Wire mobile drawer buttons
+  document.getElementById('drawerLoginBtn').onclick    = () => document.getElementById('loginBtn').click();
+  document.getElementById('drawerRegisterBtn').onclick = () => document.getElementById('registerBtn').click();
+  document.getElementById('drawerLogoutBtn').onclick   = () => document.getElementById('logoutBtn').click();
+
+  // Mobile hamburger toggle
+  const hamburger = document.getElementById('navHamburger');
+  const drawer    = document.getElementById('navDrawer');
+  hamburger.addEventListener('click', () => drawer.classList.toggle('open'));
+  document.addEventListener('click', (e) => {
+    if (!drawer.contains(e.target) && !hamburger.contains(e.target)) {
+      drawer.classList.remove('open');
+    }
+  });
+  </script>
 </body>
 </html>

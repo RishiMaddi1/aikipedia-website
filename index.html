@@ -3,948 +3,932 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aikipedia - India's Most Affordable AI Platform</title>
+  <title>Aikipedia – Built in India. Billed in ₹.</title>
+  <meta name="description" content="Direct access to Claude, Gemini, DeepSeek & more. Pay with UPI. No credit card. No subscriptions. Starts at ₹49.">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="aikipedia-auth.css" />
-  
+
   <style>
+    /* ─── Reset & Base ─────────────────────────────── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
     :root {
-      --bg: #031626;
-      --bg-secondary: #010512;
-      --text: #a3b2d3;
-      --accent: #4889cd;
-      --border: #000137;
-      --error: #FCADB0;
-      --success: #2F686F;
+      /* auth-css compat vars */
+      --bg: #0a0a0a;
+      --bg-secondary: #161616;
+      --text: #ccc;
+      --accent: #c9a84c;
+      --border: #2a2a2a;
+      --error: #ff6b6b;
+      --success: #10b981;
+      /* page palette */
+      --black:   #0a0a0a;
+      --dark:    #111111;
+      --card:    #161616;
+      --gold:    #c9a84c;
+      --gold-lt: #e8c97a;
+      --white:   #f0f0f0;
+      --muted:   #888;
     }
-    ::-webkit-scrollbar {
-      width: 6px;
-      background-color: var(--border);
-    }
-    ::-webkit-scrollbar-thumb {
-      background-color: var(--accent);
-      border-radius: 6px;
-    }
-    ::-webkit-scrollbar-button {
-      background-color: var(--border);
-    }
-    ::-webkit-scrollbar-corner {
-      background-color: var(--bg-secondary);
-    }
-    
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
+
+    ::-webkit-scrollbar { width: 5px; background: #111; }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+
+    html { scroll-behavior: smooth; }
+
     body {
-      background: #181a20;
-      color: #e2e8f0;
+      background: var(--black);
+      color: var(--white);
       font-family: 'Inter', sans-serif;
       overflow-x: hidden;
       line-height: 1.6;
     }
 
-    /* Hero Section */
-    .hero {
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      background: linear-gradient(135deg, #181a20 0%, #0f1419 100%);
-    }
+    a { text-decoration: none; color: inherit; }
 
-    .hero-content {
-      max-width: 1200px;
-      padding: 0 2rem;
+    /* ─── Navbar ────────────────────────────────────── */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 6rem;
-      z-index: 10;
-    }
-
-    .hero-text {
-      flex: 1;
-      text-align: left;
-      max-width: 600px;
-    }
-
-    .hero-3d-model {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      max-width: 500px;
-    }
-
-    .hero-badge {
-      display: inline-block;
-      padding: 0.5rem 1.5rem;
-      background: rgba(72, 137, 205, 0.1);
-      border: 1px solid rgba(72, 137, 205, 0.3);
-      border-radius: 50px;
-      color: #4889cd;
-      font-size: 0.9rem;
-      margin-bottom: 2rem;
-      animation: float 3s ease-in-out infinite;
-      text-align: left;
-    }
-
-    .hero-title {
-      font-size: clamp(2.25rem, 6vw, 5.25rem);
-      font-weight: 900;
-      background: linear-gradient(135deg, #4889cd 0%, #64b5f6 50%, #90caf9 100%);
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 1.125rem;
-      letter-spacing: -0.02em;
-      animation: slideUp 1s ease-out;
-    }
-
-    .hero-subtitle {
-      font-size: clamp(0.9rem, 2.25vw, 1.35rem);
-      color: #94a3b8;
-      max-width: 600px;
-      margin: 0 0 2.25rem 0;
-      animation: slideUp 1s ease-out 0.2s both;
-    }
-
-    .hero-3d-container {
-      width: 300px;
-      height: 300px;
-      position: relative;
-      animation: rotate3d 20s linear infinite;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .hero-3d-container::before {
-      content: '';
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, rgba(72, 137, 205, 0.2) 0%, rgba(72, 137, 205, 0.1) 100%);
-      border-radius: 50%;
-      animation: pulse 3s ease-in-out infinite;
-    }
-
-    .hero-3d-container::after {
-      content: '';
-      display: none;
-    }
-
-    .hero-logo-spin {
-      width: 70%;
-      height: 70%;
-      max-width: 210px;
-      max-height: 210px;
-      object-fit: contain;
-      filter: drop-shadow(0 10px 20px rgba(72, 137, 205, 0.3));
-      z-index: 1;
-      pointer-events: none;
-      user-select: none;
-    }
-
-    @keyframes rotate3d {
-      0% {
-        transform: rotateY(0deg) rotateX(0deg);
-      }
-      100% {
-        transform: rotateY(360deg) rotateX(360deg);
-      }
-    }
-
-    @keyframes pulse {
-      0%, 100% {
-        transform: scale(1);
-        opacity: 0.5;
-      }
-      50% {
-        transform: scale(1.1);
-        opacity: 0.8;
-      }
-    }
-
-    .cta-container {
-      display: flex;
+      padding: 0 2.5rem;
+      height: 56px;
+      background: rgba(10,10,10,0.95);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
       gap: 1rem;
-      justify-content: flex-start;
-      flex-wrap: wrap;
-      animation: slideUp 1s ease-out 0.4s both;
     }
 
-    .cta-primary {
-      padding: 1.2rem 2.5rem;
-      background: linear-gradient(135deg, #4889cd 0%, #3b82f6 100%);
-      color: white;
-      border: none;
-      border-radius: 50px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .cta-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 40px rgba(72, 137, 205, 0.4);
-    }
-
-    .cta-secondary {
-      padding: 1.2rem 2.5rem;
-      background: transparent;
-      color: #4889cd;
-      border: 2px solid #4889cd;
-      border-radius: 50px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .cta-secondary:hover {
-      background: rgba(72, 137, 205, 0.1);
-      transform: translateY(-2px);
-    }
-
-
-
-    /* Section Styles */
-    .section {
-      padding: 6rem 1.5rem;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .section-header {
-      text-align: center;
-      margin-bottom: 3rem;
-    }
-
-    .section-title {
-      font-size: clamp(1.875rem, 3.75vw, 3rem);
-      font-weight: 800;
-      background: linear-gradient(135deg, #4889cd 0%, #64b5f6 100%);
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 0.75rem;
-    }
-
-    .section-title span {
-      -webkit-text-fill-color: initial;
-      background: none;
-    }
-
-    .section-subtitle {
+    .nav-logo {
       font-size: 0.9rem;
-      color: #94a3b8;
-      max-width: 450px;
-      margin: 0 auto;
-    }
-
-    /* Video Section */
-    .video-section {
-      background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%);
-      border-radius: 22.5px;
-      padding: 3rem 1.5rem;
-      position: relative;
-      overflow: hidden;
-      margin: 3rem 0;
-    }
-
-    .video-content {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .video-text {
-      text-align: center;
-    }
-
-    .video-text .section-title {
-      text-align: center;
-      margin-bottom: 1rem;
-    }
-
-    .video-text .section-subtitle {
-      text-align: center;
-      margin: 0 0 1.5rem 0;
-      max-width: none;
-    }
-
-    .video-description {
-      color: #94a3b8;
-      font-size: 1rem;
-      line-height: 1.6;
-      margin-bottom: 0;
-    }
-
-    /* Model Cards */
-    .models-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-      gap: 2rem;
-      margin-top: 3rem;
-    }
-
-    .model-card {
-      background: linear-gradient(135deg, #1e2530 0%, #252d3a 100%);
-      border-radius: 20px;
-      padding: 2.5rem;
-      border: 1px solid rgba(72, 137, 205, 0.1);
-      transition: all 0.4s ease;
-      position: relative;
-      overflow: hidden;
-      cursor: pointer;
-    }
-
-    .model-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, #4889cd, #64b5f6, #90caf9);
-      transform: scaleX(0);
-      transition: transform 0.4s ease;
-    }
-
-    .model-card:hover::before {
-      transform: scaleX(1);
-    }
-
-    .model-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 60px rgba(72, 137, 205, 0.2);
-      border-color: rgba(72, 137, 205, 0.3);
-    }
-
-    .model-name {
-      font-size: 1.5rem;
       font-weight: 700;
-      color: #4889cd;
-      margin-bottom: 1rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--white);
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
-    .model-desc {
-      color: #94a3b8;
-      font-size: 1rem;
-      margin-bottom: 1.5rem;
-      line-height: 1.6;
-    }
-
-    .model-cost {
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: #10b981;
+    /* Center links */
+    .nav-links {
       display: flex;
+      gap: 1.8rem;
+      list-style: none;
       align-items: center;
-      gap: 0.5rem;
-      line-height: 1.4;
     }
 
-    /* Payment Grid */
-    .payment-grid {
-      display: flex;
-      gap: 2rem;
-      justify-content: center;
-      align-items: flex-start;
-      flex-wrap: wrap;
-      margin-top: 3rem;
-    }
-
-    .payment-method {
+    .nav-links a,
+    .nav-links button {
+      font-size: 0.76rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
       background: none;
       border: none;
-      box-shadow: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.2s;
       padding: 0;
+    }
+    .nav-links a:hover,
+    .nav-links button:hover { color: var(--white); }
+
+    /* Dashboard & Create Group – hidden by default, shown when logged in */
+    #dashboardNavItem,
+    #createGroupNavItem { display: none; }
+
+    /* Right-side auth area */
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    /* Login / Register shown when logged out */
+    #authButtons {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .nav-auth-link {
+      font-size: 0.76rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.2s;
+    }
+    .nav-auth-link:hover { color: var(--white); }
+
+    /* Divider between login and register */
+    .nav-auth-sep {
+      width: 1px;
+      height: 14px;
+      background: var(--border);
+    }
+
+    /* Buy Echos CTA */
+    .nav-cta {
+      padding: 0.42rem 1.15rem;
+      background: var(--gold);
+      color: #000;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s, transform 0.15s;
+      white-space: nowrap;
+    }
+    .nav-cta:hover { background: var(--gold-lt); transform: translateY(-1px); }
+
+    /* User avatar (shown when logged in) */
+    #profileToggle {
+      width: 34px;
+      height: 34px;
+      border-radius: 6px;
+      background: var(--gold);
+      color: #000;
+      font-size: 0.85rem;
+      font-weight: 800;
+      display: none; /* hidden until logged in; auth.js sets .textContent */
+      align-items: center;
+      justify-content: center;
+      cursor: default;
+      flex-shrink: 0;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      position: relative;
+    }
+
+    /* "Hello, X" hidden (auth.js still sets it; we show it as tooltip/aria) */
+    #profileDetails { display: none; }
+
+    /* Logout button – shown when logged in */
+    #logoutBtn {
+      display: none;
+      padding: 0.42rem 1rem;
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    #logoutBtn:hover { color: var(--white); border-color: var(--white); }
+
+    /* Hamburger */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      background: none;
+      border: none;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--white);
+      transition: all 0.3s;
+    }
+
+    /* Mobile drawer */
+    .nav-drawer {
+      display: none;
+      position: fixed;
+      top: 56px; left: 0; right: 0;
+      background: #111;
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      flex-direction: column;
+      gap: 0.6rem;
+      z-index: 999;
+    }
+    .nav-drawer.open { display: flex; }
+    .nav-drawer a,
+    .nav-drawer button {
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      text-align: left;
+      padding: 0.4rem 0;
+      transition: color 0.2s;
+    }
+    .nav-drawer a:hover,
+    .nav-drawer button:hover { color: var(--white); }
+
+    /* ─── Hero ──────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      transition: transform 0.2s;
+      justify-content: center;
+      text-align: center;
+      padding: 7rem 2rem 4rem;
+      background: var(--black);
+      position: relative;
+      overflow: hidden;
     }
 
-    .payment-method:hover {
-      transform: translateY(-6px) scale(1.08);
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
     }
 
-    .payment-icon {
-      width: 70px;
-      height: 70px;
-      background: linear-gradient(135deg, #1e2530 0%, #252d3a 100%);
-      border-radius: 50%;
+    .hero-inner { position: relative; z-index: 1; max-width: 820px; }
+
+    .hero-eyebrow {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.6rem;
+    }
+
+    .hero-headline {
+      font-size: clamp(3rem, 8vw, 6.5rem);
+      font-weight: 900;
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 1.5rem;
+    }
+    .hero-headline .rupee { color: var(--gold); }
+
+    .hero-sub {
+      font-size: clamp(0.88rem, 2vw, 1.05rem);
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.75;
+    }
+    .hero-sub strong { color: var(--white); }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      padding: 0.75rem 2rem;
+      background: var(--gold);
+      color: #000;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      display: inline-block;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { background: var(--gold-lt); transform: translateY(-2px); }
+
+    .btn-outline {
+      padding: 0.75rem 2rem;
+      background: transparent;
+      color: var(--white);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border: 1.5px solid var(--border);
+      cursor: pointer;
+      font-family: inherit;
+      display: inline-block;
+      transition: border-color 0.2s, color 0.2s, transform 0.15s;
+    }
+    .btn-outline:hover { border-color: var(--white); transform: translateY(-2px); }
+
+    .hero-brands {
+      margin-top: 4rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.2rem;
-      margin-bottom: 0.5rem;
-      border: 2px solid rgba(72, 137, 205, 0.15);
-      box-shadow: 0 2px 8px rgba(72, 137, 205, 0.08);
-      transition: border-color 0.2s;
+      gap: 1rem;
+      flex-wrap: wrap;
     }
-
-    .payment-method:hover .payment-icon {
-      border-color: #4889cd;
+    .hero-brands span {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #444;
     }
+    .brand-dot { width: 3px; height: 3px; background: #333; border-radius: 50%; }
 
-    .payment-name {
-      font-size: 1rem;
-      font-weight: 500;
-      color: #e2e8f0;
-      margin: 0;
-      text-align: center;
-      margin-top: 0.25rem;
-    }
-
-    /* Features Section */
-    .features-section {
-      background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%);
-      border-radius: 30px;
-      padding: 4rem 2rem;
-      margin: 4rem 0;
-    }
-
-    .features-grid {
+    /* ─── Ticker Bar ────────────────────────────────── */
+    .ticker-bar {
+      width: 100%;
+      background: var(--dark);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-      margin-top: 3rem;
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .ticker-item {
+      padding: 1.1rem 1rem;
+      text-align: center;
+      border-right: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ticker-item:last-child { border-right: none; }
+    .ticker-item span {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .ticker-item.highlight span { color: var(--gold); }
+
+    /* ─── Section Commons ───────────────────────────── */
+    .section-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 0;
+      line-height: 1.1;
+    }
+    .section-underline {
+      width: 48px; height: 3px;
+      background: var(--gold);
+      margin: 1rem 0 3.5rem;
     }
 
-    .feature-card {
-      background: linear-gradient(135deg, #1e2530 0%, #252d3a 100%);
-      border-radius: 20px;
-      padding: 2.5rem;
-      border: 1px solid rgba(72, 137, 205, 0.1);
-      transition: all 0.4s ease;
-      position: relative;
-      overflow: hidden;
+    /* ─── Why Section ───────────────────────────────── */
+    .why-section {
+      background: var(--black);
+      padding: 6rem 2rem;
+    }
+    .why-inner { max-width: 1100px; margin: 0 auto; }
+
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border: 1px solid var(--border);
+    }
+    .why-card {
+      padding: 2.5rem 2rem;
+      background: var(--card);
+      border-right: 1px solid var(--border);
+      transition: background 0.25s;
+    }
+    .why-card:last-child { border-right: none; }
+    .why-card:hover { background: #1c1c1c; }
+    .why-dot {
+      width: 8px; height: 8px;
+      background: var(--gold);
+      border-radius: 50%;
+      margin-bottom: 1.2rem;
+    }
+    .why-card-label {
+      font-size: 0.63rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.6rem;
+    }
+    .why-card-title {
+      font-size: 1rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--white);
+      margin-bottom: 0.75rem;
+    }
+    .why-card-desc {
+      font-size: 0.83rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ─── Models Section ────────────────────────────── */
+    .models-section {
+      background: var(--dark);
+      padding: 6rem 2rem;
+    }
+    .models-inner { max-width: 1100px; margin: 0 auto; }
+
+    .models-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      border: 1px solid var(--border);
+      margin-top: 0;
+    }
+    .model-card {
+      background: var(--card);
+      padding: 1.6rem 1.4rem;
+      border-right: 1px solid var(--border);
+      transition: background 0.25s;
       cursor: pointer;
     }
-
-    .feature-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 4px;
-      height: 100%;
-      background: linear-gradient(180deg, #4889cd, #64b5f6);
-      border-radius: 0 2px 2px 0;
-      transform: scaleY(0);
-      transition: transform 0.4s ease;
-      z-index: 1;
-    }
-
-    .feature-card:hover::before {
-      transform: scaleY(1);
-    }
-
-    .feature-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 60px rgba(72, 137, 205, 0.2);
-      border-color: rgba(72, 137, 205, 0.3);
-    }
-
-    .feature-title {
-      font-size: 1.5rem;
+    .model-card:last-child { border-right: none; }
+    .model-card:hover { background: #1d1d1d; }
+    .model-provider {
+      font-size: 0.58rem;
       font-weight: 700;
-      color: #4889cd;
-      margin-bottom: 1rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
     }
-
-    .feature-desc {
-      color: #94a3b8;
-      line-height: 1.6;
-    }
-
-    /* Guarantee Box */
-    .guarantee-box {
-      background: linear-gradient(135deg, rgba(72, 137, 205, 0.1) 0%, rgba(72, 137, 205, 0.05) 100%);
-      border: 2px solid rgba(72, 137, 205, 0.3);
-      border-radius: 20px;
-      padding: 3rem;
-      text-align: center;
-      margin: 3rem 0;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .guarantee-box::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(45deg, transparent, rgba(72, 137, 205, 0.1), transparent);
-      animation: rotate 10s linear infinite;
-    }
-
-    .guarantee-content {
-      position: relative;
-      z-index: 1;
-    }
-
-    .guarantee-title {
-      font-size: 2rem;
+    .model-name {
+      font-size: 0.92rem;
       font-weight: 800;
-      color: #4889cd;
-      margin-bottom: 1rem;
+      color: var(--white);
+      margin-bottom: 0.55rem;
+      line-height: 1.25;
+    }
+    .model-desc {
+      font-size: 0.73rem;
+      color: var(--muted);
+      line-height: 1.5;
     }
 
-    .guarantee-desc {
-      font-size: 1.2rem;
-      color: #e2e8f0;
+    /* ─── CTA Strip ─────────────────────────────────── */
+    .cta-strip {
+      background: var(--gold);
+      padding: 1.1rem 2rem;
+      text-align: center;
+    }
+    .cta-strip p {
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: #000;
     }
 
-    /* Animations */
-    @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    /* ─── Footer ────────────────────────────────────── */
+    footer {
+      background: var(--dark);
+      border-top: 1px solid var(--border);
+      padding: 1.8rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-left { font-size: 0.7rem; color: #444; letter-spacing: 0.05em; }
+    .footer-links { display: flex; gap: 2rem; list-style: none; }
+    .footer-links a {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: #555;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--white); }
+
+    /* ─── Auth Modal overrides (dark theme) ─────────── */
+    #authModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.75);
+      z-index: 3000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
     }
 
-    @keyframes float {
-      0%, 100% {
-        transform: translateY(0px);
-      }
-      50% {
-        transform: translateY(-20px);
-      }
+    #loginForm, #registerForm, #createGroupForm {
+      background: #161616 !important;
+      border: 1px solid #2a2a2a !important;
+      border-radius: 4px !important;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7) !important;
     }
 
-    @keyframes shimmer {
-      0% {
-        transform: translateX(-100%);
-      }
-      100% {
-        transform: translateX(100%);
-      }
+    /* ─── Responsive ────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .models-grid { grid-template-columns: repeat(3, 1fr); }
+      .model-card:nth-child(3) { border-right: none; }
+      .model-card:nth-child(4),
+      .model-card:nth-child(5) { border-top: 1px solid var(--border); }
+      .model-card:nth-child(5) { border-right: none; }
     }
 
-    @keyframes rotate {
-      0% {
-        transform: rotate(0deg);
-      }
-      100% {
-        transform: rotate(360deg);
-      }
+    @media (max-width: 900px) {
+      .why-grid { grid-template-columns: 1fr; }
+      .why-card { border-right: none; border-bottom: 1px solid var(--border); }
+      .why-card:last-child { border-bottom: none; }
+      .ticker-bar { grid-template-columns: repeat(2, 1fr); }
+      .ticker-item:nth-child(odd) { border-right: 1px solid var(--border); }
+      .ticker-item:nth-child(even) { border-right: none; }
+      .ticker-item:nth-child(1),
+      .ticker-item:nth-child(2) { border-bottom: 1px solid var(--border); }
     }
 
-    /* Responsive */
     @media (max-width: 768px) {
-      .hero-content {
-        padding: 0 0.75rem;
-        flex-direction: column;
-        text-align: center;
-        gap: 2rem;
-      }
+      .navbar { padding: 0 1.2rem; }
+      .nav-links { display: none; }
+      #authButtons { display: none !important; }
+      #logoutBtn.showing { display: none !important; }
+      .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+      #profileToggle.showing { display: flex !important; }
+    }
 
-      .hero-text {
-        text-align: center;
-      }
-
-      .hero-badge {
-        text-align: center;
-      }
-
-      .cta-container {
-        justify-content: center;
-      }
-
-      .hero-3d-container {
-        width: 200px;
-        height: 200px;
-      }
-
-      .hero-3d-container::after {
-        font-size: 5rem;
-      }
-      
-      .section {
-        padding: 3rem 0.75rem;
-      }
-      
-      .models-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .cta-container {
-        flex-direction: column;
-        align-items: center;
-      }
-      
-      .cta-primary, .cta-secondary {
-        width: 100%;
-        max-width: 225px;
-      }
-
-      .video-content {
-        text-align: center;
-      }
-
-      .video-text {
-        text-align: center;
-      }
-
-      .video-text .section-title,
-      .video-text .section-subtitle {
-        text-align: center;
-      }
+    @media (max-width: 640px) {
+      .hero-headline { font-size: clamp(2.2rem, 10vw, 3.5rem); }
+      .hero-actions { flex-direction: column; align-items: center; }
+      .btn-primary, .btn-outline { width: 100%; max-width: 260px; text-align: center; }
+      .models-grid { grid-template-columns: 1fr; }
+      .model-card { border-right: none; border-bottom: 1px solid var(--border); }
+      .model-card:last-child { border-bottom: none; }
+      footer { flex-direction: column; text-align: center; }
+      .footer-links { justify-content: center; }
     }
   </style>
 </head>
 <body>
-  <div id="sidebarOverlay"></div>
-  <!-- Profile icon always visible, floating top left -->
-  <div class="profile" id="profileToggle" style="position:fixed;top:1.76rem;left:1.76rem;z-index:2101;box-shadow:0 1.6px 9.6px rgba(0,0,0,0.13);">G</div>
-  <aside class="sidebar" id="sidebar">
-    <div class="profile-details" id="profileDetails" style="padding: 0.5rem;">Hello, Guest</div>
-    <button id="logoutBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary" style="display:none; padding: 1.2rem;gap:0.88rem; margin-top:2rem; align-items:center;">Logout</button>
-    <button id="aboutUsBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary" style="padding: 1.2rem; gap: 0.88rem; margin-top: 0.8rem; align-items: center;">About Us</button>
-    <button id="apiBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary" style="padding: 1.2rem; gap: 0.88rem; margin-top: 0.8rem; align-items: center;">API</button>
-    <button id="paymentsBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary" style="padding: 1.2rem; gap: 0.88rem; margin-top: 0.8rem; align-items: center;">Buy echos</button>
-    <button id="dashboardBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary" style="padding: 1.2rem; gap: 0.88rem; margin-top: 0.8rem; align-items: center;">Dashboard</button>
-    <button id="chatBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary" style="padding: 1.2rem; gap: 0.88rem; margin-top: 0.8rem; align-items: center;">chat</button>
-    <button id="createGroupBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary" style="padding: 1.2rem; gap: 0.88rem; margin-top: 0.8rem; align-items: center;">Create Group</button>
-    <!-- Login/Register Buttons -->
-    <div id="authButtons" style="width:100%; display:flex; flex-direction:column; gap:0.88rem; margin-top:2rem; align-items:center;">
-      <button id="loginBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary">Login</button>
-      <button id="registerBtn" class="sidebar-auth-btn sidebar-auth-btn-secondary">Register</button>
-    </div>
-    <div>
-    
-    </div>
-  </aside>
-  <!-- Auth Modal -->
-  <div id="authModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;">
+
+  <!-- ─── Auth Modal ────────────────────────────────── -->
+  <!-- profileDetails – hidden visually, auth.js writes to it -->
+  <div id="profileDetails" style="display:none;"></div>
+  <!-- sidebarOverlay – auth.js still references it; keep hidden -->
+  <div id="sidebarOverlay" style="display:none;position:fixed;inset:0;z-index:2999;"></div>
+  <!-- sidebar – auth.js references it; keep hidden off-screen -->
+  <aside id="sidebar" style="display:none;"></aside>
+
+  <div id="authModal">
     <!-- Login Form -->
-    <div id="loginForm" style="background:#1a1f2e;padding:2.5rem 3rem;border-radius:20px;min-width:380px;max-width:420px;display:flex;flex-direction:column;gap:1.5rem;align-items:center;box-shadow:0 10px 25px rgba(0,0,0,0.2);transform:translateY(-20px);transition:transform 0.3s ease;">
-      <div style="text-align:center;margin-bottom:1rem;">
-        <h2 style="color:#4889cd;font-size:2rem;margin-bottom:0.5rem;">Welcome Back</h2>
-        <p style="color:#e2e8f0;opacity:0.8;font-size:0.95rem;">Sign in to continue chatting</p>
+    <div id="loginForm" style="min-width:320px;max-width:400px;width:100%;padding:2.2rem 2.5rem;display:flex;flex-direction:column;gap:1.3rem;align-items:center;">
+      <div style="text-align:center;">
+        <h2 style="color:var(--gold);font-size:1.7rem;font-weight:900;text-transform:uppercase;letter-spacing:-0.01em;margin-bottom:0.3rem;">Welcome Back</h2>
+        <p style="color:#555;font-size:0.85rem;">Sign in to continue</p>
       </div>
-      
-      <div style="width:100%;display:flex;flex-direction:column;gap:1.2rem;">
-        <div>
-          <input id="loginUsername" placeholder="Username" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid #000137;width:100%;background:#181a20;color:#e2e8f0;font-size:1rem;transition:border-color 0.3s ease;" />
-        </div>
+      <div style="width:100%;display:flex;flex-direction:column;gap:0.9rem;">
+        <input id="loginUsername" placeholder="Username" style="padding:0.85rem 1rem;border-radius:3px;border:1px solid #2a2a2a;width:100%;background:#0a0a0a;color:#f0f0f0;font-size:0.9rem;outline:none;font-family:inherit;" />
         <div style="position:relative;width:100%;display:flex;align-items:center;">
-          <input id="loginPassword" type="password" placeholder="Password" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid #000137;width:100%;background:#181a20;color:#e2e8f0;font-size:1rem;transition:border-color 0.3s ease;" />
-          <span class="toggle-password" data-target="loginPassword" style="position:absolute;right:1.2rem;cursor:pointer;user-select:none;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="9" ry="5.5"/><circle cx="12" cy="12" r="2.5"/></svg>
+          <input id="loginPassword" type="password" placeholder="Password" style="padding:0.85rem 1rem;border-radius:3px;border:1px solid #2a2a2a;width:100%;background:#0a0a0a;color:#f0f0f0;font-size:0.9rem;outline:none;font-family:inherit;" />
+          <span class="toggle-password" data-target="loginPassword" style="position:absolute;right:1rem;cursor:pointer;user-select:none;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="9" ry="5.5"/><circle cx="12" cy="12" r="2.5"/></svg>
           </span>
         </div>
       </div>
-
-      <button id="loginSubmitBtn" style="background:#4889cd;color:#000;font-weight:600;width:100%;padding:1rem 0;border-radius:12px;border:none;cursor:pointer;font-size:1rem;transition:all 0.3s ease;margin-top:0.5rem;">Sign In</button>
-      
-      <div style="display:flex;gap:0.5rem;align-items:center;margin-top:0.5rem;">
-        <span style="color:#e2e8f0;opacity:0.7;font-size:0.9rem;">New to Aikipedia?</span>
-        <button id="switchToRegisterBtn" style="background:none;border:none;color:#4889cd;cursor:pointer;font-weight:600;font-size:0.9rem;">Create Account</button>
+      <button id="loginSubmitBtn" style="background:var(--gold);color:#000;font-weight:700;width:100%;padding:0.85rem 0;border-radius:3px;border:none;cursor:pointer;font-size:0.82rem;letter-spacing:0.1em;text-transform:uppercase;font-family:inherit;">Sign In</button>
+      <div style="display:flex;gap:0.5rem;align-items:center;">
+        <span style="color:#555;font-size:0.82rem;">New to Aikipedia?</span>
+        <button id="switchToRegisterBtn" style="background:none;border:none;color:var(--gold);cursor:pointer;font-weight:700;font-size:0.82rem;font-family:inherit;">Create Account</button>
       </div>
-
-      <button id="loginCancelBtn" style="background:none;color:#e2e8f0;border:none;cursor:pointer;font-size:0.9rem;opacity:0.7;margin-top:0.5rem;">Cancel</button>
-      
-      <div id="loginError" style="color:#FCADB0;font-size:0.95rem;text-align:center;min-height:1.2rem;"></div>
+      <button id="loginCancelBtn" style="background:none;color:#555;border:none;cursor:pointer;font-size:0.8rem;font-family:inherit;">Cancel</button>
+      <div id="loginError" style="color:#ff6b6b;font-size:0.85rem;text-align:center;min-height:1rem;"></div>
     </div>
 
     <!-- Register Form -->
-    <div id="registerForm" style="display:none;background:#1a1f2e;padding:2.5rem 3rem;border-radius:20px;min-width:380px;max-width:420px;flex-direction:column;gap:1.5rem;align-items:center;box-shadow:0 10px 25px rgba(0,0,0,0.2);transform:translateY(-20px);transition:transform 0.3s ease;">
-      <div style="text-align:center;margin-bottom:1rem;">
-        <h2 style="color:#4889cd;font-size:2rem;margin-bottom:0.5rem;">Create Account</h2>
-        <p style="color:#e2e8f0;opacity:0.8;font-size:0.95rem;">Join Aikipedia to start chatting</p>
+    <div id="registerForm" style="display:none;min-width:320px;max-width:400px;width:100%;padding:2.2rem 2.5rem;flex-direction:column;gap:1.3rem;align-items:center;">
+      <div style="text-align:center;">
+        <h2 style="color:var(--gold);font-size:1.7rem;font-weight:900;text-transform:uppercase;letter-spacing:-0.01em;margin-bottom:0.3rem;">Create Account</h2>
+        <p style="color:#555;font-size:0.85rem;">Join Aikipedia to start building</p>
       </div>
-      
-      <div style="width:100%;display:flex;flex-direction:column;gap:1.2rem;">
-        <div>
-          <input id="registerUsername" placeholder="Choose Username" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid #000137;width:100%;background:#181a20;color:#e2e8f0;font-size:1rem;transition:border-color 0.3s ease;" />
-        </div>
+      <div style="width:100%;display:flex;flex-direction:column;gap:0.9rem;">
+        <input id="registerUsername" placeholder="Choose Username" style="padding:0.85rem 1rem;border-radius:3px;border:1px solid #2a2a2a;width:100%;background:#0a0a0a;color:#f0f0f0;font-size:0.9rem;outline:none;font-family:inherit;" />
         <div style="position:relative;width:100%;display:flex;align-items:center;">
-          <input id="registerPassword" type="password" placeholder="Create Password" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid #000137;width:100%;background:#181a20;color:#e2e8f0;font-size:1rem;transition:border-color 0.3s ease;" />
-          <span class="toggle-password" data-target="registerPassword" style="position:absolute;right:1.2rem;cursor:pointer;user-select:none;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="9" ry="5.5"/><circle cx="12" cy="12" r="2.5"/></svg>
+          <input id="registerPassword" type="password" placeholder="Create Password" style="padding:0.85rem 1rem;border-radius:3px;border:1px solid #2a2a2a;width:100%;background:#0a0a0a;color:#f0f0f0;font-size:0.9rem;outline:none;font-family:inherit;" />
+          <span class="toggle-password" data-target="registerPassword" style="position:absolute;right:1rem;cursor:pointer;user-select:none;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="9" ry="5.5"/><circle cx="12" cy="12" r="2.5"/></svg>
           </span>
         </div>
         <div style="position:relative;width:100%;display:flex;align-items:center;">
-          <input id="registerConfirmPassword" type="password" placeholder="Confirm Password" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid #000137;width:100%;background:#181a20;color:#e2e8f0;font-size:1rem;transition:border-color 0.3s ease;" />
-          <span class="toggle-password" data-target="registerConfirmPassword" style="position:absolute;right:1.2rem;cursor:pointer;user-select:none;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="9" ry="5.5"/><circle cx="12" cy="12" r="2.5"/></svg>
+          <input id="registerConfirmPassword" type="password" placeholder="Confirm Password" style="padding:0.85rem 1rem;border-radius:3px;border:1px solid #2a2a2a;width:100%;background:#0a0a0a;color:#f0f0f0;font-size:0.9rem;outline:none;font-family:inherit;" />
+          <span class="toggle-password" data-target="registerConfirmPassword" style="position:absolute;right:1rem;cursor:pointer;user-select:none;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="9" ry="5.5"/><circle cx="12" cy="12" r="2.5"/></svg>
           </span>
         </div>
       </div>
-
-      <button id="registerSubmitBtn" style="background:#4889cd;color:#000;font-weight:600;width:100%;padding:1rem 0;border-radius:12px;border:none;cursor:pointer;font-size:1rem;transition:all 0.3s ease;margin-top:0.5rem;">Create Account</button>
-      
-      <div style="display:flex;gap:0.5rem;align-items:center;margin-top:0.5rem;">
-        <span style="color:#e2e8f0;opacity:0.7;font-size:0.9rem;">Already have an account?</span>
-        <button id="switchToLoginBtn" style="background:none;border:none;color:#4889cd;cursor:pointer;font-weight:600;font-size:0.9rem;">Sign In</button>
+      <button id="registerSubmitBtn" style="background:var(--gold);color:#000;font-weight:700;width:100%;padding:0.85rem 0;border-radius:3px;border:none;cursor:pointer;font-size:0.82rem;letter-spacing:0.1em;text-transform:uppercase;font-family:inherit;">Create Account</button>
+      <div style="display:flex;gap:0.5rem;align-items:center;">
+        <span style="color:#555;font-size:0.82rem;">Already have an account?</span>
+        <button id="switchToLoginBtn" style="background:none;border:none;color:var(--gold);cursor:pointer;font-weight:700;font-size:0.82rem;font-family:inherit;">Sign In</button>
       </div>
-
-      <button id="registerCancelBtn" style="background:none;color:#e2e8f0;border:none;cursor:pointer;font-size:0.9rem;opacity:0.7;margin-top:0.5rem;">Cancel</button>
-      
-      <div id="registerError" style="color:#FCADB0;font-size:0.95rem;text-align:center;min-height:1.2rem;"></div>
+      <button id="registerCancelBtn" style="background:none;color:#555;border:none;cursor:pointer;font-size:0.8rem;font-family:inherit;">Cancel</button>
+      <div id="registerError" style="color:#ff6b6b;font-size:0.85rem;text-align:center;min-height:1rem;"></div>
     </div>
+
     <!-- Create Group Form -->
-    <div id="createGroupForm" style="display:none;background:#1a1f2e;padding:2.5rem 3rem;border-radius:20px;min-width:380px;max-width:420px;flex-direction:column;gap:1.5rem;align-items:center;box-shadow:0 10px 25px rgba(0,0,0,0.2);transform:translateY(-20px);transition:transform 0.3s ease;">
-      <div style="text-align:center;margin-bottom:1rem;">
-        <h2 style="color:#4889cd;font-size:2rem;margin-bottom:0.5rem;">Create Group</h2>
-        <p style="color:#e2e8f0;opacity:0.8;font-size:0.95rem;">Start a group chat with AI</p>
+    <div id="createGroupForm" style="display:none;min-width:320px;max-width:400px;width:100%;padding:2.2rem 2.5rem;flex-direction:column;gap:1.3rem;align-items:center;">
+      <div style="text-align:center;">
+        <h2 style="color:var(--gold);font-size:1.7rem;font-weight:900;text-transform:uppercase;margin-bottom:0.3rem;">Create Group</h2>
+        <p style="color:#555;font-size:0.85rem;">Start a group chat with AI</p>
       </div>
-      <div style="width:100%;display:flex;flex-direction:column;gap:1.2rem;">
+      <div style="width:100%;display:flex;flex-direction:column;gap:0.9rem;">
+        <input id="groupName" placeholder="Group name" style="padding:0.85rem 1rem;border-radius:3px;border:1px solid #2a2a2a;width:100%;background:#0a0a0a;color:#f0f0f0;font-size:0.9rem;outline:none;font-family:inherit;" />
         <div>
-          <input id="groupName" placeholder="Group name" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid #000137;width:100%;background:#181a20;color:#e2e8f0;font-size:1rem;transition:border-color 0.3s ease;" />
-        </div>
-        <div>
-          <label style="color:#94a3b8;font-size:0.9rem;margin-bottom:0.5rem;display:block;">Max members (optional)</label>
-          <input id="groupMaxMembers" type="number" placeholder="50" min="2" max="100" style="padding:1rem 1.2rem;border-radius:12px;border:2px solid #000137;width:100%;background:#181a20;color:#e2e8f0;font-size:1rem;transition:border-color 0.3s ease;" />
+          <label style="color:#555;font-size:0.78rem;display:block;margin-bottom:0.4rem;">Max members (optional)</label>
+          <input id="groupMaxMembers" type="number" placeholder="50" min="2" max="100" style="padding:0.85rem 1rem;border-radius:3px;border:1px solid #2a2a2a;width:100%;background:#0a0a0a;color:#f0f0f0;font-size:0.9rem;outline:none;font-family:inherit;" />
         </div>
       </div>
-      <button id="createGroupSubmitBtn" style="background:#4889cd;color:#000;font-weight:600;width:100%;padding:1rem 0;border-radius:12px;border:none;cursor:pointer;font-size:1rem;transition:all 0.3s ease;margin-top:0.5rem;">Create Group</button>
-      <button id="createGroupCancelBtn" style="background:none;color:#e2e8f0;border:none;cursor:pointer;font-size:0.9rem;opacity:0.7;margin-top:0.5rem;">Cancel</button>
-      <div id="createGroupError" style="color:#FCADB0;font-size:0.95rem;text-align:center;min-height:1.2rem;"></div>
+      <button id="createGroupSubmitBtn" style="background:var(--gold);color:#000;font-weight:700;width:100%;padding:0.85rem 0;border-radius:3px;border:none;cursor:pointer;font-size:0.82rem;letter-spacing:0.1em;text-transform:uppercase;font-family:inherit;">Create Group</button>
+      <button id="createGroupCancelBtn" style="background:none;color:#555;border:none;cursor:pointer;font-size:0.8rem;font-family:inherit;">Cancel</button>
+      <div id="createGroupError" style="color:#ff6b6b;font-size:0.85rem;text-align:center;min-height:1rem;"></div>
     </div>
   </div>
-  <!-- Hero Section -->
-  <section class="hero">
-    <div class="hero-content">
-      <div class="hero-text">
-        
-        <h1 class="hero-title">Aikipedia</h1>
-        <p class="hero-subtitle">
-          Access premium AI models starting at just ₹49. No subscriptions, no hidden fees. 
-          Built for Indian developers, students, and innovators.
-        </p>
-        <div class="cta-container">
-          <a href="api.html" class="cta-primary" style="text-decoration:none;display:inline-block;">Start Building Now</a>
-          <a href="payments.html" class="cta-secondary" style="text-decoration:none;display:inline-block;">View Pricing</a>
-        </div>
-      </div>
-      <div class="hero-3d-model">
-        <div class="hero-3d-container">
-          <img src="aikipedia_logo.svg" alt="Aikipedia Logo" class="hero-logo-spin" />
-        </div>
-      </div>
-    </div>
-  </section>
 
-    <!-- Free Trial Alternative Section -->
-  <section class="section">
-    <div class="video-section">
-      <div class="video-content">
-        <div class="video-text">
-          <h2 class="section-title">Stop the Free Trial Circus!</h2>
-          <p class="section-subtitle">
-            Had enough of the 'create new account' cycle?
-          </p>
-          <p class="video-description">
-            Instead of juggling between accounts for using their keys for a limited amount of times, 
-            buy credits cheap and use as you go. Credit to credit basis, no expiry till a year.
-          </p>
-          <p class="video-description" style="color:#2f7fdb;font-weight:600;">
-            No credit card required – pay with UPI or RuPay cards. Unlike other websites, you don't need a credit card to get started!
-          </p>
-          <p class="video-description">
-            No more switching between services, remembering different logins, or hitting free trial limits. 
-            Get all your AI needs met in one place with transparent, affordable pricing.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
+  <!-- ─── Navbar ────────────────────────────────────── -->
+  <nav class="navbar" id="mainNav">
+    <!-- Logo -->
+    <a href="index.html" class="nav-logo">Aikipedia.in</a>
 
-  <!-- Chat Models Section -->
-  <section class="section">
-    <div class="section-header">
-      <h2 class="section-title">Chat Models</h2>
-      <p class="section-subtitle">
-        Powerful conversational AI for coding, writing, and problem-solving
+    <!-- Center nav links -->
+    <ul class="nav-links">
+      <li><a href="about_us.html" id="aboutUsBtn">About</a></li>
+      <li><a href="api.html" id="apiBtn">API</a></li>
+      <li><a href="payments.html" id="paymentsBtn">Pricing</a></li>
+      <li><a href="chat.html" id="chatBtn">Chat</a></li>
+      <!-- Only shown when logged in -->
+      <li id="dashboardNavItem"><button id="dashboardBtn">Dashboard</button></li>
+      <li id="createGroupNavItem"><button id="createGroupBtn">New&nbsp;Group</button></li>
+    </ul>
+
+    <!-- Right: auth area -->
+    <div class="nav-right">
+      <!-- Logged-out state: Login + Register -->
+      <div id="authButtons">
+        <button class="nav-auth-link" id="loginBtn">Login</button>
+        <div class="nav-auth-sep"></div>
+        <button class="nav-auth-link" id="registerBtn">Register</button>
+      </div>
+
+      <!-- Logged-in state: Logout -->
+      <button id="logoutBtn">Logout</button>
+
+      <!-- Always visible: Buy Echos CTA -->
+      <a href="payments.html" class="nav-cta" id="navBuyBtn">Buy&nbsp;Echos</a>
+
+      <!-- User avatar — rightmost element, shown when logged in -->
+      <div id="profileToggle" title="" aria-label="Signed in"></div>
+    </div>
+
+    <!-- Hamburger (mobile) -->
+    <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile Drawer -->
+  <div class="nav-drawer" id="navDrawer">
+    <a href="about_us.html">About</a>
+    <a href="api.html">API</a>
+    <a href="payments.html">Pricing</a>
+    <a href="chat.html">Chat</a>
+    <a href="dashboard.html" id="drawerDashboardLink" style="display:none;">Dashboard</a>
+    <a href="payments.html">Buy Echos</a>
+    <button id="drawerLoginBtn" style="display:none;">Login</button>
+    <button id="drawerRegisterBtn" style="display:none;">Register</button>
+    <button id="drawerLogoutBtn" style="display:none;">Logout</button>
+  </div>
+
+  <!-- ─── Hero Section ──────────────────────────────── -->
+  <section class="hero" id="hero">
+    <div class="hero-inner">
+      <span class="hero-eyebrow">India&apos;s most affordable AI platform</span>
+      <h1 class="hero-headline">
+        Built in India.<br>
+        Billed in <span class="rupee">₹</span>.
+      </h1>
+      <p class="hero-sub">
+        Direct access to Claude, Gemini, DeepSeek &amp; more.
+        <strong>Pay with UPI. No credit card. No subscriptions.</strong>
+        Starts at ₹49.
       </p>
-    </div>
-    <div style="text-align:center;margin-bottom:2rem;">
-      <h3 style="color:#4889cd;font-size:1.2rem;font-weight:600;margin-bottom:0.5rem;">Cost per 1 Million Tokens</h3>
-      <p style="color:#94a3b8;font-size:0.9rem;">All prices in Indian Rupees (₹)</p>
-    </div>
-    <div class="models-grid">
-      <div class="model-card">
-        <div class="model-name">Qwen-2.5-Coder <span style="font-size:0.9em;color:#94a3b8;">(qwen/qwen-2.5-coder-32b-instruct)</span></div>
-        <div class="model-desc">
-          Specialized in code generation and technical discussions.
-        </div>
-        <div class="model-cost">
-          <span style="color:#2f7fdb;">Input:</span> ₹6.474 &nbsp;|&nbsp; <span style="color:#2f7fdb;">Output:</span> ₹16.185
-        </div>
+      <div class="hero-actions">
+        <a href="payments.html" class="btn-primary" id="heroBuyBtn">Buy Echos</a>
+        <a href="api.html" class="btn-outline" id="heroStartBtn">Start Building</a>
+        <a href="chat.html" class="btn-outline" id="heroChatBtn">Chat Now</a>
       </div>
-      <div class="model-card">
-        <div class="model-name">Gemini <span style="font-size:0.9em;color:#94a3b8;">(google/gemini-2.5-flash)</span></div>
-        <div class="model-desc">
-          Fast and versatile for general conversations and reasoning.<br>+₹0.051377 per image (when image_url is provided)
-        </div>
-        <div class="model-cost">
-          <span style="color:#2f7fdb;">Input:</span> ₹16.185 &nbsp;|&nbsp; <span style="color:#2f7fdb;">Output:</span> ₹64.74
-        </div>
-      </div>
-      <div class="model-card">
-        <div class="model-name">Codestral <span style="font-size:0.9em;color:#94a3b8;">(mistralai/codestral-2501)</span></div>
-        <div class="model-desc">
-          High-performance code generation model ideal for software development tasks.
-        </div>
-        <div class="model-cost">
-          <span style="color:#2f7fdb;">Input:</span> ₹32.37 &nbsp;|&nbsp; <span style="color:#2f7fdb;">Output:</span> ₹97.11
-        </div>
-      </div>
-      <div class="model-card">
-        <div class="model-name">DeepSeek V3 <span style="font-size:0.9em;color:#94a3b8;">(deepseek/deepseek-chat-v3-0324)</span></div>
-        <div class="model-desc">
-          Advanced general-purpose model by DeepSeek, great for reasoning and conversation.
-        </div>
-        <div class="model-cost">
-          <span style="color:#2f7fdb;">Input:</span> ₹30.212 &nbsp;|&nbsp; <span style="color:#2f7fdb;">Output:</span> ₹95.004
-        </div>
-      </div>
-      <div class="model-card">
-        <div class="model-name">Claude 3 Haiku<span style="font-size:0.9em;color:#94a3b8;">(anthropic/claude-3-haiku)</span></div>
-        <div class="model-desc">
-          Fast, affordable, and supports image input. Great for general tasks and vision.
-        </div>
-        <div class="model-cost">
-          <span style="color:#2f7fdb;">Input:</span> ₹26.975 &nbsp;|&nbsp; <span style="color:#2f7fdb;">Output:</span> ₹134.875
-        </div>
+      <div class="hero-brands">
+        <span>Anthropic</span><div class="brand-dot"></div>
+        <span>Google</span><div class="brand-dot"></div>
+        <span>Mistral</span><div class="brand-dot"></div>
+        <span>DeepSeek</span><div class="brand-dot"></div>
+        <span>Qwen</span>
       </div>
     </div>
-    <p style="text-align:center;color:#94a3b8;margin-top:2rem;font-size:1rem;">More chat models coming soon!</p>
   </section>
 
-  <!-- Vision Models Section -->
-  <section class="section">
-    <div class="section-header">
-      <h2 class="section-title">Vision Models</h2>
-      <p class="section-subtitle">
-        AI that understands images, documents, and visual content
-      </p>
-    </div>
-    <div style="text-align:center;margin-bottom:2rem;">
-      <h3 style="color:#4889cd;font-size:1.2rem;font-weight:600;margin-bottom:0.5rem;">Cost per 1000 Images</h3>
-      <p style="color:#94a3b8;font-size:0.9rem;">All prices in Indian Rupees (₹)</p>
-    </div>
-    <div class="models-grid">
-      <div class="model-card">
-        <div class="model-name">Gemini Flash <span style="font-size:0.9em;color:#94a3b8;">(google/gemini-2.5-flash)</span></div>
-        <div class="model-desc">
-          Fast and versatile for general conversations, reasoning, and image understanding.<br>+₹0.0667 per image (when image_url is provided)
-        </div>
-        <div class="model-cost">₹68.4 for 1000 images</div>
-      </div>
-      <div class="model-card">
-        <div class="model-name">Claude 3 Haiku<span style="font-size:0.9em;color:#94a3b8;">(anthropic/claude-3-haiku)</span></div>
-        <div class="model-desc">
-          Fast, affordable, and supports image input. Great for general tasks and vision.<br>+₹0.0432 per image (when image_url is provided)
-        </div>
-        <div class="model-cost">₹44.2 for 1000 images</div>
-      </div>
-    </div>
-    <p style="text-align:center;color:#94a3b8;margin-top:2rem;font-size:1rem;">More vision models coming soon!</p>
-  </section>
+  <!-- ─── Ticker Bar ────────────────────────────────── -->
+  <div class="ticker-bar">
+    <div class="ticker-item highlight"><span>₹49 to Start</span></div>
+    <div class="ticker-item"><span>7 Models Live</span></div>
+    <div class="ticker-item highlight"><span>UPI Native</span></div>
+    <div class="ticker-item"><span>No Subscription</span></div>
+  </div>
 
-  <!-- Payment Section -->
-  <section class="section">
-    <div class="section-header">
-      <h2 class="section-title">Payment Made Simple</h2>
-      <p class="section-subtitle">
-        Pay securely with UPI or Visa/RuPay cards
-      </p>
-    </div>
-    <div class="payment-grid">
-      <div class="payment-method" onclick="window.location.href='payments.html'" style="cursor:pointer;">
-        <div class="payment-icon">💳</div>
-        <div class="payment-name">Visa / RuPay Cards</div>
-      </div>
-      <div class="payment-method" onclick="window.location.href='payments.html'" style="cursor:pointer;">
-        <div class="payment-icon">
-          <img src="upi-icon.png" alt="UPI" style="width:48px;height:48px;object-fit:contain;" />
+  <!-- ─── Why Aikipedia ─────────────────────────────── -->
+  <section id="about" class="why-section">
+    <div class="why-inner">
+      <span class="section-label">Why Aikipedia</span>
+      <h2 class="section-title">Why Aikipedia</h2>
+      <div class="section-underline"></div>
+      <div class="why-grid">
+        <div class="why-card">
+          <div class="why-dot"></div>
+          <div class="why-card-label">No Dollar Conversion</div>
+          <div class="why-card-title">No Dollar Conversion</div>
+          <div class="why-card-desc">Pay exactly in ₹. No forex fees, no credit card needed. UPI and RuPay accepted.</div>
         </div>
-        <div class="payment-name">UPI</div>
-      </div>
-    </div>
-    <p style="text-align:center;color:#94a3b8;margin-top:1.5rem;font-size:1rem;opacity:0.8;">Payments processed securely by <b>Razorpay</b></p>
-  </section>
-
-  <!-- Features Section -->
-  <section class="section">
-    <div class="features-section">
-      <div class="section-header">
-        <h2 class="section-title">Why Developers Love Us</h2>
-        <p class="section-subtitle">
-          Built for the modern developer workflow
-        </p>
-      </div>
-      
-      <div class="guarantee-box">
-        <div class="guarantee-content">
-          <div class="guarantee-title">24/7 Availability Promise</div>
-          <div class="guarantee-desc">
-            All supported models are available 24 hours a day with 100% uptime guarantee. No delays, no excuses.
-          </div>
+        <div class="why-card">
+          <div class="why-dot"></div>
+          <div class="why-card-label">Pay As You Go</div>
+          <div class="why-card-title">Pay As You Go</div>
+          <div class="why-card-desc">Buy credits once, use for a year. No monthly lock-in, no auto-renewals, no surprises.</div>
         </div>
-      </div>
-
-      <div class="features-grid">
-        <div class="feature-card">
-          <!-- <div class="feature-icon">🏆</div> -->
-          <div class="feature-title">Hackathon Ready</div>
-          <div class="feature-desc">
-            Use your tokens directly in hackathons and personal projects via our lightning-fast API. Ship faster, win more.
-          </div>
-        </div>
-        <div class="feature-card">
-          <!-- <div class="feature-icon">🧪</div> -->
-          <div class="feature-title">Test Before You Build</div>
-          <div class="feature-desc">
-            Try any model directly on our website before integrating. No surprises, no wasted development time.
-          </div>
-        </div>
-        <div class="feature-card">
-          <!-- <div class="feature-icon">💎</div> -->
-          <div class="feature-title">Transparent Pricing</div>
-          <div class="feature-desc">
-            Crystal clear per-token pricing with no hidden costs. Pay only for what you use, see exactly what you're getting.
-          </div>
-        </div>
-        <div class="feature-card">
-          <!-- <div class="feature-icon">🔄</div> -->
-          <div class="feature-title">Model Flexibility</div>
-          <div class="feature-desc">
-            Our model lineup evolves with the AI landscape. Any supported model is guaranteed 24/7 availability.
-          </div>
+        <div class="why-card">
+          <div class="why-dot"></div>
+          <div class="why-card-label">Every Frontier Model</div>
+          <div class="why-card-title">Every Frontier Model</div>
+          <div class="why-card-desc">Claude, Gemini, DeepSeek, Mistral, Qwen — all in one place, one API key, one wallet.</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Background particles effect -->
+  <!-- ─── Available Models ──────────────────────────── -->
+  <section id="models" class="models-section">
+    <div class="models-inner">
+      <span class="section-label">Available Models</span>
+      <h2 class="section-title">Available Models</h2>
+      <div class="section-underline"></div>
+      <div class="models-grid">
+        <div class="model-card" onclick="window.location.href='api.html'">
+          <div class="model-provider">Anthropic</div>
+          <div class="model-name">Claude 3 Haiku</div>
+          <div class="model-desc">Fastest model for near-instant responses. Optimal for chat and simple tasks.</div>
+        </div>
+        <div class="model-card" onclick="window.location.href='api.html'">
+          <div class="model-provider">Google</div>
+          <div class="model-name">Gemini 2.5 Flash</div>
+          <div class="model-desc">High-performance multi-modal model. Excellent for text and image reasoning.</div>
+        </div>
+        <div class="model-card" onclick="window.location.href='api.html'">
+          <div class="model-provider">DeepSeek</div>
+          <div class="model-name">DeepSeek V3</div>
+          <div class="model-desc">Powerful open-weight model with top-tier reasoning capabilities.</div>
+        </div>
+        <div class="model-card" onclick="window.location.href='api.html'">
+          <div class="model-provider">Mistral</div>
+          <div class="model-name">Codestral</div>
+          <div class="model-desc">Specialized model focused exclusively on code generation and analysis.</div>
+        </div>
+        <div class="model-card" onclick="window.location.href='api.html'">
+          <div class="model-provider">Alibaba</div>
+          <div class="model-name">Qwen 2.5 Coder</div>
+          <div class="model-desc">State-of-the-art coding model with extensive language support.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CTA Strip ─────────────────────────────────── -->
+  <div class="cta-strip">
+    <p>Proudly Made in India. Built for Indian Developers, Students &amp; Innovators.</p>
+  </div>
+
+  <!-- ─── Footer ───────────────────────────────────── -->
+  <footer>
+    <span class="footer-left">© 2024 Aikipedia.in</span>
+    <ul class="footer-links">
+      <li><a href="api.html">Documentation</a></li>
+      <li><a href="about_us.html">About</a></li>
+      <li><a href="payments.html">Pricing</a></li>
+    </ul>
+  </footer>
+
+  <!-- ─── Scripts ───────────────────────────────────── -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="background-particles.js"></script>
-  <!-- Cursor trail effect -->
   <script src="cursor-trail.js"></script>
-  <!-- Sidebar and Auth Modal Logic (from index.html) -->
   <script src="aikipedia-auth.js"></script>
+
+  <script>
+  // ── Patch auth.js sidebar calls so they work with the new navbar ──────────
+
+  // auth.js calls sidebar.classList.add/remove('visible') and
+  // profileToggle.addEventListener('click', ...) – these are now no-ops on
+  // the hidden <aside id="sidebar">, which is intentional.
+
+  // Mirror logged-in/out state to the navbar UI.
+  // We do this by watching the DOM mutations auth.js makes to profileToggle
+  // and authButtons after it calls setLoggedInUser / setLoggedOut.
+
+  function syncNavbarAuthState() {
+    const user   = localStorage.getItem('aikipediaUser');
+    const toggle = document.getElementById('profileToggle');
+    const logout = document.getElementById('logoutBtn');
+    const auth   = document.getElementById('authButtons');
+    const dashLi = document.getElementById('dashboardNavItem');
+    const grpLi  = document.getElementById('createGroupNavItem');
+    const drawerDash   = document.getElementById('drawerDashboardLink');
+    const drawerLogin  = document.getElementById('drawerLoginBtn');
+    const drawerReg    = document.getElementById('drawerRegisterBtn');
+    const drawerLogout = document.getElementById('drawerLogoutBtn');
+
+    if (user) {
+      // Logged in
+      toggle.textContent = user.charAt(0).toUpperCase();
+      toggle.title = 'Signed in as ' + user;
+      toggle.style.display = 'flex';
+      toggle.classList.add('showing');
+      auth.style.display = 'none';
+      logout.style.display = 'flex';
+      logout.classList.add('showing');
+      if (dashLi) dashLi.style.display = 'list-item';
+      if (grpLi)  grpLi.style.display  = 'list-item';
+      if (drawerDash)   drawerDash.style.display = 'block';
+      if (drawerLogin)  drawerLogin.style.display = 'none';
+      if (drawerReg)    drawerReg.style.display   = 'none';
+      if (drawerLogout) drawerLogout.style.display = 'block';
+    } else {
+      // Logged out
+      toggle.style.display = 'none';
+      toggle.classList.remove('showing');
+      auth.style.display = 'flex';
+      logout.style.display = 'none';
+      logout.classList.remove('showing');
+      if (dashLi) dashLi.style.display = 'none';
+      if (grpLi)  grpLi.style.display  = 'none';
+      if (drawerDash)   drawerDash.style.display = 'none';
+      if (drawerLogin)  drawerLogin.style.display = 'block';
+      if (drawerReg)    drawerReg.style.display   = 'block';
+      if (drawerLogout) drawerLogout.style.display = 'none';
+    }
+  }
+
+  // Run on load and whenever auth state changes
+  window.addEventListener('DOMContentLoaded', syncNavbarAuthState);
+  window.addEventListener('aikipedia-auth-change', syncNavbarAuthState);
+
+  // Wire mobile drawer buttons to the real auth buttons
+  document.getElementById('drawerLoginBtn').onclick    = () => document.getElementById('loginBtn').click();
+  document.getElementById('drawerRegisterBtn').onclick = () => document.getElementById('registerBtn').click();
+  document.getElementById('drawerLogoutBtn').onclick   = () => document.getElementById('logoutBtn').click();
+
+  // Mobile hamburger toggle
+  const hamburger = document.getElementById('navHamburger');
+  const drawer    = document.getElementById('navDrawer');
+  hamburger.addEventListener('click', () => drawer.classList.toggle('open'));
+  document.addEventListener('click', (e) => {
+    if (!drawer.contains(e.target) && !hamburger.contains(e.target)) {
+      drawer.classList.remove('open');
+    }
+  });
+  </script>
 </body>
 </html>
